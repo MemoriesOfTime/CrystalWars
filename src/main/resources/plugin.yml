@@ -1,15 +1,6 @@
-name: BedWar
-main: cn.lanink.murdermystery.BedWar
+name: BedWars
+main: cn.lanink.bedwars.BedWars
 version: "1.0.0-SNAPSHOT"
-api:
-  - 1.0.0
+api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"
-loadbefore:
-  - Tips
-
-permissions:
-  MurderMystery.all:
-    default: true
-  MurderMystery.op:
-    default: op

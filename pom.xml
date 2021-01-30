@@ -8,14 +8,6 @@
     <artifactId>BedWars</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <licenses>
-        <license>
-            <name>GNU Affero General Public License v3.0</name>
-            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
