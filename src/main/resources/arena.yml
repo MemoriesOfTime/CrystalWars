@@ -5,18 +5,35 @@ gameTime: 600
 gameWorld: "BedWarsGame"
 spawn:
   red:
-    x: 0
-    y: 0
-    z: 0
+    x: 0.0
+    y: 0.0
+    z: 0.0
   yellow:
-    x: 0
-    y: 0
-    z: 0
+    x: 0.0
+    y: 0.0
+    z: 0.0
   blue:
-    x: 0
-    y: 0
-    z: 0
+    x: 0.0
+    y: 0.0
+    z: 0.0
   green:
-    x: 0
-    y: 0
-    z: 0
+    x: 0.0
+    y: 0.0
+    z: 0.0
+bed:
+  red:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  yellow:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  blue:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  green:
+    x: 0.0
+    y: 0.0
+    z: 0.0

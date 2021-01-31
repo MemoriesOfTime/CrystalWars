@@ -23,15 +23,21 @@ class ArenaConfig {
     private final Map<Team, Vector3> teamBed = new HashMap<>();
 
     protected ArenaConfig(@NotNull Config config) {
-        //TODO load Config
-
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("waitTime");
 
         this.gameWorldName = config.getString("gameWorld");
 
-
-
+        Map<String, Map<String, Double>> spawn = config.get("spawn", new HashMap<>());
+        for (Map.Entry<String, Map<String, Double>> entry : spawn.entrySet()) {
+            this.teamSpawn.put(Team.valueOf(entry.getKey().toUpperCase()),
+                    new Vector3(entry.getValue().get("x"), entry.getValue().get("y"), entry.getValue().get("z")));
+        }
+        spawn = config.get("bed", new HashMap<>());
+        for (Map.Entry<String, Map<String, Double>> entry : spawn.entrySet()) {
+            this.teamBed.put(Team.valueOf(entry.getKey().toUpperCase()),
+                    new Vector3(entry.getValue().get("x"), entry.getValue().get("y"), entry.getValue().get("z")));
+        }
     }
 
     public Vector3 getTeamSpawn(@NotNull Team team) {
