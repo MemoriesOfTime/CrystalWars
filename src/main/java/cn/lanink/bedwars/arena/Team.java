@@ -5,9 +5,10 @@ package cn.lanink.bedwars.arena;
  */
 public enum Team {
 
+    NULL,
     RED,
     YELLOW,
     BLUE,
-    GREEN,
+    GREEN;
 
 }
