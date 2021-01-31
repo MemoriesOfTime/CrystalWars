@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BaseArena extends ArenaConfig {
 
+    private ArenaStatus arenaStatus;
+
     private final ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
 
     public BaseArena(@NotNull Config config) {
@@ -26,6 +28,14 @@ public class BaseArena extends ArenaConfig {
     public boolean quitRoom(@NotNull Player player) {
         //TODO
         return false;
+    }
+
+    public enum ArenaStatus {
+        LEVEL_NOT_LOADED,
+        TASK_NEED_INITIALIZED,
+        WAIT,
+        GAME,
+        VICTORY
     }
 
 }
