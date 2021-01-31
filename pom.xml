@@ -71,7 +71,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>${project.basedir}/src/main/java/cn/lanink/bedwar/BedWar.java</include>
+                                <include>${project.basedir}/src/main/java/cn/lanink/bedwars/BedWars.java</include>
                                 <include>${project.basedir}/src/main/resources/plugin.yml</include>
                             </includes>
                             <replacements>
