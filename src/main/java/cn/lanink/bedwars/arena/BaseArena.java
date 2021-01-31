@@ -1,5 +1,6 @@
 package cn.lanink.bedwars.arena;
 
+import cn.lanink.bedwars.BedWars;
 import cn.lanink.bedwars.utils.exception.ArenaLoadException;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -12,13 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author lt_name
  */
-public class BaseArena extends ArenaConfig {
+public abstract class BaseArena extends ArenaConfig {
+
+    protected BedWars bedWars = BedWars.getInstance();
 
     private ArenaStatus arenaStatus;
 
     private Level gameWorld;
 
-    private final ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Player, PlayerData> players = new ConcurrentHashMap<>();
 
     public BaseArena(@NotNull Config config) throws ArenaLoadException {
         super(config);
