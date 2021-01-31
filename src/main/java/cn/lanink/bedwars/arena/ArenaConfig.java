@@ -2,29 +2,34 @@ package cn.lanink.bedwars.arena;
 
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
+import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author lt_name
  */
+@AllArgsConstructor
 @Getter
 class ArenaConfig {
 
-    private final int setWaitTime, setGameTime;
+    private final int setWaitTime;
+    private final int setGameTime;
 
     private final String gameWorldName;
 
     private final Map<Team, Vector3> teamSpawn = new HashMap<>();
-
     private final Map<Team, Vector3> teamBed = new HashMap<>();
 
     protected ArenaConfig(@NotNull Config config) {
         this.setWaitTime = config.getInt("waitTime");
-        this.setGameTime = config.getInt("waitTime");
+        this.setGameTime = config.getInt("gameTime");
 
         this.gameWorldName = config.getString("gameWorld");
 
@@ -41,11 +46,54 @@ class ArenaConfig {
     }
 
     public Vector3 getTeamSpawn(@NotNull Team team) {
-        return teamSpawn.get(team);
+        return this.teamSpawn.get(team);
     }
 
     public Vector3 getTeamBed(@NotNull Team team) {
         return this.teamBed.get(team);
+    }
+
+    public Map<String, Object> getSaveMap() {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("waitTime", this.getSetWaitTime());
+        map.put("gameTime", this.getSetGameTime());
+
+        map.put("gameWorld", this.getGameWorldName());
+
+        for (Map.Entry<Team, Vector3> entry : this.getTeamSpawn().entrySet()) {
+            map.put(entry.getKey().name().toLowerCase(), this.getSavePosMap(entry));
+        }
+        for (Map.Entry<Team, Vector3> entry : this.getTeamBed().entrySet()) {
+            map.put(entry.getKey().name().toLowerCase(), this.getSavePosMap(entry));
+        }
+        return map;
+    }
+
+    private LinkedHashMap<String, Double> getSavePosMap(Map.Entry<Team, Vector3> entry) {
+        LinkedHashMap<String, Double> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("x", entry.getValue().getX());
+        linkedHashMap.put("y", entry.getValue().getY());
+        linkedHashMap.put("z", entry.getValue().getZ());
+        return linkedHashMap;
+    }
+
+    public void saveConfig(File file) {
+        this.saveConfig(new Config(file, Config.YAML));
+    }
+
+    public void saveConfig(Config config) {
+        for (Map.Entry<String, Object> entry : this.getSaveMap().entrySet()) {
+            config.set(entry.getKey(), entry.getValue());
+        }
+        config.save();
+    }
+
+    public String toJsonString() {
+        return new Gson().toJson(this);
+    }
+
+    public static ArenaConfig fromJsonString(@NotNull String jsonString) {
+        return new Gson().fromJson(jsonString, ArenaConfig.class);
     }
 
 }

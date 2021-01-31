@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,7 +22,7 @@ public abstract class BaseArena extends ArenaConfig {
 
     private Level gameWorld;
 
-    private final ConcurrentHashMap<Player, PlayerData> players = new ConcurrentHashMap<>();
+    private final Map<Player, PlayerData> playerData = new ConcurrentHashMap<>();
 
     public BaseArena(@NotNull Config config) throws ArenaLoadException {
         super(config);
@@ -41,6 +42,18 @@ public abstract class BaseArena extends ArenaConfig {
     public boolean quitRoom(@NotNull Player player) {
         //TODO
         return false;
+    }
+
+    public Level getGameWorld() {
+        return this.gameWorld;
+    }
+
+    public Map<Player, PlayerData> getPlayerData() {
+        return this.playerData;
+    }
+
+    public PlayerData getPlayerData(@NotNull Player player) {
+        return this.playerData.get(player);
     }
 
     public enum ArenaStatus {
