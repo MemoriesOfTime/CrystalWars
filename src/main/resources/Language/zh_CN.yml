@@ -1,0 +1,2 @@
+cmd_noPermission: "你没有权限使用此命令!"
+cmd_cannotUsedInConsole: "不能在控制台执行此命令!"
