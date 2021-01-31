@@ -1,6 +1,6 @@
-package cn.lanink.bedwars.scoreboard.ltname;
+package cn.lanink.bedwars.utils.scoreboard.ltname;
 
-import cn.lanink.bedwars.scoreboard.base.IScoreboard;
+import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 
 import java.util.List;

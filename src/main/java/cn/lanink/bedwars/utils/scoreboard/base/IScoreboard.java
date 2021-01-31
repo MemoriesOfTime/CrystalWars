@@ -1,4 +1,4 @@
-package cn.lanink.bedwars.scoreboard.base;
+package cn.lanink.bedwars.utils.scoreboard.base;
 
 import cn.nukkit.Player;
 

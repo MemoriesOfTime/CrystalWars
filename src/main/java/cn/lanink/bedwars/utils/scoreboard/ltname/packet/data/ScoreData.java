@@ -1,4 +1,4 @@
-package cn.lanink.bedwars.scoreboard.ltname.packet.data;
+package cn.lanink.bedwars.utils.scoreboard.ltname.packet.data;
 
 /**
  * 参考项目：

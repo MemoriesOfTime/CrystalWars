@@ -1,9 +1,9 @@
-package cn.lanink.bedwars.scoreboard.ltname;
+package cn.lanink.bedwars.utils.scoreboard.ltname;
 
-import cn.lanink.bedwars.scoreboard.ltname.packet.RemoveObjectivePacket;
-import cn.lanink.bedwars.scoreboard.ltname.packet.SetObjectivePacket;
-import cn.lanink.bedwars.scoreboard.ltname.packet.SetScorePacket;
-import cn.lanink.bedwars.scoreboard.ltname.packet.data.ScoreData;
+import cn.lanink.bedwars.utils.scoreboard.ltname.packet.RemoveObjectivePacket;
+import cn.lanink.bedwars.utils.scoreboard.ltname.packet.SetObjectivePacket;
+import cn.lanink.bedwars.utils.scoreboard.ltname.packet.SetScorePacket;
+import cn.lanink.bedwars.utils.scoreboard.ltname.packet.data.ScoreData;
 import cn.nukkit.Player;
 
 import java.util.HashSet;

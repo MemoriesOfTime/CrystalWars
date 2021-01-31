@@ -1,7 +1,7 @@
 package cn.lanink.bedwars;
 
-import cn.lanink.bedwars.scoreboard.base.IScoreboard;
 import cn.lanink.bedwars.utils.Language;
+import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;

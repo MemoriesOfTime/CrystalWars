@@ -1,6 +1,6 @@
-package cn.lanink.bedwars.scoreboard.theamychan;
+package cn.lanink.bedwars.utils.scoreboard.theamychan;
 
-import cn.lanink.bedwars.scoreboard.base.IScoreboard;
+import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import de.theamychan.scoreboard.api.ScoreboardAPI;
 import de.theamychan.scoreboard.network.DisplaySlot;

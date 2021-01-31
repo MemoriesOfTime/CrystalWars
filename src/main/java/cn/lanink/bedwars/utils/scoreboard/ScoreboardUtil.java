@@ -1,6 +1,6 @@
-package cn.lanink.bedwars.scoreboard;
+package cn.lanink.bedwars.utils.scoreboard;
 
-import cn.lanink.bedwars.scoreboard.base.IScoreboard;
+import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
 import cn.nukkit.Server;
 
 /**
@@ -21,16 +21,16 @@ public class ScoreboardUtil {
                 if (Server.getInstance().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
                     throw new Exception("Not Loaded");
                 }
-                scoreboard = new cn.lanink.bedwars.scoreboard.creeperface.SimpleScoreboard();
+                scoreboard = new cn.lanink.bedwars.utils.scoreboard.creeperface.SimpleScoreboard();
             } catch (Exception e) {
                 try {
                     Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
                     if (Server.getInstance().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
                         throw new Exception("Not Loaded");
                     }
-                    scoreboard = new cn.lanink.bedwars.scoreboard.theamychan.SimpleScoreboard();
+                    scoreboard = new cn.lanink.bedwars.utils.scoreboard.theamychan.SimpleScoreboard();
                 } catch (Exception e1) {
-                    scoreboard = new cn.lanink.bedwars.scoreboard.ltname.SimpleScoreboard();
+                    scoreboard = new cn.lanink.bedwars.utils.scoreboard.ltname.SimpleScoreboard();
                 }
             }
         }

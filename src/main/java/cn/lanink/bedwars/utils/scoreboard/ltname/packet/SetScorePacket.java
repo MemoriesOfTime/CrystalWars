@@ -1,6 +1,6 @@
-package cn.lanink.bedwars.scoreboard.ltname.packet;
+package cn.lanink.bedwars.utils.scoreboard.ltname.packet;
 
-import cn.lanink.bedwars.scoreboard.ltname.packet.data.ScoreData;
+import cn.lanink.bedwars.utils.scoreboard.ltname.packet.data.ScoreData;
 import cn.nukkit.network.protocol.DataPacket;
 
 import java.util.List;

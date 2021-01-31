@@ -1,4 +1,4 @@
-package cn.lanink.bedwars.scoreboard.ltname.packet;
+package cn.lanink.bedwars.utils.scoreboard.ltname.packet;
 
 import cn.nukkit.network.protocol.DataPacket;
 

@@ -1,4 +1,4 @@
-package cn.lanink.bedwars.scoreboard.ltname;
+package cn.lanink.bedwars.utils.scoreboard.ltname;
 
 /**
  * @author lt_name

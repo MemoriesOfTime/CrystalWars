@@ -1,6 +1,6 @@
-package cn.lanink.bedwars.scoreboard.creeperface;
+package cn.lanink.bedwars.utils.scoreboard.creeperface;
 
-import cn.lanink.bedwars.scoreboard.base.IScoreboard;
+import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI;
 
