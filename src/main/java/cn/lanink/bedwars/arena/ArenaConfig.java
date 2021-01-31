@@ -60,21 +60,21 @@ class ArenaConfig {
 
         map.put("gameWorld", this.getGameWorldName());
 
-        for (Map.Entry<Team, Vector3> entry : this.getTeamSpawn().entrySet()) {
-            map.put(entry.getKey().name().toLowerCase(), this.getSavePosMap(entry));
-        }
-        for (Map.Entry<Team, Vector3> entry : this.getTeamBed().entrySet()) {
-            map.put(entry.getKey().name().toLowerCase(), this.getSavePosMap(entry));
-        }
+        map.put("spawn", this.getSavePosMap(this.getTeamSpawn()));
+        map.put("bed", this.getSavePosMap(this.getTeamBed()));
         return map;
     }
 
-    private LinkedHashMap<String, Double> getSavePosMap(Map.Entry<Team, Vector3> entry) {
-        LinkedHashMap<String, Double> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("x", entry.getValue().getX());
-        linkedHashMap.put("y", entry.getValue().getY());
-        linkedHashMap.put("z", entry.getValue().getZ());
-        return linkedHashMap;
+    private LinkedHashMap<String, LinkedHashMap<String, Double>> getSavePosMap(Map<Team, Vector3> pos) {
+        LinkedHashMap<String, LinkedHashMap<String, Double>> posMap = new LinkedHashMap<>();
+        for (Map.Entry<Team, Vector3> entry : pos.entrySet()) {
+            LinkedHashMap<String, Double> map = new LinkedHashMap<>();
+            map.put("x", entry.getValue().getX());
+            map.put("y", entry.getValue().getY());
+            map.put("z", entry.getValue().getZ());
+            posMap.put(entry.getKey().name().toLowerCase(), map);
+        }
+        return posMap;
     }
 
     public void saveConfig(File file) {
