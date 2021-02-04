@@ -1,0 +1,8 @@
+#金锭生成器配置
+---
+itemID: "266:0"
+showName: "Gold Ingot"
+spawnTime(s): 30
+spawnCount: 1
+canSpawnOnDay: true
+canSpawnOnNight: true
