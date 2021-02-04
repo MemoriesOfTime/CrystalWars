@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author lt_name
  */
-public class ItemGenerationManager {
+public class ItemGenerationConfigManager {
 
     private final BedWars bedWars;
 
-    public ItemGenerationManager(@NotNull BedWars bedWars) {
+    public ItemGenerationConfigManager(@NotNull BedWars bedWars) {
         this.bedWars = bedWars;
     }
 

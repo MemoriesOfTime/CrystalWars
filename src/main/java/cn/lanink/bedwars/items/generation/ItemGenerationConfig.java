@@ -17,7 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class ItemGeneration implements ISaveConfig {
+public class ItemGenerationConfig implements ISaveConfig {
 
     private final Item item;
 
@@ -29,7 +29,7 @@ public class ItemGeneration implements ISaveConfig {
     private final boolean canSpawnOnDay;
     private final boolean canSpawnOnNight;
 
-    public ItemGeneration(@NotNull Config config) {
+    public ItemGenerationConfig(@NotNull Config config) {
         this.item = Item.fromString(config.getString("itemID"));
 
         this.showName = config.getString("showName");
