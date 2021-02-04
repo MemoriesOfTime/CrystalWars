@@ -1,5 +1,6 @@
 package cn.lanink.bedwars.arena;
 
+import cn.lanink.bedwars.utils.ISaveConfig;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import com.google.gson.Gson;
@@ -7,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @AllArgsConstructor
 @Getter
-class ArenaConfig {
+class ArenaConfig implements ISaveConfig {
 
     private final int setWaitTime;
     private final int setGameTime;
@@ -53,6 +53,7 @@ class ArenaConfig {
         return this.teamBed.get(team);
     }
 
+    @Override
     public Map<String, Object> getSaveMap() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("waitTime", this.getSetWaitTime());
@@ -75,17 +76,6 @@ class ArenaConfig {
             posMap.put(entry.getKey().name().toLowerCase(), map);
         }
         return posMap;
-    }
-
-    public void saveConfig(File file) {
-        this.saveConfig(new Config(file, Config.YAML));
-    }
-
-    public void saveConfig(Config config) {
-        for (Map.Entry<String, Object> entry : this.getSaveMap().entrySet()) {
-            config.set(entry.getKey(), entry.getValue());
-        }
-        config.save();
     }
 
     public String toJsonString() {
