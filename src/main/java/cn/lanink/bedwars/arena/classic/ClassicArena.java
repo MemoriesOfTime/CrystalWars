@@ -1,6 +1,7 @@
 package cn.lanink.bedwars.arena.classic;
 
 import cn.lanink.bedwars.arena.BaseArena;
+import cn.lanink.bedwars.utils.exception.ArenaLoadException;
 import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ClassicArena extends BaseArena {
 
-    public ClassicArena(@NotNull Config config) {
+    public ClassicArena(@NotNull Config config) throws ArenaLoadException {
         super(config);
     }
 

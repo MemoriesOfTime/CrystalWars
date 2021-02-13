@@ -6,6 +6,8 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -18,8 +20,11 @@ public abstract class BaseArena extends ArenaConfig {
 
     protected BedWars bedWars = BedWars.getInstance();
 
+    @Setter
+    @Getter
     private ArenaStatus arenaStatus;
 
+    @Getter
     private Level gameWorld;
 
     private final Map<Player, PlayerData> playerData = new ConcurrentHashMap<>();
@@ -42,10 +47,6 @@ public abstract class BaseArena extends ArenaConfig {
     public boolean quitRoom(@NotNull Player player) {
         //TODO
         return false;
-    }
-
-    public Level getGameWorld() {
-        return this.gameWorld;
     }
 
     public Map<Player, PlayerData> getPlayerData() {

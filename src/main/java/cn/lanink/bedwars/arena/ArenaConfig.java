@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @AllArgsConstructor
 @Getter
-class ArenaConfig implements ISaveConfig {
+public class ArenaConfig implements ISaveConfig {
 
     private final int setWaitTime;
     private final int setGameTime;

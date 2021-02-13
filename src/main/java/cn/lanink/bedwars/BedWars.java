@@ -1,6 +1,9 @@
 package cn.lanink.bedwars;
 
+import cn.lanink.bedwars.arena.ArenaConfig;
+import cn.lanink.bedwars.arena.BaseArena;
 import cn.lanink.bedwars.utils.Language;
+import cn.lanink.bedwars.utils.scoreboard.ScoreboardUtil;
 import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import cn.nukkit.plugin.PluginBase;
@@ -31,6 +34,11 @@ public class BedWars extends PluginBase {
 
     private IScoreboard scoreboard;
 
+    private static final LinkedHashMap<String, Class<? extends BaseArena>> ARENA_CLASS = new LinkedHashMap<>();
+
+    private final HashMap<String, ArenaConfig> arenaConfigs = new HashMap<>();
+    private final LinkedHashMap<String, BaseArena> arenas = new LinkedHashMap<>();
+
     public static BedWars getInstance() {
         return bedWars;
     }
@@ -44,8 +52,10 @@ public class BedWars extends PluginBase {
 
         if (this.config.getBoolean("debug", false)) {
             debug = true;
+            this.getLogger().warning("§c=========================================");
             this.getLogger().warning("§c 警告：您开启了debug模式！");
             this.getLogger().warning("§c Warning: You have turned on debug mode!");
+            this.getLogger().warning("§c=========================================");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
@@ -96,6 +106,7 @@ public class BedWars extends PluginBase {
 
     @Override
     public void onEnable() {
+        this.scoreboard = ScoreboardUtil.getScoreboard();
 
     }
 
@@ -130,6 +141,10 @@ public class BedWars extends PluginBase {
             return this.languageMap.get(lang);
         }
         return this.languageMap.get(this.defaultLanguage);
+    }
+
+    public static void registerArenaClass(String name, Class<? extends BaseArena> arenaClass) {
+        ARENA_CLASS.put(name, arenaClass);
     }
 
 
