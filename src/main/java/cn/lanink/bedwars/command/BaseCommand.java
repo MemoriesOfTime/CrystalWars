@@ -42,23 +42,23 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(this.bedWars.getLanguage(sender).translateString("cmd_noPermission"));
+                        sender.sendMessage("你没有权限使用此命令!");
                     }else {
-                        sender.sendMessage(this.bedWars.getLanguage(sender).translateString("cmd_cannotUsedInConsole"));
+                        sender.sendMessage("不能在控制台执行此命令!");
                     }
                 }else {
                     this.sendHelp(sender);
                 }
             }else {
                 if (sender.isPlayer()) {
-                    this.sendUi(sender);
+                    this.sendGUI(sender);
                 }else {
                     this.sendHelp(sender);
                 }
             }
             return true;
         }
-        sender.sendMessage(this.bedWars.getLanguage(sender).translateString("cmd_noPermission"));
+        sender.sendMessage("你没有权限使用此命令!");
         return true;
     }
 
@@ -72,7 +72,7 @@ public abstract class BaseCommand extends Command {
      * 发送UI
      * @param sender 玩家
      */
-    public abstract void sendUi(CommandSender sender);
+    public abstract void sendGUI(CommandSender sender);
 
     protected void addSubCommand(BaseSubCommand cmd) {
         this.subCommand.add(cmd);
@@ -81,6 +81,7 @@ public abstract class BaseCommand extends Command {
         for (String alias : cmd.getAliases()) {
             this.subCommands.put(alias.toLowerCase(), commandId);
         }
+        this.loadCommandBase();
     }
 
     protected void loadCommandBase(){

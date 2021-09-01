@@ -1,8 +1,13 @@
 #金锭生成器配置
 ---
+#物品ID
 itemID: "266:0"
 showName: "Gold Ingot"
+#生成间隔（秒）
 spawnTime(s): 30
+#生成数量
 spawnCount: 1
+#可以在白天生成
 canSpawnOnDay: true
+#可以在晚上生成
 canSpawnOnNight: true

@@ -1,6 +1,5 @@
 package cn.lanink.bedwars.items.generation;
 
-import cn.lanink.bedwars.utils.ISaveConfig;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import lombok.AllArgsConstructor;
@@ -8,16 +7,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author lt_name
  */
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class ItemGenerationConfig implements ISaveConfig {
+public class ItemGenerationConfig {
+
+    private final String name;
+    private final Config config;
 
     private final Item item;
 
@@ -26,10 +25,19 @@ public class ItemGenerationConfig implements ISaveConfig {
     private final int spawnTime;
     private final int spawnCount;
 
+    /**
+     * 可以在白天生成
+     */
     private final boolean canSpawnOnDay;
+    /**
+     * 可以在晚上生成
+     */
     private final boolean canSpawnOnNight;
 
-    public ItemGenerationConfig(@NotNull Config config) {
+    public ItemGenerationConfig(@NotNull String name, @NotNull Config config) {
+        this.name = name;
+        this.config = config;
+
         this.item = Item.fromString(config.getString("itemID"));
 
         this.showName = config.getString("showName");
@@ -48,21 +56,16 @@ public class ItemGenerationConfig implements ISaveConfig {
         return this.item.clone();
     }
 
-    @Override
-    public Map<String, Object> getSaveMap() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+    public void save() {
+        this.config.set("itemID", this.getItem().getId() + ":" + this.getItem().getDamage());
 
-        map.put("itemID", this.getItem().getId() + ":" + this.getItem().getDamage());
+        this.config.set("showName", this.getItem().getCustomName());
 
-        map.put("showName", this.getItem().getCustomName());
+        this.config.set("spawnTime(s)", this.getSpawnTime());
+        this.config.set("spawnCount", this.getSpawnCount());
 
-        map.put("spawnTime(s)", this.getSpawnTime());
-        map.put("spawnCount", this.getSpawnCount());
-
-        map.put("canSpawnOnDay", this.isCanSpawnOnDay());
-        map.put("canSpawnOnNight", this.isCanSpawnOnNight());
-
-        return map;
+        this.config.set("canSpawnOnDay", this.isCanSpawnOnDay());
+        this.config.set("canSpawnOnNight", this.isCanSpawnOnNight());
     }
 
 }

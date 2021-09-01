@@ -1,17 +1,23 @@
 package cn.lanink.bedwars;
 
 import cn.lanink.bedwars.arena.ArenaConfig;
+import cn.lanink.bedwars.arena.ArenaTickTask;
 import cn.lanink.bedwars.arena.BaseArena;
-import cn.lanink.bedwars.utils.Language;
-import cn.lanink.bedwars.utils.scoreboard.ScoreboardUtil;
-import cn.lanink.bedwars.utils.scoreboard.base.IScoreboard;
-import cn.nukkit.Player;
+import cn.lanink.bedwars.arena.classic.ClassicArena;
+import cn.lanink.bedwars.listener.defaults.PlayerJoinAndQuit;
+import cn.lanink.bedwars.utils.Watchdog;
+import cn.lanink.gamecore.listener.BaseGameListener;
+import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
+import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * @author lt_name
@@ -26,18 +32,23 @@ public class BedWars extends PluginBase {
 
     private Config config;
 
-    //Language
-    private String defaultLanguage = "zh_CN";
-    private final Map<String, String> languageMappingTable = new HashMap<>();
-    private final Map<String, Language> languageMap = new HashMap<>();
-    private final Map<Player, String> playerLanguage = new ConcurrentHashMap<>();
-
     private IScoreboard scoreboard;
 
     private static final LinkedHashMap<String, Class<? extends BaseArena>> ARENA_CLASS = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Class<? extends BaseGameListener<BaseArena>>> LISTENER_CLASS = new LinkedHashMap<>();
+
+    private final LinkedHashMap<String, BaseGameListener<BaseArena>> gameListeners = new LinkedHashMap<>();
 
     private final HashMap<String, ArenaConfig> arenaConfigs = new HashMap<>();
+    @Getter
     private final LinkedHashMap<String, BaseArena> arenas = new LinkedHashMap<>();
+
+    @Getter
+    private String serverWorldPath;
+    @Getter
+    private String worldBackupPath;
+    @Getter
+    private String roomConfigPath;
 
     public static BedWars getInstance() {
         return bedWars;
@@ -46,6 +57,10 @@ public class BedWars extends PluginBase {
     @Override
     public void onLoad() {
         bedWars = this;
+
+        this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
+        this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
+        this.roomConfigPath = this.getDataFolder() + "/Rooms/";
 
         this.saveDefaultConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
@@ -63,51 +78,20 @@ public class BedWars extends PluginBase {
             }
         }
 
-        this.saveResource("Language/zh_CN.yml", "Language/cache/new_zh_CN.yml", true);
-        List<String> languages = Arrays.asList("zh_CN", "en_US");
-        for (String language : languages) {
-            this.saveResource("Language/" + language + ".yml");
-        }
-        this.defaultLanguage = this.config.getString("defaultLanguage", "zh_CN");
-        this.languageMappingTable.putAll(this.config.get("languageMappingTable", new HashMap<>()));
-        File[] files = new File(getDataFolder() + "/Language").listFiles();
-        if (files != null && files.length > 0) {
-            for (File file : files) {
-                if (!file.isFile()) {
-                    continue;
-                }
-                String name = file.getName().split("\\.")[0];
-                Language language = new Language(new Config(file, Config.YAML));
-                if (this.config.getBoolean("autoUpdateLanguage")) {
-                    //更新插件自带的语言文件
-                    if (languages.contains(name)) {
-                        this.saveResource("Language/" + name + ".yml",
-                                "Language/cache/new.yml", true);
-                        language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
-                    }
-                    //以zh_CN为基础 更新所有语言文件
-                    language.update(new Config(this.getDataFolder() + "/Language/cache/new_zh_CN.yml", Config.YAML));
-                }
-                this.languageMap.put(name, language);
-                this.getLogger().info("§aLanguage: " + name + " loaded !");
-            }
-        }
-        if (this.languageMap.isEmpty()) {
-            this.getLogger().error("§cFailed to load language file! The plugin does not work");
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        if (!this.languageMap.containsKey(this.defaultLanguage)) {
-            this.getLogger().error("§cNo default language found: " + this.defaultLanguage + " Has been set to 'zh_CN'");
-            this.defaultLanguage = "zh_CN";
-        }
-
+        registerArenaClass("classic", ClassicArena.class);
     }
 
     @Override
     public void onEnable() {
         this.scoreboard = ScoreboardUtil.getScoreboard();
 
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
+        this.loadAllListener();
+
+        this.getServer().getScheduler().scheduleRepeatingTask(this, new ArenaTickTask(this), 1);
+        this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this), 20, true);
+
+        this.getLogger().info("插件加载完成！ 版本: " + VERSION);
     }
 
     @Override
@@ -120,32 +104,27 @@ public class BedWars extends PluginBase {
         return this.config;
     }
 
-    public Map<Player, String> getPlayerLanguage() {
-        return this.playerLanguage;
-    }
-
-    public Language getLanguage() {
-        return this.getLanguage(null);
-    }
-
-    public Language getLanguage(Object obj) {
-        if (obj instanceof Player) {
-            Player player = (Player) obj;
-            String lang = this.playerLanguage.getOrDefault(player, this.defaultLanguage);
-            if (!this.languageMap.containsKey(lang) && this.languageMappingTable.containsKey(lang)) {
-                lang = this.languageMappingTable.get(lang);
-            }
-            if (!this.languageMap.containsKey(lang)) {
-                lang = this.defaultLanguage;
-            }
-            return this.languageMap.get(lang);
-        }
-        return this.languageMap.get(this.defaultLanguage);
-    }
-
-    public static void registerArenaClass(String name, Class<? extends BaseArena> arenaClass) {
+    public static void registerArenaClass(@NotNull String name, @NotNull Class<? extends BaseArena> arenaClass) {
         ARENA_CLASS.put(name, arenaClass);
     }
 
+    public static void registerListener(@NotNull String name, @NotNull Class<? extends BaseGameListener<BaseArena>> listerClass) {
+        LISTENER_CLASS.put(name, listerClass);
+    }
+
+    public void loadAllListener() {
+        for (Map.Entry<String, Class<? extends BaseGameListener<BaseArena>>> entry : LISTENER_CLASS.entrySet()) {
+            try {
+                BaseGameListener<BaseArena> baseGameListener = entry.getValue().getConstructor().newInstance();
+                baseGameListener.init(entry.getKey());
+                this.gameListeners.put(entry.getKey(), baseGameListener);
+                if (BedWars.debug) {
+                    this.getLogger().info("[debug] registerListener: " + baseGameListener.getListenerName());
+                }
+            } catch (Exception e) {
+                this.getLogger().error("加载监听器时出错：", e);
+            }
+        }
+    }
 
 }

@@ -1,21 +1,52 @@
 package cn.lanink.bedwars.items.generation;
 
 import cn.lanink.bedwars.BedWars;
+import cn.nukkit.utils.Config;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.HashMap;
 
 /**
  * @author lt_name
  */
 public class ItemGenerationConfigManager {
 
-    private final BedWars bedWars;
+    private static final BedWars BED_WARS = BedWars.getInstance();
+    @Getter
+    private static final HashMap<String, ItemGenerationConfig> ITEM_GENERATION_CONFIG_MAP = new HashMap<>();
 
-    public ItemGenerationConfigManager(@NotNull BedWars bedWars) {
-        this.bedWars = bedWars;
+    private ItemGenerationConfigManager() {
+
     }
 
-    private void loadAllItemGeneration() {
-        //TODO
+    /**
+     * 加载所有物品生成配置
+     */
+    public static void loadAllItemGeneration() {
+        File[] files = new File(BED_WARS.getDataFolder() + "/ItemGeneration").listFiles();
+        if (files == null || files.length == 0) {
+            return;
+        }
+        int count = 0;
+        for (File file : files) {
+            if (!file.isFile()) {
+                continue;
+            }
+            try {
+                String name = file.getName().split("\\.")[0];
+                ITEM_GENERATION_CONFIG_MAP.put(name, new ItemGenerationConfig(name, new Config(file, Config.YAML)));
+                count++;
+            } catch (Exception e) {
+                BED_WARS.getLogger().error("加载物品生成配置失败，请检查配置文件！", e);
+            }
+        }
+        BED_WARS.getLogger().info("已成功加载" + count + "个物品生成配置");
+    }
+
+    public static ItemGenerationConfig getItemGenerationConfig(@NotNull String name) {
+        return ITEM_GENERATION_CONFIG_MAP.get(name);
     }
 
 

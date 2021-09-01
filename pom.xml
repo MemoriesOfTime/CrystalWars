@@ -127,27 +127,10 @@
         </dependency>
 
         <dependency>
-            <groupId>de.theamychan.scoreboard</groupId>
-            <artifactId>ScoreboardAPI</artifactId>
-            <version>1.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.3.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>gt.creeperface.nukkit.scoreboardapi</groupId>
-            <artifactId>ScoreboardAPI</artifactId>
-            <version>1.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.4(creeperface).jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>tip.Main</groupId>
-            <artifactId>Tips</artifactId>
-            <version>1.7.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Tips_v1.7.2.jar</systemPath>
+            <groupId>cn.lanink</groupId>
+            <artifactId>MemoriesOfTime-GameCore</artifactId>
+            <version>1.3.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
