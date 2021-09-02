@@ -225,14 +225,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             list.add(Utils.getSpace(list));
             list.add("游戏结束倒计时:" + Utils.formatCountdown(this.gameTime));
             list.add(Utils.getSpace(list));
-            list.add("红队: 水晶: " + Utils.getShowHealth(this.teamEntityEndCrystalMap.get(Team.RED)) +
-                    " 存活: " + this.getSurvivingPlayers(Team.RED).size());
-            list.add("黄队: 水晶: " + Utils.getShowHealth(this.teamEntityEndCrystalMap.get(Team.YELLOW)) +
-                    " 存活: " + this.getSurvivingPlayers(Team.YELLOW).size());
-            list.add("蓝队: 水晶: " + Utils.getShowHealth(this.teamEntityEndCrystalMap.get(Team.BLUE)) +
-                    " 存活: " + this.getSurvivingPlayers(Team.BLUE).size());
-            list.add("绿队: 水晶: " + Utils.getShowHealth(this.teamEntityEndCrystalMap.get(Team.GREEN)) +
-                    " 存活: " + this.getSurvivingPlayers(Team.GREEN).size());
+            for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
+                list.add(Utils.getShowTeam(e1.getKey()) + ": 水晶: " + Utils.getShowHealth(e1.getValue()) +
+                        " 存活: " + this.getSurvivingPlayers(e1.getKey()).size());
+            }
             list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), "CrystalWars", list);
         }
@@ -306,94 +302,67 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             baseCount = 1;
         }
 
-        //TODO 改成兼容多个队伍数量
-        LinkedList<Player> noTeamPlayers = new LinkedList<>();
-        LinkedList<Player> redTeamPlayers = new LinkedList<>();
-        LinkedList<Player> yellowTeamPlayers = new LinkedList<>();
-        LinkedList<Player> blueTeamPlayers = new LinkedList<>();
-        LinkedList<Player> greenTeamPlayers = new LinkedList<>();
-        for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
-            if (entry.getValue().getTeam() == Team.NULL) {
-                noTeamPlayers.add(entry.getKey());
-            }else if (entry.getValue().getTeam() == Team.RED) {
-                redTeamPlayers.add(entry.getKey());
-            }else if (entry.getValue().getTeam() == Team.YELLOW) {
-                yellowTeamPlayers.add(entry.getKey());
-            }else if (entry.getValue().getTeam() == Team.BLUE) {
-                blueTeamPlayers.add(entry.getKey());
-            }else if (entry.getValue().getTeam() == Team.GREEN) {
-                greenTeamPlayers.add(entry.getKey());
-            }
+        HashMap<Team, LinkedList<Player>> teamPlayers = new HashMap<>();
+        for (Team team : Team.values()) {
+            teamPlayers.put(team, new LinkedList<>());
         }
 
-        Collections.shuffle(noTeamPlayers, CrystalWars.RANDOM);
+        for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
+            teamPlayers.get(entry.getValue().getTeam()).add(entry.getKey());
+        }
+
+        //打乱顺序
+        for (LinkedList<Player> list : teamPlayers.values()) {
+            Collections.shuffle(list, CrystalWars.RANDOM);
+        }
 
         while (true) {
             Player cache = null;
 
-            if (!noTeamPlayers.isEmpty()) {
-                cache = noTeamPlayers.poll();
-            }else if (redTeamPlayers.size() > baseCount + 2) {
-                cache = redTeamPlayers.get(CrystalWars.RANDOM.nextInt(redTeamPlayers.size()));
-                redTeamPlayers.remove(cache);
-            }else if (yellowTeamPlayers.size() > baseCount + 2) {
-                cache = yellowTeamPlayers.get(CrystalWars.RANDOM.nextInt(yellowTeamPlayers.size()));
-                yellowTeamPlayers.remove(cache);
-            }else if (blueTeamPlayers.size() > baseCount + 2) {
-                cache = blueTeamPlayers.get(CrystalWars.RANDOM.nextInt(blueTeamPlayers.size()));
-                blueTeamPlayers.remove(cache);
-            }else if (greenTeamPlayers.size() > baseCount + 2) {
-                cache = greenTeamPlayers.get(CrystalWars.RANDOM.nextInt(greenTeamPlayers.size()));
-                greenTeamPlayers.remove(cache);
+            if (!teamPlayers.get(Team.NULL).isEmpty()) {
+                cache = teamPlayers.get(Team.NULL).poll();
+            }else {
+                for (Map.Entry<Team, LinkedList<Player>> entry : teamPlayers.entrySet()) {
+                    if (entry.getKey() == Team.NULL) {
+                        continue;
+                    }
+                    if (entry.getValue().size() > baseCount + 1) {
+                        cache = entry.getValue().poll();
+                        break;
+                    }
+                }
             }
 
             if (cache == null) {
                 break;
             }
 
-            if (redTeamPlayers.size() < baseCount) {
-                redTeamPlayers.add(cache);
-                continue;
-            }else if (yellowTeamPlayers.size() < baseCount) {
-                yellowTeamPlayers.add(cache);
-                continue;
-            }else if (blueTeamPlayers.size() < baseCount) {
-                blueTeamPlayers.add(cache);
-                continue;
-            }else if (greenTeamPlayers.size() < baseCount) {
-                greenTeamPlayers.add(cache);
-                continue;
+            for (Map.Entry<Team, LinkedList<Player>> entry : teamPlayers.entrySet()) {
+                if (entry.getKey() == Team.NULL) {
+                    continue;
+                }
+                if (entry.getValue().size() < baseCount) {
+                    entry.getValue().add(cache);
+                    cache = null;
+                    break;
+                }
             }
 
-            switch (CrystalWars.RANDOM.nextInt(4)) {
-                case 0:
-                    redTeamPlayers.add(cache);
-                    break;
-                case 1:
-                    yellowTeamPlayers.add(cache);
-                    break;
-                case 2:
-                    blueTeamPlayers.add(cache);
-                    break;
-                default:
-                    greenTeamPlayers.add(cache);
-                    break;
+            if (cache != null) {
+                ArrayList<Team> teams = new ArrayList<>(Arrays.asList(Team.values()));
+                teams.remove(Team.NULL);
+                teamPlayers.get(teams.get(CrystalWars.RANDOM.nextInt(teams.size()))).add(cache);
             }
         }
 
-        for (Player player : redTeamPlayers) {
-            this.getPlayerData(player).setTeam(Team.RED);
+        for (Map.Entry<Team, LinkedList<Player>> entry : teamPlayers.entrySet()) {
+            if (entry.getKey() == Team.NULL) {
+                continue;
+            }
+            for (Player player : entry.getValue()) {
+                this.getPlayerData(player).setTeam(entry.getKey());
+            }
         }
-        for (Player player : yellowTeamPlayers) {
-            this.getPlayerData(player).setTeam(Team.YELLOW);
-        }
-        for (Player player : blueTeamPlayers) {
-            this.getPlayerData(player).setTeam(Team.BLUE);
-        }
-        for (Player player : greenTeamPlayers) {
-            this.getPlayerData(player).setTeam(Team.GREEN);
-        }
-
     }
 
     /**

@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.utils;
 
+import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -11,6 +12,22 @@ import java.util.List;
  * @author LT_Name
  */
 public class Utils {
+
+    public static String getShowTeam(Team team) {
+        switch (team) {
+            case RED:
+                return "红队";
+            case YELLOW:
+                return "黄队";
+            case BLUE:
+                return "蓝队";
+            case GREEN:
+                return "绿队";
+            case NULL:
+            default:
+                return "未加入队伍";
+        }
+    }
 
     public static String getShowHealth(CrystalWarsEntityEndCrystal crystalWarsEntityEndCrystal) {
         if (crystalWarsEntityEndCrystal.isClosed() || crystalWarsEntityEndCrystal.getHealth() < 1) {
