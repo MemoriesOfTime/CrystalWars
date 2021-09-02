@@ -2,7 +2,6 @@
 ---
 waitTime: 60
 gameTime: 600
-gameWorld: "BedWarsGame"
 spawn:
   red:
     x: 0.0
@@ -20,7 +19,7 @@ spawn:
     x: 0.0
     y: 0.0
     z: 0.0
-bed:
+crystal:
   red:
     x: 0.0
     y: 0.0
