@@ -43,7 +43,7 @@ public class Utils {
         if (crystal.isClosed() || crystal.getHealth() < 1) {
             return "§c§l✘";
         }
-        return String.valueOf(NukkitMath.round(crystal.getHealth(), 2));
+        return NukkitMath.round((crystal.getHealth()/crystal.getMaxHealth()) * 100, 1) + "%";
     }
 
     public static String getEntityShowHealth(CrystalWarsEntityEndCrystal crystal) {
