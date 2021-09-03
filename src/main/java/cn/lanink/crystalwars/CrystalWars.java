@@ -17,10 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author lt_name
@@ -30,6 +29,7 @@ public class CrystalWars extends PluginBase {
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
+    public static final ThreadPoolExecutor EXECUTOR = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
     @Getter
     private boolean hasTips = false;
@@ -125,6 +125,8 @@ public class CrystalWars extends PluginBase {
         ArenaTickTask.clearAll();
         Watchdog.clearAll();
 
+        EXECUTOR.shutdown();
+
         this.getLogger().info("插件卸载完毕！");
     }
 
@@ -146,6 +148,7 @@ public class CrystalWars extends PluginBase {
             try {
                 BaseGameListener<BaseArena> baseGameListener = entry.getValue().getConstructor().newInstance();
                 baseGameListener.init(entry.getKey());
+                this.getServer().getPluginManager().registerEvents(baseGameListener, this);
                 this.gameListeners.put(entry.getKey(), baseGameListener);
                 if (CrystalWars.debug) {
                     this.getLogger().info("[debug] registerListener: " + baseGameListener.getListenerName());
@@ -184,6 +187,28 @@ public class CrystalWars extends PluginBase {
             this.getLogger().info("游戏房间:" + world + " 加载完成！");
         } catch (Exception e) {
             this.getLogger().error("加载游戏房间时出现错误！", e);
+        }
+    }
+
+    public void unloadAllArena() {
+        for (String world : new HashSet<>(this.arenas.keySet())) {
+            this.unloadArena(world);
+        }
+    }
+
+    public void unloadArena(String world) {
+        if (this.arenas.containsKey(world)) {
+            BaseArena arena = this.arenas.remove(world);
+            try {
+                arena.gameEnd();
+            } catch (Exception ignored) {
+
+            }
+            for (BaseGameListener<BaseArena> listener : this.gameListeners.values()) {
+                listener.removeListenerRoom(world);
+            }
+            this.getLogger().info("游戏房间: " + world + " 卸载完成！");
+            this.arenaConfigs.remove(world);
         }
     }
 

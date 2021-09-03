@@ -1,12 +1,18 @@
 package cn.lanink.crystalwars.entity;
 
+import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.Team;
+import cn.lanink.crystalwars.utils.Utils;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -22,6 +28,8 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
     protected boolean detonated = false;
 
     @Getter
+    private final BaseArena arena;
+    @Getter
     private final Team team;
 
     private int lastAttackTick;
@@ -31,12 +39,16 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
         return NETWORK_ID;
     }
 
-    public CrystalWarsEntityEndCrystal(FullChunk chunk, CompoundTag nbt, Team team) {
+    public CrystalWarsEntityEndCrystal(FullChunk chunk, CompoundTag nbt, BaseArena arena, Team team) {
         super(chunk, nbt);
+        this.arena = arena;
         this.team = team;
         this.setShowBase(true);
         this.setMaxHealth(100);
         this.setHealth(100);
+        this.setNameTagVisible(true);
+        this.setNameTagAlwaysVisible(true);
+        this.setNameTag(Utils.getShowTeam(this.getTeam()) + "\n" + Utils.getEntityShowHealth(this));
     }
 
     @Override
@@ -76,7 +88,12 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
 
         if (source.getCause() != EntityDamageEvent.DamageCause.FIRE && source.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK && source.getCause() != EntityDamageEvent.DamageCause.LAVA) {
             if (super.attack(source)) {
+                this.setNameTag(Utils.getShowTeam(this.getTeam()) + "\n" + Utils.getEntityShowHealth(this));
                 this.lastAttackTick = Server.getInstance().getTick();
+
+                this.level.addSound(this, Sound.MOB_BLAZE_HIT);
+                this.level.addParticle(new DestroyBlockParticle(this, Block.get(Block.REDSTONE_BLOCK)));
+
                 if (this.getHealth() < 1) {
                     this.explode();
                 }
@@ -98,6 +115,10 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
 
             this.level.addParticle(new HugeExplodeSeedParticle(pos));
             this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_EXPLODE);
+
+            for (Player player : this.getArena().getPlayers(this.getTeam())) {
+                player.sendTitle("§c§l✘", "§e你的水晶已被§c§l破坏§r§e将§c§l无法重生");
+            }
         }
 
     }
