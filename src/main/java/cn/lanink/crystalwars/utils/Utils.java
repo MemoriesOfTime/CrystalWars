@@ -26,24 +26,40 @@ public class Utils {
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:
-                return "红队";
+                return "§c§l红队§r";
             case YELLOW:
-                return "黄队";
+                return "§e§l黄队§r";
             case BLUE:
-                return "蓝队";
+                return "§9§l蓝队§r";
             case GREEN:
-                return "绿队";
+                return "§2§l绿队§r";
             case NULL:
             default:
-                return "未加入队伍";
+                return "§7§l未加入队伍§r";
         }
     }
 
-    public static String getShowHealth(CrystalWarsEntityEndCrystal crystalWarsEntityEndCrystal) {
-        if (crystalWarsEntityEndCrystal.isClosed() || crystalWarsEntityEndCrystal.getHealth() < 1) {
-            return "X";
+    public static String getShowHealth(CrystalWarsEntityEndCrystal crystal) {
+        if (crystal.isClosed() || crystal.getHealth() < 1) {
+            return "§c§l✘";
         }
-        return String.valueOf(NukkitMath.round(crystalWarsEntityEndCrystal.getHealth(), 2));
+        return String.valueOf(NukkitMath.round(crystal.getHealth(), 2));
+    }
+
+    public static String getEntityShowHealth(CrystalWarsEntityEndCrystal crystal) {
+        int needShow = (int) (crystal.getHealth() / (crystal.getMaxHealth()/10));
+        StringBuilder string = new StringBuilder();
+        for (int j = 0; j < 10; j++) {
+            if (j < needShow) {
+                string.append("§a▍");
+            }else {
+                string.append("§c▍");
+            }
+        }
+        string.append(" §e")
+                .append(NukkitMath.round((crystal.getHealth()/crystal.getMaxHealth()) * 100, 1))
+                .append("%");
+        return string.toString();
     }
 
     public static String vector3ToString(Vector3 vector3) {

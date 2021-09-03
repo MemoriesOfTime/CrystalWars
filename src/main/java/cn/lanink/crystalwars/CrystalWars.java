@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author lt_name
@@ -27,6 +29,7 @@ public class CrystalWars extends PluginBase {
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
+    public static final ThreadPoolExecutor EXECUTOR = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
     @Getter
     private boolean hasTips = false;
@@ -121,6 +124,8 @@ public class CrystalWars extends PluginBase {
 
         ArenaTickTask.clearAll();
         Watchdog.clearAll();
+
+        EXECUTOR.shutdown();
 
         this.getLogger().info("插件卸载完毕！");
     }

@@ -15,7 +15,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -234,11 +234,16 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            list.add("游戏结束倒计时:" + Utils.formatCountdown(this.gameTime));
+            list.add("§f游戏结束倒计时: §a" + Utils.formatCountdown(this.gameTime));
             list.add(Utils.getSpace(list));
             for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
-                list.add(Utils.getShowTeam(e1.getKey()) + ": 水晶: " + Utils.getShowHealth(e1.getValue()) +
-                        " 存活: " + this.getSurvivingPlayers(e1.getKey()).size());
+                list.add(Utils.getShowTeam(e1.getKey()) + "§e水晶: §a" + Utils.getShowHealth(e1.getValue()));
+            }
+            list.add(Utils.getSpace(list));
+            for (Team team : this.teamEntityEndCrystalMap.keySet()) {
+                if (!this.isTeamCrystalSurviving(team)) {
+                    list.add(Utils.getShowTeam(team) + "§e存活: §a" + this.getSurvivingPlayers(team).size());
+                }
             }
             list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), "CrystalWars", list);
@@ -297,6 +302,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             CrystalWarsEntityEndCrystal entityEndCrystal = new CrystalWarsEntityEndCrystal(
                     crystalPos.getChunk(),
                     Entity.getDefaultNBT(crystalPos),
+                    this,
                     team
             );
             entityEndCrystal.spawnToAll();
@@ -333,22 +339,19 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 this.crystalWars.getLogger().error("§c游戏房间: " + this.getGameWorldName() + " 地图备份不存在！还原失败！");
                 this.crystalWars.unloadArena(this.getGameWorldName());
             }
-            Server.getInstance().getScheduler().scheduleAsyncTask(this.crystalWars, new AsyncTask() {
-                @Override
-                public void onRun() {
-                    if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
-                        Server.getInstance().loadLevel(getGameWorldName());
-                        gameWorld = Server.getInstance().getLevelByName(getGameWorldName());
-                        setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
-                        if (CrystalWars.debug) {
-                            crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
-                        }
-                    }else {
-                        crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
-                        crystalWars.unloadArena(getGameWorldName());
+            CompletableFuture.runAsync(() -> {
+                if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                    Server.getInstance().loadLevel(getGameWorldName());
+                    this.gameWorld = Server.getInstance().getLevelByName(getGameWorldName());
+                    setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
+                    if (CrystalWars.debug) {
+                        this.crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
                     }
+                }else {
+                    this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
+                    this.crystalWars.unloadArena(getGameWorldName());
                 }
-            });
+            }, CrystalWars.EXECUTOR);
         }
     }
 
@@ -507,6 +510,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
         }
         return players;
+    }
+
+    public boolean isTeamCrystalSurviving(@NotNull Team team) {
+        if (this.teamEntityEndCrystalMap.containsKey(team)) {
+            return !this.teamEntityEndCrystalMap.get(team).isClosed();
+        }
+        return false;
     }
 
     @Override
