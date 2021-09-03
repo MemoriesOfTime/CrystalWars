@@ -15,6 +15,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,11 +46,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     private int waitTime;
     private int gameTime;
+    private int victoryTime;
 
     @Getter
     private final Map<Player, PlayerData> playerDataMap = new ConcurrentHashMap<>();
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
+
+    private Team victoryTeam = Team.NULL;
 
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
@@ -105,7 +109,9 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     public void initData() {
         this.waitTime = this.getSetWaitTime();
         this.gameTime = this.getSetGameTime();
+        this.victoryTime = 10;
         this.playerDataMap.clear();
+        this.victoryTeam = Team.NULL;
     }
 
     public boolean canJoin() {
@@ -197,7 +203,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            list.add("开始倒计时: " + Utils.formatCountdown(this.waitTime));
+            if (this.getPlayerDataMap().size() >= this.getMinPlayers()) {
+                list.add("开始倒计时: " + Utils.formatCountdown(this.waitTime));
+            }else {
+                list.add("等待玩家加入中...");
+            }
             list.add(Utils.getSpace(list));
             list.add("玩家数量: " + getPlayerDataMap().size() + "/" + this.getMaxPlayers());
             list.add(Utils.getSpace(list));
@@ -250,7 +260,25 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public void onUpdateVictory(int tick) {
-        //TODO
+
+        for (Map.Entry<Player, PlayerData> entry : this.playerDataMap.entrySet()) {
+            if (this.victoryTeam != Team.NULL) {
+                if (entry.getValue().getTeam() == this.victoryTeam &&
+                        entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
+                    Utils.spawnFirework(entry.getKey());
+                }
+            }
+
+            //TODO 胜利提示
+            LinkedList<String> list = new LinkedList<>();
+
+            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), "CrystalWars", list);
+        }
+
+        this.victoryTime--;
+        if (this.victoryTime <= 0) {
+            this.gameEnd();
+        }
 
         Watchdog.resetTime(this);
     }
@@ -286,10 +314,40 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public void gameEnd() {
-        this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
-        //TODO
+        ArenaStatus oldStatus = this.getArenaStatus();
+        this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
+        }
+
+        if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
+            this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
+            if (CrystalWars.debug) {
+                this.crystalWars.getLogger().info("§a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
+            }
+            Server.getInstance().unloadLevel(this.getGameWorld());
+            File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
+            File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
+            if (!backup.exists()) {
+                this.crystalWars.getLogger().error("§c游戏房间: " + this.getGameWorldName() + " 地图备份不存在！还原失败！");
+                this.crystalWars.unloadArena(this.getGameWorldName());
+            }
+            Server.getInstance().getScheduler().scheduleAsyncTask(this.crystalWars, new AsyncTask() {
+                @Override
+                public void onRun() {
+                    if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                        Server.getInstance().loadLevel(getGameWorldName());
+                        gameWorld = Server.getInstance().getLevelByName(getGameWorldName());
+                        setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
+                        if (CrystalWars.debug) {
+                            crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
+                        }
+                    }else {
+                        crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
+                        crystalWars.unloadArena(getGameWorldName());
+                    }
+                }
+            });
         }
     }
 
@@ -375,8 +433,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(Player.VIEW);
-        //TODO 检查床是否存在
-        playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
+        if (this.teamEntityEndCrystalMap.get(playerData.getTeam()).isClosed()) {
+            playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
+        }else {
+            playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
+        }
         //TODO 可能需要调整
         playerData.setWaitSpawnTime(5);
     }
