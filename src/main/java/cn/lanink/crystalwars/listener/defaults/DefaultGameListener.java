@@ -26,7 +26,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME) {
                 if (event.getFinalDamage() + 1 > player.getHealth()) {
                     arena.playerDeath(player);
-                    event.setCancelled(true);
+                    event.setDamage(0);
                 }
             } else {
                 event.setCancelled(true);
@@ -40,7 +40,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     if (arena == null) {
                         return;
                     }
-                    final CrystalWarsEntityEndCrystal entityCrystal = (CrystalWarsEntityEndCrystal) event.getEntity();
+                    CrystalWarsEntityEndCrystal entityCrystal = (CrystalWarsEntityEndCrystal) event.getEntity();
                     if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME) {
                         PlayerData playerData = arena.getPlayerData(damager);
                         if (playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE && playerData.getTeam() != entityCrystal.getTeam()) {

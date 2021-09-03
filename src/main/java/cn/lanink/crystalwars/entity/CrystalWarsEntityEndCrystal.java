@@ -2,11 +2,14 @@ package cn.lanink.crystalwars.entity;
 
 import cn.lanink.crystalwars.arena.Team;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -77,6 +80,10 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
         if (source.getCause() != EntityDamageEvent.DamageCause.FIRE && source.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK && source.getCause() != EntityDamageEvent.DamageCause.LAVA) {
             if (super.attack(source)) {
                 this.lastAttackTick = Server.getInstance().getTick();
+
+                this.level.addSound(this, Sound.MOB_BLAZE_HIT);
+                this.level.addParticle(new DestroyBlockParticle(this, Block.get(Block.REDSTONE_BLOCK)));
+
                 if (this.getHealth() < 1) {
                     this.explode();
                 }

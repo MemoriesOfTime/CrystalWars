@@ -132,6 +132,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         playerData.saveBeforePlayerData();
         this.getPlayerDataMap().put(player, playerData);
 
+        player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -449,13 +450,15 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
      */
     public void playerRespawn(@NotNull Player player) {
         PlayerData playerData = this.getPlayerData(player);
-        player.getInventory().clearAll();
-        player.getUIInventory().clearAll();
         if (playerData.getTeam() == Team.NULL) {
             return;
         }
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);
+        player.setHealth(player.getMaxHealth());
+        player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         playerData.setPlayerStatus(PlayerData.PlayerStatus.SURVIVE);
     }
 

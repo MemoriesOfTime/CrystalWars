@@ -143,6 +143,7 @@ public class CrystalWars extends PluginBase {
             try {
                 BaseGameListener<BaseArena> baseGameListener = entry.getValue().getConstructor().newInstance();
                 baseGameListener.init(entry.getKey());
+                this.getServer().getPluginManager().registerEvents(baseGameListener, this);
                 this.gameListeners.put(entry.getKey(), baseGameListener);
                 if (CrystalWars.debug) {
                     this.getLogger().info("[debug] registerListener: " + baseGameListener.getListenerName());
