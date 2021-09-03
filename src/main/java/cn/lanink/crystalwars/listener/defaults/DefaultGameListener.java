@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.listener.defaults;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -48,6 +49,27 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                         }
                     }
                 }
+            }
+            event.setCancelled(true);
+        }else if (event.getEntity() instanceof CrystalWarsEntityMerchant) {
+            if(!(event instanceof EntityDamageByEntityEvent)) {
+                return;
+            }
+            if(!(((EntityDamageByEntityEvent) event).getDamager() instanceof Player)) {
+                return;
+            }
+            Player toucher = (Player) ((EntityDamageByEntityEvent) event).getDamager();
+            CrystalWarsEntityMerchant crystalWarsEntityMerchant = (CrystalWarsEntityMerchant) event.getEntity();
+            BaseArena arena = this.getListenerRoom(toucher.getLevel());
+            if(arena == null) {
+                return;
+            }
+            PlayerData playerData = arena.getPlayerData(toucher);
+            if(playerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
+                return;
+            }
+            if(playerData.getTeam() == crystalWarsEntityMerchant.getTeam() || crystalWarsEntityMerchant.isAllowOtherTeamUse()) {
+                crystalWarsEntityMerchant.sendSupplyWindow(toucher, arena);
             }
             event.setCancelled(true);
         }
