@@ -55,6 +55,9 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     private Team victoryTeam = Team.NULL;
 
+    @Getter
+    private boolean isOvertime = false;
+
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
         this.gameWorldName = gameWorldName;
@@ -112,6 +115,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.victoryTime = 10;
         this.playerDataMap.clear();
         this.victoryTeam = Team.NULL;
+        this.isOvertime = false;
     }
 
     public boolean canJoin() {
@@ -222,6 +226,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             return;
         }
 
+        this.gameTime--;
+
         for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
@@ -279,6 +285,20 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (count <= 1) {
             this.setArenaStatus(ArenaStatus.VICTORY);
             this.victoryTeam = survivingTeam;
+        }else if (this.gameTime <= 0) {
+            //加时赛
+            if (this.isOvertime()) {
+                this.setArenaStatus(ArenaStatus.VICTORY);
+                this.victoryTeam = survivingTeam;
+            }else {
+                this.isOvertime = true;
+                this.gameTime = this.getSetGameTime()/2; //改为可以在配置文件设置
+                for (CrystalWarsEntityEndCrystal crystal : this.teamEntityEndCrystalMap.values()) {
+                    if (!crystal.isClosed()) {
+                        crystal.explode();
+                    }
+                }
+            }
         }
 
         Watchdog.resetTime(this);
