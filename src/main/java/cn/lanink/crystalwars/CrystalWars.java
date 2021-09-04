@@ -65,6 +65,8 @@ public class CrystalWars extends PluginBase {
     @Getter
     private String roomConfigPath;
 
+    public static long inventoryRuntimeId = 0L;
+
     public static CrystalWars getInstance() {
         return crystalWars;
     }
