@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CrystalWars extends PluginBase {
 
+    public static final String PLUGIN_NAME = "CrystalWars"; //TODO RGB!!!
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
@@ -64,6 +65,15 @@ public class CrystalWars extends PluginBase {
     private String worldBackupPath;
     @Getter
     private String roomConfigPath;
+
+    @Getter
+    private String cmdUser;
+    @Getter
+    private String cmdAdmin;
+    @Getter
+    private List<String> cmdUserAliases;
+    @Getter
+    private List<String> cmdAdminAliases;
 
     public static CrystalWars getInstance() {
         return crystalWars;
@@ -118,7 +128,13 @@ public class CrystalWars extends PluginBase {
 
         this.loadAllArena();
 
-        this.getServer().getCommandMap().register("CrystalWars".toLowerCase(), new UserCommand("CrystalWars"));
+        this.cmdUser = this.config.getString("cmdUser", "CrystalWars");
+        this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "CrystalWarsAdmin");
+        this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+
+        this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
+                new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
 
         this.getLogger().info("插件加载完成！ 版本: " + VERSION);
     }
