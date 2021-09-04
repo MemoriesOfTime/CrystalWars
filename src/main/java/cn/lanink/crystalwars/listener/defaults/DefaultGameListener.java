@@ -57,6 +57,9 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             }
             event.setCancelled(true);
         }else if (event.getEntity() instanceof CrystalWarsEntityBaseMerchant) {
+            if(!event.isCancelled()) {
+                event.setCancelled(true);
+            }
             if(!(event instanceof EntityDamageByEntityEvent)) {
                 return;
             }
@@ -76,7 +79,6 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             if(playerData.getTeam() == crystalWarsEntityMerchant.getTeam() || crystalWarsEntityMerchant.isAllowOtherTeamUse()) {
                 crystalWarsEntityMerchant.sendSupplyWindow(toucher, arena);
             }
-            event.setCancelled(true);
         }
     }
 

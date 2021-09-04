@@ -3,6 +3,9 @@
 id: "0:0"
 count: 16
 title: 羊毛
+subTitle: "(花费: 5个铁锭)"
+cost:
+  - "266:0#5"
 lore:
   - "会变成你的形状哦～"
 dynamicTeamItem: true

@@ -12,6 +12,7 @@ import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.passive.EntityVillager;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
@@ -64,6 +65,12 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
         updateMerchantInventory(arena);
         registerInventoryClickListener(); // TODO 在 GameCore 内制作一个类似 GUI快速构建 的'箱子界面交互模块'，并抛弃此 Listener
         generateGUI(arena);
+    }
+
+    @Override
+    public boolean attack(EntityDamageEvent source) {
+        source.setCancelled(true);
+        return super.attack(source);
     }
 
     /**
