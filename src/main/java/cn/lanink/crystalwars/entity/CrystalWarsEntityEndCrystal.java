@@ -17,7 +17,11 @@ import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.DummyBossBar;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author LT_Name
@@ -34,6 +38,8 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
     private final Team team;
 
     private int lastAttackTick;
+
+    private final HashMap<Player, DummyBossBar> bossBarMap = new HashMap<>();
 
     @Override
     public int getNetworkId() {
@@ -87,6 +93,30 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
     }
 
     @Override
+    public boolean onUpdate(int currentTick) {
+        if (currentTick%5 == 0) {
+            for (Player player : this.getLevel().getPlayers().values()) {
+                if (this.distance(player) <= 10) {
+                    if (!this.bossBarMap.containsKey(player)) {
+                        DummyBossBar bossBar = new DummyBossBar
+                                .Builder(player).text(Utils.getShowTeam(this.getTeam()) + "水晶").build();
+                        this.bossBarMap.put(player, bossBar);
+                    }
+                    DummyBossBar bossBar = this.bossBarMap.get(player);
+                    if (!player.getDummyBossBars().containsKey(bossBar.getBossBarId())) {
+                        player.createBossBar(bossBar);
+                    }
+                    bossBar.setLength((this.getHealth() / this.getMaxHealth()) * 100);
+                }else if (this.bossBarMap.containsKey(player)) {
+                    DummyBossBar bossBar = this.bossBarMap.get(player);
+                    player.removeBossBar(bossBar.getBossBarId());
+                }
+            }
+        }
+        return super.onUpdate(currentTick);
+    }
+
+    @Override
     public boolean attack(EntityDamageEvent source) {
         if (Server.getInstance().getTick() - this.lastAttackTick < 10) {
             return false;
@@ -126,7 +156,16 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
                 player.sendTitle("§c§l✘", "§e你的水晶已被§c§l破坏§r§e将§c§l无法重生");
             }
         }
+    }
 
+    @Override
+    public void close() {
+        super.close();
+
+        for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
+            entry.getKey().removeBossBar(entry.getValue().getBossBarId());
+        }
+        this.bossBarMap.clear();
     }
 
     @Override

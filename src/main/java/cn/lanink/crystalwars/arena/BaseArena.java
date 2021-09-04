@@ -486,10 +486,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setGamemode(Player.VIEW);
-        if (this.teamEntityEndCrystalMap.get(playerData.getTeam()).isClosed()) {
-            playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
-        }else {
+        if (this.isTeamCrystalSurviving(playerData.getTeam())) {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
+        }else {
+            playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
         }
         playerData.setDeathCount(playerData.getDeathCount() + 1);
         //TODO 可能需要调整
