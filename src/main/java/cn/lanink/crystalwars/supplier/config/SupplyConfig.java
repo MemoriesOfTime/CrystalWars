@@ -28,6 +28,7 @@ public class SupplyConfig {
 
     private final SupplySlot[] slots;
 
+    @SuppressWarnings("unchecked")
     public SupplyConfig(@NotNull String name, @NotNull Config config) {
         slots = new SupplySlot[config.getAll().size()];
         this.name = name;

@@ -8,9 +8,9 @@ import cn.lanink.crystalwars.supplier.SupplyWindowGenerator;
 import cn.lanink.crystalwars.utils.RuntimeIdHolder;
 import cn.lanink.gamecore.api.Info;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
+import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.form.window.FormWindowSimple;
@@ -126,11 +126,16 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
         }
 
         this.fireProof = true;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
+        this.setDataFlag(
+                EntityUtils.getEntityField("DATA_FLAGS", DATA_FLAGS),
+                EntityUtils.getEntityField("DATA_FLAG_FIRE_IMMUNE", DATA_FLAG_FIRE_IMMUNE),
+                true
+        );
 
-        this.getDataProperties().putInt(Entity.DATA_CONTAINER_TYPE, 10)
-                .putInt(Entity.DATA_CONTAINER_BASE_SIZE, InventoryType.CHEST.getDefaultSize())
-                .putInt(Entity.DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH, 0);
+        this.getDataProperties()
+                .putInt(EntityUtils.getEntityField("DATA_CONTAINER_TYPE", DATA_CONTAINER_TYPE), 10)
+                .putInt(EntityUtils.getEntityField("DATA_CONTAINER_BASE_SIZE", DATA_CONTAINER_BASE_SIZE), InventoryType.CHEST.getDefaultSize())
+                .putInt(EntityUtils.getEntityField("DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH", DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH), 0);
 
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
@@ -140,11 +145,6 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
     public void saveNBT() {
         super.saveNBT();
         this.namedTag.putBoolean("allowOtherTeamUse", allowOtherTeamUse);
-    }
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
     }
 
     /**

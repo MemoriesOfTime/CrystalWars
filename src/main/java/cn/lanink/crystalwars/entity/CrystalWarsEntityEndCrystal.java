@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.entity;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.utils.Utils;
+import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -46,8 +47,6 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
         this.setShowBase(true);
         this.setMaxHealth(100);
         this.setHealth(100);
-        this.setNameTagVisible(true);
-        this.setNameTagAlwaysVisible(true);
         this.setNameTag(Utils.getShowTeam(this.getTeam()) + "\n" + Utils.getEntityShowHealth(this));
     }
 
@@ -60,7 +59,14 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
         }
 
         this.fireProof = true;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
+        this.setDataFlag(
+                EntityUtils.getEntityField("DATA_FLAGS", DATA_FLAGS),
+                EntityUtils.getEntityField("DATA_FLAG_FIRE_IMMUNE", DATA_FLAG_FIRE_IMMUNE),
+                true
+        );
+
+        this.setNameTagVisible(true);
+        this.setNameTagAlwaysVisible(true);
     }
 
     @Override
@@ -129,11 +135,18 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
     }
 
     public boolean showBase() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE);
+        return this.getDataFlag(
+                EntityUtils.getEntityField("DATA_FLAGS", DATA_FLAGS),
+                EntityUtils.getEntityField("DATA_FLAG_SHOWBASE", DATA_FLAG_SHOWBASE)
+        );
     }
 
     public void setShowBase(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE, value);
+        this.setDataFlag(
+                EntityUtils.getEntityField("DATA_FLAGS", DATA_FLAGS),
+                EntityUtils.getEntityField("DATA_FLAG_SHOWBASE", DATA_FLAG_SHOWBASE),
+                value
+        );
     }
 
 }

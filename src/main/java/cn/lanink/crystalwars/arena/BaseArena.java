@@ -95,9 +95,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         Watchdog.add(this);
     }
 
-    public void setGameMode(String gameMode) {
+    public final void setGameMode(String gameMode) {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
+        }else {
+            throw new RuntimeException("重复设置房间游戏模式！");
         }
     }
 
@@ -244,7 +246,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            list.add("§f游戏结束倒计时: §a" + Utils.formatCountdown(this.gameTime));
+            list.add("§f游戏结束倒计时: §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
             list.add(Utils.getSpace(list));
             for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
                 list.add(Utils.getShowTeam(e1.getKey()) + "§e水晶: §a" + Utils.getShowHealth(e1.getValue()));
