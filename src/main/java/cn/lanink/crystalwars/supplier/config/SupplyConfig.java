@@ -74,6 +74,9 @@ public class SupplyConfig {
 
         private String icon;
 
+        /**
+         * 处于背包的位置:配置Config
+         */
         private Map<Integer, SupplyItemConfig> itemConfigs;
     }
 }
