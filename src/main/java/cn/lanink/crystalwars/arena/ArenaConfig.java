@@ -8,7 +8,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +21,6 @@ import java.util.Map;
  */
 @AllArgsConstructor
 @Getter
-@EqualsAndHashCode
 public class ArenaConfig implements ISaveConfig {
 
     private final int setWaitTime;
@@ -70,6 +68,9 @@ public class ArenaConfig implements ISaveConfig {
             } catch (Exception e) {
                 CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误：", e);
             }
+        }
+        if (CrystalWars.debug) {
+            CrystalWars.getInstance().getLogger().info("[debug] 资源生成点:" + this.resourceGenerations);
         }
     }
 

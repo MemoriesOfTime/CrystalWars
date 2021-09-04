@@ -255,6 +255,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     (!this.getGameWorld().isDaytime() && resourceGeneration.getConfig().isCanSpawnOnNight())) {
                 resourceGeneration.setCoolDownTime(resourceGeneration.getCoolDownTime() - 1);
                 if (resourceGeneration.getCoolDownTime() <= 0) {
+                    resourceGeneration.setCoolDownTime(resourceGeneration.getConfig().getSpawnTime());
                     Item item = resourceGeneration.getConfig().getItem();
                     item.setCount(resourceGeneration.getConfig().getSpawnCount());
                     this.getGameWorld().dropItem(resourceGeneration.getVector3(), item);
@@ -573,6 +574,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), this.getGameWorldName());
+        return Objects.hash(this.getGameWorldName());
     }
 }

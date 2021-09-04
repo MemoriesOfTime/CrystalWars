@@ -34,7 +34,7 @@ public class Watchdog extends PluginTask<CrystalWars> {
                             entry.setValue(0);
                             entry.getKey().gameEnd();
                         } catch (Exception e) {
-                            //this.owner.unloadRoom(entry.getKey().getLevelName());
+                            this.owner.unloadArena(entry.getKey().getGameWorldName());
                             this.owner.getLogger().error("[Watchdog] The room[" + entry.getKey().getGameWorldName() + "] cannot end the game error", e);
                         }
                     }
