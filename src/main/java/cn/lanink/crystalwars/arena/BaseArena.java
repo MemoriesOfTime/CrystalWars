@@ -95,9 +95,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         Watchdog.add(this);
     }
 
-    public void setGameMode(String gameMode) {
+    public final void setGameMode(String gameMode) {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
+        }else {
+            throw new RuntimeException("重复设置房间游戏模式！");
         }
     }
 

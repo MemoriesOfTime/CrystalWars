@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.HashMap;
 
 /**
- * @author lt_name
+ * @author LT_Name
  */
 public class ItemGenerationConfigManager {
 
@@ -18,14 +18,14 @@ public class ItemGenerationConfigManager {
     private static final HashMap<String, ItemGenerationConfig> ITEM_GENERATION_CONFIG_MAP = new HashMap<>();
 
     private ItemGenerationConfigManager() {
-
+        throw new RuntimeException("哎呀！你不能实例化这个类！");
     }
 
     /**
      * 加载所有物品生成配置
      */
     public static void loadAllItemGeneration() {
-        File dataFolder = new File(CRYSTAL_WARS.getDataFolder() + "/ItemGeneration");
+        File dataFolder = new File(CRYSTAL_WARS.getDataFolder(), "/ItemGeneration/");
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
             CRYSTAL_WARS.saveResource("ItemGeneration/GoldIngot.yml");
@@ -54,6 +54,5 @@ public class ItemGenerationConfigManager {
     public static ItemGenerationConfig getItemGenerationConfig(@NotNull String name) {
         return ITEM_GENERATION_CONFIG_MAP.get(name);
     }
-
 
 }
