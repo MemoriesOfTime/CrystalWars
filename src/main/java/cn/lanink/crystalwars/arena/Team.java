@@ -8,26 +8,36 @@ public enum Team {
     /**
      * 没有队伍
      */
-    NULL,
+    NULL("§7"),
 
     /**
      * 红队
      */
-    RED,
+    RED("§c"),
 
     /**
      * 黄队
      */
-    YELLOW,
+    YELLOW("§e"),
 
     /**
      * 蓝队
      */
-    BLUE,
+    BLUE("§9"),
 
     /**
      * 绿队
      */
-    GREEN;
+    GREEN("§2");
+
+    private final String color;
+
+    Team(String color) {
+        this.color = color;
+    }
+
+    public String getColor() {
+        return this.color;
+    }
 
 }

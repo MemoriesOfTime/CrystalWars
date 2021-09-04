@@ -26,16 +26,16 @@ public class Utils {
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:
-                return "§c§l红队§r";
+                return team.getColor() + "§l红队§r";
             case YELLOW:
-                return "§e§l黄队§r";
+                return team.getColor() + "§l黄队§r";
             case BLUE:
-                return "§9§l蓝队§r";
+                return team.getColor() + "§l蓝队§r";
             case GREEN:
-                return "§2§l绿队§r";
+                return team.getColor() + "§l绿队§r";
             case NULL:
             default:
-                return "§7§l未加入队伍§r";
+                return team.getColor() + "§l未加入队伍§r";
         }
     }
 

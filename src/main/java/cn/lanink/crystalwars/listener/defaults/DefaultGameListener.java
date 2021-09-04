@@ -6,8 +6,13 @@ import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.inventory.CraftItemEvent;
+import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
+import cn.nukkit.event.player.PlayerGameModeChangeEvent;
+import cn.nukkit.level.Level;
 
 /**
  * @author LT_Name
@@ -50,6 +55,36 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 }
             }
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(PlayerFoodLevelChangeEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        if (this.getListenerRoom(player.getLevel()) != null) {
+            if (event.getFoodLevel() < player.getFoodData().getLevel() ||
+                    event.getFoodSaturationLevel() < player.getFoodData().getFoodSaturationLevel()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onCraft(CraftItemEvent event) {
+        Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
+            event.setCancelled();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
+            event.setCancelled(false);
         }
     }
 
