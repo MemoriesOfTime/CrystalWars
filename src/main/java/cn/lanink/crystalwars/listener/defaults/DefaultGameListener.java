@@ -2,8 +2,8 @@ package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
-import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -21,7 +21,7 @@ import cn.nukkit.level.Level;
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseArena> {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
@@ -82,7 +82,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onFoodLevelChange(PlayerFoodLevelChangeEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
@@ -96,7 +96,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCraft(CraftItemEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
         if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
