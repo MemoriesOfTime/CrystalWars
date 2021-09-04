@@ -13,4 +13,7 @@ public class ArenaLoadException extends Exception {
         super(message);
     }
 
+    public ArenaLoadException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

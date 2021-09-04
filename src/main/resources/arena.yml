@@ -1,8 +1,14 @@
 #房间配置文件
 ---
 gameMode: "classic"
+#游戏开始等待时间
 waitTime: 60
+#游戏时间（超出将进入加时赛，水晶会直接爆炸）
 gameTime: 600
+#加时赛时间
+overtime: 180
+
+#玩家出生点
 spawn:
   red:
     x: 0.0
@@ -20,6 +26,8 @@ spawn:
     x: 0.0
     y: 0.0
     z: 0.0
+
+#队伍水晶生成点
 crystal:
   red:
     x: 0.0
@@ -37,6 +45,27 @@ crystal:
     x: 0.0
     y: 0.0
     z: 0.0
+
+#队伍商店生成点
+shop:
+  red:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  yellow:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  blue:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  green:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+
+#资源生成点
 resourceGenerations:
   - itemGenerationConfigName: "IronIngot"
     x: 0.0

@@ -292,7 +292,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 this.victoryTeam = survivingTeam;
             }else {
                 this.isOvertime = true;
-                this.gameTime = this.getSetGameTime()/2; //改为可以在配置文件设置
+                this.gameTime = this.getSetOvertime();
                 for (CrystalWarsEntityEndCrystal crystal : this.teamEntityEndCrystalMap.values()) {
                     if (!crystal.isClosed()) {
                         crystal.explode();
