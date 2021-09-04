@@ -1,5 +1,6 @@
 #房间配置文件
 ---
+gameMode: "classic"
 waitTime: 60
 gameTime: 600
 spawn:
@@ -33,6 +34,11 @@ crystal:
     y: 0.0
     z: 0.0
   green:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+resourceGenerations:
+  - itemGenerationConfigName: "IronIngot"
     x: 0.0
     y: 0.0
     z: 0.0

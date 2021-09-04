@@ -4,11 +4,13 @@ import cn.lanink.crystalwars.arena.ArenaTickTask;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.classic.ClassicArena;
 import cn.lanink.crystalwars.command.user.UserCommand;
+import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Server;
+import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
@@ -18,8 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lt_name
@@ -29,7 +32,14 @@ public class CrystalWars extends PluginBase {
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
-    public static final ThreadPoolExecutor EXECUTOR = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+    public static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(
+            0,
+            Integer.MAX_VALUE,
+            5,
+            TimeUnit.SECONDS,
+            new SynchronousQueue<>(),
+            task -> new Thread(task, "CrystalWars Restore World Thread")
+    );
 
     @Getter
     private boolean hasTips = false;
@@ -93,13 +103,12 @@ public class CrystalWars extends PluginBase {
         //检查Tips
         try {
             Class.forName("tip.Main");
-            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
-                throw new RuntimeException("Not Loaded");
-            }
             this.hasTips = true;
         } catch (Exception ignored) {
 
         }
+
+        ItemGenerationConfigManager.loadAllItemGeneration();
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.loadAllListener();
@@ -116,11 +125,11 @@ public class CrystalWars extends PluginBase {
 
     @Override
     public void onDisable() {
-        for (BaseArena arena : this.arenas.values()) {
-            arena.gameEnd();
-        }
+        this.unloadAllArena();
         this.arenas.clear();
         this.arenaConfigs.clear();
+
+        this.unloadAllListener();
 
         ArenaTickTask.clearAll();
         Watchdog.clearAll();
@@ -155,6 +164,15 @@ public class CrystalWars extends PluginBase {
                 }
             } catch (Exception e) {
                 this.getLogger().error("加载监听器时出错：", e);
+            }
+        }
+    }
+
+    public void unloadAllListener() {
+        for (BaseGameListener<BaseArena> listener : this.gameListeners.values()) {
+            HandlerList.unregisterAll(listener);
+            if (CrystalWars.debug) {
+                this.getLogger().info("[debug] unregisterListener: " + listener.getListenerName());
             }
         }
     }

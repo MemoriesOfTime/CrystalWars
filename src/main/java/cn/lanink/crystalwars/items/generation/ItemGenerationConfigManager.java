@@ -25,7 +25,13 @@ public class ItemGenerationConfigManager {
      * 加载所有物品生成配置
      */
     public static void loadAllItemGeneration() {
-        File[] files = new File(CRYSTAL_WARS.getDataFolder() + "/ItemGeneration").listFiles();
+        File dataFolder = new File(CRYSTAL_WARS.getDataFolder() + "/ItemGeneration");
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+            CRYSTAL_WARS.saveResource("ItemGeneration/GoldIngot.yml");
+            CRYSTAL_WARS.saveResource("ItemGeneration/IronIngot.yml");
+        }
+        File[] files = dataFolder.listFiles();
         if (files == null || files.length == 0) {
             return;
         }
