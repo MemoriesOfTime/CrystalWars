@@ -212,7 +212,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             list.add(Utils.getSpace(list));
             list.add("玩家数量: " + getPlayerDataMap().size() + "/" + this.getMaxPlayers());
             list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), "CrystalWars", list);
+            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
         Watchdog.resetTime(this);
     }
@@ -250,7 +250,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 }
             }
             list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), "CrystalWars", list);
+            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
 
         //资源生成
@@ -305,7 +305,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //TODO 胜利提示
             LinkedList<String> list = new LinkedList<>();
 
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), "CrystalWars", list);
+            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
 
         this.victoryTime--;

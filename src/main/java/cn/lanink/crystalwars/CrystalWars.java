@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CrystalWars extends PluginBase {
 
-    public static final String PLUGIN_NAME = "CrystalWars"; //TODO RGB!!!
+    public static final String PLUGIN_NAME = "§1C§2r§3y§cs§5t§6a§al§cW§ba§1r§5s§r";
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
