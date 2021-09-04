@@ -3,6 +3,7 @@ package cn.lanink.crystalwars;
 import cn.lanink.crystalwars.arena.ArenaTickTask;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.classic.ClassicArena;
+import cn.lanink.crystalwars.command.admin.AdminCommand;
 import cn.lanink.crystalwars.command.user.UserCommand;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
@@ -128,7 +129,7 @@ public class CrystalWars extends PluginBase {
         this.loadAllListener();
 
         this.getServer().getScheduler().scheduleRepeatingTask(this, new ArenaTickTask(this), 1);
-        this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this), 20, true);
+        this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this, 10), 20, true);
 
         this.loadAllArena();
 
@@ -139,6 +140,8 @@ public class CrystalWars extends PluginBase {
 
         this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
+        this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
+                new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
 
         this.getLogger().info("插件加载完成！ 版本: " + VERSION);
     }

@@ -25,6 +25,10 @@ import java.util.Map;
  */
 public class Utils {
 
+    private Utils() {
+        throw new RuntimeException("哎呀！你不能实例化这个类！");
+    }
+
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:

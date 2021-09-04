@@ -13,10 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Watchdog extends PluginTask<CrystalWars> {
 
     private static final ConcurrentHashMap<BaseArena, Integer> ARENA_RUN_TIME = new ConcurrentHashMap<>();
-    private final int outTime = 10;
+    private final int outTime;
 
-    public Watchdog(CrystalWars crystalWars) {
+    public Watchdog(CrystalWars crystalWars, int outTime) {
         super(crystalWars);
+        this.outTime = outTime;
     }
 
     @Override
