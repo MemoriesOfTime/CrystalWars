@@ -29,20 +29,30 @@ public class SupplyItemConfig {
     private Map<Team, Item> dynamicTeamItems;
 
     public SupplyItemConfig(@NotNull String name, @NotNull Config config) {
-        dynamicTeamItem = config.getBoolean("dynamicTeamItem");
-        count = config.getInt("count");
-        if(dynamicTeamItem) {
-            dynamicTeamItems = new HashMap<>();
-            Item redItem = Item.get(config.getInt("redId"), config.getInt("redMeta"), count);
-            Item blueItem = Item.get(config.getInt("blueId"), config.getInt("blueMeta"), count);
-            Item greenItem = Item.get(config.getInt("greenId"), config.getInt("greenMeta"), count);
-            Item yellowItem = Item.get(config.getInt("yellowId"), config.getInt("yellowMeta"), count);
-            dynamicTeamItems.put(Team.RED, redItem);
-            dynamicTeamItems.put(Team.BLUE, blueItem);
-            dynamicTeamItems.put(Team.GREEN, greenItem);
-            dynamicTeamItems.put(Team.YELLOW, yellowItem);
+        this.dynamicTeamItem = config.getBoolean("dynamicTeamItem");
+        this.count = config.getInt("count");
+        if(this.dynamicTeamItem) {
+            this.dynamicTeamItems = new HashMap<>();
+
+            Item redItem = Item.fromString(config.getString("redId"));
+            redItem.setCount(this.count);
+
+            Item blueItem = Item.fromString(config.getString("blueId"));
+            blueItem.setCount(this.count);
+
+            Item greenItem = Item.fromString(config.getString("greenId"));
+            greenItem.setCount(this.count);
+
+            Item yellowItem = Item.fromString(config.getString("yellowId"));
+            yellowItem.setCount(this.count);
+
+            this.dynamicTeamItems.put(Team.RED, redItem);
+            this.dynamicTeamItems.put(Team.BLUE, blueItem);
+            this.dynamicTeamItems.put(Team.GREEN, greenItem);
+            this.dynamicTeamItems.put(Team.YELLOW, yellowItem);
         }else {
-            item = Item.get(config.getInt("id"), config.getInt("meta"), count);
+            this.item = Item.fromString(config.getString("id"));
+            this.item.setCount(this.count);
         }
     }
 
