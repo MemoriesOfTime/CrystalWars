@@ -7,7 +7,6 @@ import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
-import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -51,19 +50,19 @@ public class ArenaConfig implements ISaveConfig {
             Map<String, Map<String, Double>> spawn = config.get("spawn", new HashMap<>());
             for (Map.Entry<String, Map<String, Double>> entry : spawn.entrySet()) {
                 this.teamSpawn.put(Team.valueOf(entry.getKey().toUpperCase()),
-                        new Vector3(entry.getValue().get("x"), entry.getValue().get("y"), entry.getValue().get("z")));
+                        Utils.mapToVector3(entry.getValue()));
             }
 
             Map<String, Map<String, Double>> crystal = config.get("crystal", new HashMap<>());
             for (Map.Entry<String, Map<String, Double>> entry : crystal.entrySet()) {
                 this.teamCrystal.put(Team.valueOf(entry.getKey().toUpperCase()),
-                        new Vector3(entry.getValue().get("x"), entry.getValue().get("y"), entry.getValue().get("z")));
+                        Utils.mapToVector3(entry.getValue()));
             }
 
             Map<String, Map<String, Double>> shop = config.get("shop", new HashMap<>());
             for (Map.Entry<String, Map<String, Double>> entry : shop.entrySet()) {
                 this.teamShop.put(Team.valueOf(entry.getKey().toUpperCase()),
-                        new Vector3(entry.getValue().get("x"), entry.getValue().get("y"), entry.getValue().get("z")));
+                        Utils.mapToVector3(entry.getValue()));
             }
 
             for (Map map : config.getMapList("resourceGenerations")) {
@@ -71,11 +70,7 @@ public class ArenaConfig implements ISaveConfig {
                     this.resourceGenerations.add(
                             new ResourceGeneration(
                                     ItemGenerationConfigManager.getItemGenerationConfig((String) map.get("itemGenerationConfigName")),
-                                    new Vector3(
-                                            (double) map.get("x"),
-                                            (double) map.get("y"),
-                                            (double) map.get("z")
-                                    )
+                                    Utils.mapToVector3(map)
                             )
                     );
                 } catch (Exception e) {
@@ -113,21 +108,9 @@ public class ArenaConfig implements ISaveConfig {
     private LinkedHashMap<String, LinkedHashMap<String, Double>> getSavePosMap(Map<Team, Vector3> pos) {
         LinkedHashMap<String, LinkedHashMap<String, Double>> posMap = new LinkedHashMap<>();
         for (Map.Entry<Team, Vector3> entry : pos.entrySet()) {
-            LinkedHashMap<String, Double> map = new LinkedHashMap<>();
-            map.put("x", entry.getValue().getX());
-            map.put("y", entry.getValue().getY());
-            map.put("z", entry.getValue().getZ());
-            posMap.put(entry.getKey().name().toLowerCase(), map);
+            posMap.put(entry.getKey().name().toLowerCase(), Utils.vector3ToMap(entry.getValue()));
         }
         return posMap;
-    }
-
-    public String toJsonString() {
-        return new Gson().toJson(this);
-    }
-
-    public static ArenaConfig fromJsonString(@NotNull String jsonString) {
-        return new Gson().fromJson(jsonString, ArenaConfig.class);
     }
 
 }

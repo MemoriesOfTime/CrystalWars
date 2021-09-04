@@ -16,7 +16,9 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.DyeColor;
 
 import java.text.DecimalFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LT_Name
@@ -39,6 +41,12 @@ public class Utils {
         }
     }
 
+    /**
+     * 获取水晶实体百分比显示的血量
+     *
+     * @param crystal 水晶实体
+     * @return 百分比显示的血量
+     */
     public static String getShowHealth(CrystalWarsEntityEndCrystal crystal) {
         if (crystal.isClosed() || crystal.getHealth() < 1) {
             return "§c§l✘";
@@ -46,6 +54,12 @@ public class Utils {
         return NukkitMath.round((crystal.getHealth()/crystal.getMaxHealth()) * 100, 1) + "% ";
     }
 
+    /**
+     * 获取水晶实体显示的血量条
+     *
+     * @param crystal 水晶实体
+     * @return 血量条
+     */
     public static String getEntityShowHealth(CrystalWarsEntityEndCrystal crystal) {
         int needShow = (int) (crystal.getHealth() / (crystal.getMaxHealth()/10));
         StringBuilder string = new StringBuilder();
@@ -56,14 +70,20 @@ public class Utils {
                 string.append("§c▍");
             }
         }
-        string.append(" §e")
-                .append(NukkitMath.round((crystal.getHealth()/crystal.getMaxHealth()) * 100, 1))
-                .append("%");
+        string.append(" §e").append(getShowHealth(crystal));
         return string.toString();
     }
 
     public static String vector3ToString(Vector3 vector3) {
         return vector3.x + ":" + vector3.y + ":" +vector3.z;
+    }
+
+    public static LinkedHashMap<String, Double> vector3ToMap(Vector3 vector3) {
+        LinkedHashMap<String, Double> map = new LinkedHashMap<>();
+        map.put("x", vector3.getX());
+        map.put("y", vector3.getY());
+        map.put("z", vector3.getZ());
+        return map;
     }
 
     public static Vector3 stringToVector3(String string) {
@@ -72,6 +92,15 @@ public class Utils {
                 Double.parseDouble(split[0]),
                 Double.parseDouble(split[1]),
                 Double.parseDouble(split[2])
+        );
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static Vector3 mapToVector3(Map map) {
+        return new Vector3(
+                (double) map.get("x"),
+                (double) map.get("y"),
+                (double) map.get("z")
         );
     }
 
