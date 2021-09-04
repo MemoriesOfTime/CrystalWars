@@ -491,6 +491,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }else {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
         }
+        playerData.setDeathCount(playerData.getDeathCount() + 1);
         //TODO 可能需要调整
         playerData.setWaitSpawnTime(5);
     }
