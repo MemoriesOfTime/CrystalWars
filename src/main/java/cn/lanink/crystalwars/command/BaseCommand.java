@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.command;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -25,6 +26,7 @@ public abstract class BaseCommand extends Command {
 
     /**
      * 判断权限
+     *
      * @param sender 玩家
      * @return 是否拥有权限
      */
@@ -50,8 +52,8 @@ public abstract class BaseCommand extends Command {
                     this.sendHelp(sender);
                 }
             }else {
-                if (sender.isPlayer()) {
-                    this.sendGUI(sender);
+                if (sender instanceof Player) {
+                    this.sendGUI((Player) sender);
                 }else {
                     this.sendHelp(sender);
                 }
@@ -64,15 +66,17 @@ public abstract class BaseCommand extends Command {
 
     /**
      * 发送帮助
+     *
      * @param sender 玩家
      * */
     public abstract void sendHelp(CommandSender sender);
 
     /**
-     * 发送UI
-     * @param sender 玩家
+     * 发送GUI
+     *
+     * @param player 玩家
      */
-    public abstract void sendGUI(CommandSender sender);
+    public abstract void sendGUI(Player player);
 
     protected void addSubCommand(BaseSubCommand cmd) {
         this.subCommand.add(cmd);

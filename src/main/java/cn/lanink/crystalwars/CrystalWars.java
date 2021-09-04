@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CrystalWars extends PluginBase {
 
+    public static final String PLUGIN_NAME = "§1C§2r§3y§cs§5t§6a§al§cW§ba§1r§5s§r";
     public static final String VERSION = "?";
     public static boolean debug = false;
     public static final Random RANDOM = new Random();
@@ -65,7 +66,18 @@ public class CrystalWars extends PluginBase {
     @Getter
     private String roomConfigPath;
 
+<<<<<<< HEAD
     public static long inventoryRuntimeId = 0L;
+=======
+    @Getter
+    private String cmdUser;
+    @Getter
+    private String cmdAdmin;
+    @Getter
+    private List<String> cmdUserAliases;
+    @Getter
+    private List<String> cmdAdminAliases;
+>>>>>>> aa8b75f5ba780fa157e61a20abf461f2d82f91ad
 
     public static CrystalWars getInstance() {
         return crystalWars;
@@ -120,7 +132,13 @@ public class CrystalWars extends PluginBase {
 
         this.loadAllArena();
 
-        this.getServer().getCommandMap().register("CrystalWars".toLowerCase(), new UserCommand("CrystalWars"));
+        this.cmdUser = this.config.getString("cmdUser", "CrystalWars");
+        this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "CrystalWarsAdmin");
+        this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+
+        this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
+                new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
 
         this.getLogger().info("插件加载完成！ 版本: " + VERSION);
     }
