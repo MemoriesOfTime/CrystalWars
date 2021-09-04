@@ -225,9 +225,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
-                entry.getValue().setWaitSpawnTime(entry.getValue().getWaitSpawnTime() - 1);
-                if (entry.getValue().getWaitSpawnTime() <= 0) {
-                    this.playerRespawn(entry.getKey());
+                if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
+                    entry.getValue().setWaitSpawnTime(entry.getValue().getWaitSpawnTime() - 1);
+                    if (entry.getValue().getWaitSpawnTime() <= 0) {
+                        this.playerRespawn(entry.getKey());
+                    }
+                }else {
+                    entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
                 }
             }
 
@@ -263,10 +267,32 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
         }
 
+        //胜利判断
+        int count = 0;
+        Team survivingTeam = Team.NULL;
+        for (Team team : this.teamEntityEndCrystalMap.keySet()) {
+            if (this.isTeamCrystalSurviving(team) || !this.getSurvivingPlayers(team).isEmpty()) {
+                count++;
+                survivingTeam = team;
+            }
+        }
+        if (count <= 1) {
+            this.setArenaStatus(ArenaStatus.VICTORY);
+            this.victoryTeam = survivingTeam;
+        }
+
         Watchdog.resetTime(this);
     }
 
     public void onUpdateVictory(int tick) {
+        if (tick%20 != 0) {
+            return;
+        }
+
+        if (this.getPlayerDataMap().isEmpty()) {
+            this.gameEnd();
+            return;
+        }
 
         for (Map.Entry<Player, PlayerData> entry : this.playerDataMap.entrySet()) {
             if (this.victoryTeam != Team.NULL) {

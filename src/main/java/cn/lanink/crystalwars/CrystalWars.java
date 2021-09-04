@@ -10,6 +10,7 @@ import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Server;
+import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
@@ -102,9 +103,6 @@ public class CrystalWars extends PluginBase {
         //检查Tips
         try {
             Class.forName("tip.Main");
-            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
-                throw new RuntimeException("Not Loaded");
-            }
             this.hasTips = true;
         } catch (Exception ignored) {
 
@@ -127,11 +125,11 @@ public class CrystalWars extends PluginBase {
 
     @Override
     public void onDisable() {
-        for (BaseArena arena : this.arenas.values()) {
-            arena.gameEnd();
-        }
+        this.unloadAllArena();
         this.arenas.clear();
         this.arenaConfigs.clear();
+
+        this.unloadAllListener();
 
         ArenaTickTask.clearAll();
         Watchdog.clearAll();
@@ -166,6 +164,15 @@ public class CrystalWars extends PluginBase {
                 }
             } catch (Exception e) {
                 this.getLogger().error("加载监听器时出错：", e);
+            }
+        }
+    }
+
+    public void unloadAllListener() {
+        for (BaseGameListener<BaseArena> listener : this.gameListeners.values()) {
+            HandlerList.unregisterAll(listener);
+            if (CrystalWars.debug) {
+                this.getLogger().info("[debug] unregisterListener: " + listener.getListenerName());
             }
         }
     }

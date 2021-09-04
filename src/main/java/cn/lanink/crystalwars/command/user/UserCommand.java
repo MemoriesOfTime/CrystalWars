@@ -13,7 +13,7 @@ import cn.nukkit.command.CommandSender;
 public class UserCommand extends BaseCommand {
 
     public UserCommand(String name) {
-        super(name, "HuntGame 命令");
+        super(name, "CrystalWars 命令");
         this.setPermission("crystalwars.command.user");
 
         this.addSubCommand(new JoinRoom("join"));
