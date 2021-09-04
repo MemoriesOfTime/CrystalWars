@@ -1,0 +1,18 @@
+# 金苹果
+---
+id: 322
+meta: 1
+count: 1
+title: 金苹果
+lore:
+  - "恢复血量"
+# 如果设置成true 需要补充如下数据
+# redId: xx
+# redMeta: xx
+# yellowId: xx
+# yellowMeta: xx
+# greenId: xx
+# greenMeta: xx
+# blueId: xx
+# blueMeta: xx
+dynamicTeamItem: false

@@ -7,6 +7,7 @@ import cn.lanink.crystalwars.command.user.UserCommand;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
+import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Server;
@@ -66,9 +67,8 @@ public class CrystalWars extends PluginBase {
     @Getter
     private String roomConfigPath;
 
-<<<<<<< HEAD
     public static long inventoryRuntimeId = 0L;
-=======
+
     @Getter
     private String cmdUser;
     @Getter
@@ -77,7 +77,6 @@ public class CrystalWars extends PluginBase {
     private List<String> cmdUserAliases;
     @Getter
     private List<String> cmdAdminAliases;
->>>>>>> aa8b75f5ba780fa157e61a20abf461f2d82f91ad
 
     public static CrystalWars getInstance() {
         return crystalWars;
@@ -123,6 +122,7 @@ public class CrystalWars extends PluginBase {
         }
 
         ItemGenerationConfigManager.loadAllItemGeneration();
+        SupplyConfigManager.loadAllSupplyConfig();
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.loadAllListener();

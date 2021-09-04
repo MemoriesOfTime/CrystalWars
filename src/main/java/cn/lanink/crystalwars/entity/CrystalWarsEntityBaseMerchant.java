@@ -4,12 +4,15 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.listener.inventory.MerchantInventoryClickListener;
+import cn.lanink.crystalwars.supplier.SupplyWindowGenerator;
 import cn.lanink.crystalwars.utils.RuntimeIdHolder;
 import cn.lanink.gamecore.api.Info;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.passive.EntityVillager;
+import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
@@ -18,6 +21,9 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 /**
  * @author iGxnon
@@ -32,7 +38,7 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
     private final Team team;
 
     @Getter
-    private final ImmutableMap<MerchantInventory.Slot, MerchantInventory> inventoryMap = ImmutableMap.<MerchantInventory.Slot, MerchantInventory>builder()
+    private final ImmutableMap<MerchantInventory.Slot, MerchantInventory> inventoryWindowMap = ImmutableMap.<MerchantInventory.Slot, MerchantInventory>builder()
             .put(MerchantInventory.Slot.FIRST, new MerchantInventory(this))
             .put(MerchantInventory.Slot.SECOND, new MerchantInventory(this))
             .put(MerchantInventory.Slot.THIRD, new MerchantInventory(this))
@@ -44,13 +50,35 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
             .put(MerchantInventory.Slot.NINTH, new MerchantInventory(this))
             .build();
 
-    public CrystalWarsEntityBaseMerchant(FullChunk chunk, CompoundTag nbt, Team team, BaseArena arena) {
+    @Getter
+    private ImmutableMap<MerchantInventory.Slot, FormWindowSimple> guiWindowMap;
+
+    @Getter
+    private FormWindowSimple parentGUI;
+
+    public CrystalWarsEntityBaseMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull BaseArena arena) {
         super(chunk, nbt);
         this.team = team;
         this.setMaxHealth(1000);
         this.setHealth(1000F);
         updateMerchantInventory(arena);
-        registerInventoryClickListener();
+        registerInventoryClickListener(); // TODO 在 GameCore 内制作一个类似 GUI快速构建 的'箱子界面交互模块'，并抛弃此 Listener
+        generateGUI(arena);
+    }
+
+    /**
+     * 生成 Gui 界面
+     */
+    public void generateGUI(BaseArena arena) {
+        ImmutableMap.Builder<MerchantInventory.Slot, FormWindowSimple> builder = ImmutableMap.builder();
+        getInventoryWindowMap().forEach((slot, inventory) -> {
+            if(!inventory.isEmpty()) {
+                builder.put(slot, SupplyWindowGenerator.generatePage(inventory));
+            }
+        });
+        guiWindowMap = builder.build();
+        parentGUI = new AdvancedFormWindowSimple(getNameTag());
+        // TODO 从战局内获取到 Supply 信息
     }
 
     /**
@@ -62,7 +90,7 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
 
     public void registerInventoryClickListener() {
         MerchantInventoryClickListener listener = new MerchantInventoryClickListener(this);
-        inventoryMap.forEach(((slot, merchantInventory) -> listener.addToListen(merchantInventory.getRid(), merchantInventory)));
+        inventoryWindowMap.forEach(((slot, merchantInventory) -> listener.addToListen(merchantInventory.getRid(), merchantInventory)));
         Server.getInstance().getPluginManager().registerEvents(listener, CrystalWars.getInstance());
     }
 
@@ -78,7 +106,7 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
      * @return 背包
      */
     public MerchantInventory getInventory(MerchantInventory.Slot slot) {
-        return inventoryMap.get(slot);
+        return inventoryWindowMap.get(slot);
     }
 
 
@@ -123,9 +151,11 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
 
     public static class MerchantInventory extends ContainerInventory implements RuntimeIdHolder {
 
+        private final long runtimeId = CrystalWars.inventoryRuntimeId ++;
+
         @Override
         public long getRid() {
-            return CrystalWars.inventoryRuntimeId ++;
+            return runtimeId;
         }
 
         public MerchantInventory(InventoryHolder holder) {
@@ -142,7 +172,33 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
         }
 
         public enum Slot {
-            FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH
+            FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH;
+
+            public static Slot valueFormStr(String str) {
+                str = str.toLowerCase(Locale.ROOT);
+                switch (str) {
+                    case "first":
+                        return Slot.FIRST;
+                    case "second":
+                        return Slot.SECOND;
+                    case "third":
+                        return Slot.THIRD;
+                    case "fourth":
+                        return Slot.FOURTH;
+                    case "fifth":
+                        return Slot.FIFTH;
+                    case "sixth":
+                        return Slot.SIXTH;
+                    case "seventh":
+                        return Slot.SEVENTH;
+                    case "eighth":
+                        return Slot.EIGHTH;
+                    case "ninth":
+                        return Slot.NINTH;
+                    default:
+                        return null;
+                }
+            }
         }
 
     }

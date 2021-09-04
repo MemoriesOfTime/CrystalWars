@@ -1,0 +1,17 @@
+# 羊毛
+---
+id: -1
+meta: -1
+count: 16
+title: 羊毛
+lore:
+  - "会变成你的形状哦～"
+dynamicTeamItem: true
+redId: 35
+redMeta: 6
+yellowId: 35
+yellowMeta: 4
+greenId: 35
+greenMeta: 5
+blueId: 35
+blueMeta: 3
