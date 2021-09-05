@@ -30,7 +30,7 @@ import java.util.Locale;
  * @author iGxnon
  * @date 2021/9/3
  */
-public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager implements InventoryHolder {
+public class CrystalWarsEntityMerchant extends EntityVillager implements InventoryHolder {
 
     @Getter
     private boolean allowOtherTeamUse = true;
@@ -57,7 +57,7 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
     @Getter
     private FormWindowSimple parentGUI;
 
-    public CrystalWarsEntityBaseMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull BaseArena arena) {
+    public CrystalWarsEntityMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull BaseArena arena) {
         super(chunk, nbt);
         this.team = team;
         this.setMaxHealth(1000);
@@ -105,7 +105,6 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
     @Info("商人的背包不止一个，请勿使用该方法")
     @Deprecated
     public Inventory getInventory() {
-        //TODO 主背包？？？
         return this.getInventory(MerchantInventory.Slot.FIRST);
     }
 
@@ -180,8 +179,8 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
             return super.getHolder();
         }
 
-        public CrystalWarsEntityBaseMerchant getOwner() {
-            return (CrystalWarsEntityBaseMerchant) getHolder();
+        public CrystalWarsEntityMerchant getOwner() {
+            return (CrystalWarsEntityMerchant) getHolder();
         }
 
         public enum Slot {

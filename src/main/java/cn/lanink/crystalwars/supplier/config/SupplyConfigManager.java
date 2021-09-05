@@ -30,24 +30,20 @@ public class SupplyConfigManager {
         File dir = new File(CRYSTAL_WARS.getDataFolder(), "/Supply/");
         if(!dir.exists()) {
             dir.mkdirs();
-            CRYSTAL_WARS.saveResource("Supply/BaseSupply.yml");
-            CRYSTAL_WARS.saveResource("Supply/Items/goldapple.yml");
-            CRYSTAL_WARS.saveResource("Supply/Items/wool.yml");
-            // TODO save more
+            // TODO
         }
         if(dir.listFiles() == null || Objects.requireNonNull(dir.listFiles()).length <= 1) {
             return;
         }
         AtomicInteger count = new AtomicInteger();
         Stream.of(Objects.requireNonNull(dir.listFiles()))
-                .filter(File::isFile)
-                .forEach(file -> {
-                    Config config = new Config(file, Config.YAML);
-                    String name = file.getName().split("\\.")[0];
-                    SupplyConfig supplyConfig = new SupplyConfig(name, config);
-                    SUPPLY_CONFIG_MAP.put(name, supplyConfig);
+                .filter(File::isDirectory)
+                .forEach(supplyDir -> {
+                    SupplyConfig supplyConfig = new SupplyConfig(supplyDir.getName(), supplyDir);
+                    SUPPLY_CONFIG_MAP.put(supplyDir.getName(), supplyConfig);
                     count.incrementAndGet();
                 });
+
         CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
         if(CrystalWars.debug) {
             CRYSTAL_WARS.getLogger().warning(SUPPLY_CONFIG_MAP.toString());

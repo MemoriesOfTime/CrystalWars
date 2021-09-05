@@ -4,6 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitMath;
@@ -181,6 +182,21 @@ public class Utils {
         nbt.putCompound("FireworkItem", NBTIO.putItemHelper(item));
         EntityFirework entity = new EntityFirework(position.getLevel().getChunk((int)position.x >> 4, (int)position.z >> 4), nbt);
         entity.spawnToAll();
+    }
+
+    public static Item getTeamColorItem(Item defaultItem, Team team) {
+        return getTeamColorItem(defaultItem, team.getColor());
+    }
+
+    public static Item getTeamColorItem(Item defaultItem, String colorCode) {
+        colorCode = colorCode.split("§")[1];
+        if(defaultItem.hasMeta()) {
+            switch (defaultItem.getId()) {
+                case Item.WOOL:
+                    break;
+                case Item:
+            }
+        }
     }
 
 }

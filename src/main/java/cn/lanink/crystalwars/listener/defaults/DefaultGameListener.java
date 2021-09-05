@@ -2,7 +2,7 @@ package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
-import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
@@ -63,7 +63,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 }
             }
             event.setCancelled(true);
-        }else if (event.getEntity() instanceof CrystalWarsEntityBaseMerchant) {
+        }else if (event.getEntity() instanceof CrystalWarsEntityMerchant) {
             if(!event.isCancelled()) {
                 event.setCancelled(true);
             }
@@ -74,7 +74,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 return;
             }
             Player toucher = (Player) ((EntityDamageByEntityEvent) event).getDamager();
-            CrystalWarsEntityBaseMerchant crystalWarsEntityMerchant = (CrystalWarsEntityBaseMerchant) event.getEntity();
+            CrystalWarsEntityMerchant crystalWarsEntityMerchant = (CrystalWarsEntityMerchant) event.getEntity();
             BaseArena arena = this.getListenerRoom(toucher.getLevel());
             if(arena == null) {
                 return;

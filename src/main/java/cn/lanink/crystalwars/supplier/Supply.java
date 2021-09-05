@@ -6,4 +6,5 @@ package cn.lanink.crystalwars.supplier;
  */
 public class Supply {
 
+
 }

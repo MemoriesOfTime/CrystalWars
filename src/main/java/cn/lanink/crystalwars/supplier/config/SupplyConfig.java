@@ -1,83 +1,78 @@
 package cn.lanink.crystalwars.supplier.config;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
 import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
+import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
 import cn.nukkit.utils.Config;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author iGxnon
  * @date 2021/9/3
  */
 @Getter
-@AllArgsConstructor
 @ToString
 public class SupplyConfig {
 
-    private String name;
+    private final String dirName;
 
-    private final SupplySlot[] slots;
+    private final List<SupplyPageConfig> pageConfigs = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
-    public SupplyConfig(@NotNull String name, @NotNull Config config) {
-        slots = new SupplySlot[config.getAll().size()];
-        this.name = name;
-        int index = 0;
-        for (Map.Entry<String, Object> entry : config.getAll().entrySet()) {
-            String slotStr = entry.getKey();
-            String title = (String) ((Map<String, Object>) entry.getValue()).get("title");
-            String icon = (String) ((Map<String, Object>) entry.getValue()).get("icon");
-            List<String> items = (List<String>) ((Map<String, Object>) entry.getValue()).get("items");
-            SupplySlot slot = new SupplySlot();
-            slot.setTitle(title);
-            slot.setIcon(icon);
-            slot.setType(CrystalWarsEntityBaseMerchant.MerchantInventory.Slot.valueFormStr(slotStr));
-            Map<Integer, SupplyItemConfig> itemConfigs = new HashMap<>();
-            items.forEach(foo -> {
-                final String itemName = foo.split(":")[0];
-                String itemFile = CrystalWars.getInstance().getDataFolder() + "/Supply/Items/" + itemName + ".yml";
-                if(!new File(itemFile).exists()) {
-                    CrystalWars.getInstance().getLogger().warning("Item " + itemName + " does not exist!");
-                    return;
-                }
-                int itemIndex;
-                try {
-                    itemIndex = Integer.parseInt(foo.split(":")[1]);
-                }catch (NumberFormatException e) {
-                    CrystalWars.getInstance().getLogger().warning("Item " + itemName + " index format exception!");
-                    return;
-                }
-                itemConfigs.put(itemIndex, new SupplyItemConfig(itemName, new Config(new File(itemFile), Config.YAML)));
-            });
-            slot.setItemConfigs(itemConfigs);
-            this.slots[index] = slot;
-            index ++;
+    private final Map<String, SupplyItemConfig> itemConfigMap = new HashMap<>();
+
+    private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
+
+    public SupplyConfig(@NotNull String dirName, File path) {
+        this.dirName = dirName;
+        File[] childDir = path.listFiles();
+        if(childDir == null ||
+                childDir.length != 2 ||
+                !Arrays.asList("items", "pages").contains(childDir[0].getName()) ||
+                !Arrays.asList("items", "pages").contains(childDir[1].getName())) {
+            throw new RuntimeException("加载" + dirName + "失败!");
         }
+        File itemsPath = new File(path, "items");
+        File[] itemsFiles = itemsPath.listFiles();
+        File pagesPath = new File(path, "pages");
+        File[] pagesFiles = pagesPath.listFiles();
+        if(itemsFiles == null || pagesFiles == null) {
+            throw new RuntimeException("加载" + dirName + "失败!");
+        }
+
+        Arrays.stream(itemsFiles)
+                .filter(this::checkItemFileCorrect)
+                .forEach(itemFile -> {
+                    String fileName = itemFile.getName().split("\\.")[0];
+                    itemConfigMap.put(fileName, new SupplyItemConfig(fileName, new Config(itemFile, Config.YAML)));
+                });
+
+
     }
 
-    @Data
-    @ToString
-    public static class SupplySlot {
+    private boolean checkItemFileCorrect(File file) {
+        
+        if(!file.getName().endsWith(".yml")) {
+            return false;
+        }
 
-        private CrystalWarsEntityBaseMerchant.MerchantInventory.Slot type;
+        Config config = new Config(file, Config.YAML);
+        List<String> authorizedKey = Arrays.asList("title", "subTitle", "pos", "cost", "count", "lore");
 
-        private String title;
+        if(config.getAll().keySet().size() != authorizedKey.size()) {
+            return false;
+        }
 
-        private String icon;
-
-        /**
-         * 处于背包的位置:配置Config
-         */
-        private Map<Integer, SupplyItemConfig> itemConfigs;
+        for(Map.Entry<String, Object> entry : config.getAll().entrySet()) {
+            if(!authorizedKey.contains(entry.getKey())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

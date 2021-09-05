@@ -1,7 +1,7 @@
 package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.EntityText;
 import cn.lanink.crystalwars.utils.Utils;
@@ -55,7 +55,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     private final Map<Player, PlayerData> playerDataMap = new ConcurrentHashMap<>();
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
-    private final HashMap<Team, CrystalWarsEntityBaseMerchant> teamEntityMerchantMap = new HashMap<>();
+    private final HashMap<Team, CrystalWarsEntityMerchant> teamEntityMerchantMap = new HashMap<>();
     private final HashMap<ResourceGeneration, EntityText> resourceGenerationText = new HashMap<>();
 
     private Team victoryTeam = Team.NULL;
@@ -392,20 +392,18 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             if (team == Team.NULL || this.getPlayers(team).isEmpty()) {
                 continue;
             }
-
             Position shopPos = Position.fromObject(this.getTeamShop(team), this.getGameWorld());
-            //TODO
-            /*CrystalWarsEntityBaseMerchant shop = new CrystalWarsEntityBaseMerchant(
+            CrystalWarsEntityMerchant shop = new CrystalWarsEntityMerchant(
                     shopPos.getChunk(),
                     Entity.getDefaultNBT(shopPos),
                     team,
                     this
             );
             shop.spawnToAll();
-            CrystalWarsEntityBaseMerchant oldEntity = this.teamEntityMerchantMap.put(team, shop);
+            CrystalWarsEntityMerchant oldEntity = this.teamEntityMerchantMap.put(team, shop);
             if (oldEntity != null) {
                 oldEntity.close();
-            }*/
+            }
         }
 
         //游戏开始，重生所有玩家
@@ -427,7 +425,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             crystal.close();
         }
 
-        for (CrystalWarsEntityBaseMerchant merchant : this.teamEntityMerchantMap.values()) {
+        for (CrystalWarsEntityMerchant merchant : this.teamEntityMerchantMap.values()) {
             merchant.close();
         }
 

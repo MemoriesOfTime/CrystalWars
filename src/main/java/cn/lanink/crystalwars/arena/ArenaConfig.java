@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
+import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.utils.ISaveConfig;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -35,6 +36,7 @@ public class ArenaConfig implements ISaveConfig {
     private final Map<Team, Vector3> teamCrystal = new HashMap<>();
     private final Map<Team, Vector3> teamShop = new HashMap<>();
     private final ArrayList<ResourceGeneration> resourceGenerations = new ArrayList<>();
+    private final Supply supply;
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
         try {
@@ -77,6 +79,9 @@ public class ArenaConfig implements ISaveConfig {
                     CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误：", e);
                 }
             }
+
+            this.supply = null;
+
             if (CrystalWars.debug) {
                 CrystalWars.getInstance().getLogger().info("[debug] 资源生成点:" + this.resourceGenerations);
             }

@@ -1,0 +1,17 @@
+# 默认页面
+---
+title: 默认页面
+linkItems:
+  "1:0":
+    pos: 0
+    link: ./pageDefault.yml
+    afterClick: "2:0"
+  "2:0":
+    pos: 1
+    link: ./pageBlock.yml
+    afterClick: "1:0"
+  "266:0":
+    pos: 2
+    link: ./pageProp.yml
+    afterClick: "265:0"
+items:

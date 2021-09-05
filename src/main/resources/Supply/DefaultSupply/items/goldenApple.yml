@@ -1,0 +1,8 @@
+title: 金苹果
+subTitle: (5个金锭 x4)
+pos: 9
+cost:
+  - "266:0x5"
+count: 4
+lore:
+  - "吃了就会变强"

@@ -1,6 +1,6 @@
 package cn.lanink.crystalwars.listener.inventory;
 
-import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -14,20 +14,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author iGxnon
  * @date 2021/9/4
  */
-public class MerchantInventoryClickListener implements InventoryClickListener<CrystalWarsEntityBaseMerchant.MerchantInventory>{
+public class MerchantInventoryClickListener implements InventoryClickListener<CrystalWarsEntityMerchant.MerchantInventory>{
 
-    private final ConcurrentHashMap<Long, CrystalWarsEntityBaseMerchant.MerchantInventory> listenerInventories = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, CrystalWarsEntityMerchant.MerchantInventory> listenerInventories = new ConcurrentHashMap<>();
 
     @Getter
-    private final CrystalWarsEntityBaseMerchant merchant;
+    private final CrystalWarsEntityMerchant merchant;
 
     @Override
-    public void addToListen(long runtimeId, CrystalWarsEntityBaseMerchant.MerchantInventory inventory) {
+    public void addToListen(long runtimeId, CrystalWarsEntityMerchant.MerchantInventory inventory) {
         listenerInventories.put(runtimeId, inventory);
     }
 
     @Override
-    public Map<Long, CrystalWarsEntityBaseMerchant.MerchantInventory> getListenerInventories() {
+    public Map<Long, CrystalWarsEntityMerchant.MerchantInventory> getListenerInventories() {
         return listenerInventories;
     }
 
@@ -36,7 +36,7 @@ public class MerchantInventoryClickListener implements InventoryClickListener<Cr
         listenerInventories.clear();
     }
 
-    public MerchantInventoryClickListener(CrystalWarsEntityBaseMerchant merchant) {
+    public MerchantInventoryClickListener(CrystalWarsEntityMerchant merchant) {
         this.merchant = merchant;
     }
 
@@ -46,26 +46,26 @@ public class MerchantInventoryClickListener implements InventoryClickListener<Cr
     }
 
     @Override
-    public void removeFromListen(CrystalWarsEntityBaseMerchant.MerchantInventory inventory) {
+    public void removeFromListen(CrystalWarsEntityMerchant.MerchantInventory inventory) {
         removeFromListen(inventory.getRid());
     }
 
     @Override
-    public void addToListen(CrystalWarsEntityBaseMerchant.MerchantInventory inventory) {
+    public void addToListen(CrystalWarsEntityMerchant.MerchantInventory inventory) {
         addToListen(inventory.getRid(), inventory);
     }
 
     @Override
-    public CrystalWarsEntityBaseMerchant.MerchantInventory getListenerInventory(long rid) {
+    public CrystalWarsEntityMerchant.MerchantInventory getListenerInventory(long rid) {
         return listenerInventories.get(rid);
     }
 
     @EventHandler
     public void onClickInventory(InventoryClickEvent event) {
-        if(event.getInventory() instanceof CrystalWarsEntityBaseMerchant.MerchantInventory) {
-            CrystalWarsEntityBaseMerchant.MerchantInventory inventory = (CrystalWarsEntityBaseMerchant.MerchantInventory) event.getInventory();
+        if(event.getInventory() instanceof CrystalWarsEntityMerchant.MerchantInventory) {
+            CrystalWarsEntityMerchant.MerchantInventory inventory = (CrystalWarsEntityMerchant.MerchantInventory) event.getInventory();
             Player player = event.getPlayer();
-            CrystalWarsEntityBaseMerchant merchant = getMerchant();
+            CrystalWarsEntityMerchant merchant = getMerchant();
             if(getListenerInventories().containsKey(inventory.getRid())) {
                 event.setCancelled(true);
                 Item selectSupply = event.getSourceItem();

@@ -1,6 +1,6 @@
 package cn.lanink.crystalwars.supplier;
 
-import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.nukkit.form.window.FormWindowSimple;
 
 /**
@@ -9,7 +9,7 @@ import cn.nukkit.form.window.FormWindowSimple;
  */
 public class SupplyWindowGenerator {
 
-    public static FormWindowSimple generatePage(CrystalWarsEntityBaseMerchant.MerchantInventory inventory) {
+    public static FormWindowSimple generatePage(CrystalWarsEntityMerchant.MerchantInventory inventory) {
         return null;
     }
 

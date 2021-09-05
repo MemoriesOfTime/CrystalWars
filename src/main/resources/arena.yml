@@ -7,6 +7,8 @@ waitTime: 60
 gameTime: 600
 #加时赛时间
 overtime: 180
+#支援物品配置(商店)
+supply: DefaultSupply
 
 #玩家出生点
 spawn:
