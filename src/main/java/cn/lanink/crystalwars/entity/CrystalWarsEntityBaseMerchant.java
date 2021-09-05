@@ -105,7 +105,8 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
     @Info("商人的背包不止一个，请勿使用该方法")
     @Deprecated
     public Inventory getInventory() {
-        return null;
+        //TODO 主背包？？？
+        return this.getInventory(MerchantInventory.Slot.FIRST);
     }
 
     /**
@@ -153,7 +154,12 @@ public abstract class CrystalWarsEntityBaseMerchant extends EntityVillager imple
      * @param arena 战局
      */
     public void sendSupplyWindow(Player player, BaseArena arena) {
+        if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
+            //TODO 打开主背包 而不是分类的子背包
+            player.addWindow(this.getInventory(MerchantInventory.Slot.FIRST));
+        }else {
 
+        }
     }
 
     public static class MerchantInventory extends ContainerInventory implements RuntimeIdHolder {

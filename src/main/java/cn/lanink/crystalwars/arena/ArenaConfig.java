@@ -93,6 +93,10 @@ public class ArenaConfig implements ISaveConfig {
         return this.teamCrystal.get(team);
     }
 
+    public Vector3 getTeamShop(@NotNull Team team) {
+        return this.teamShop.get(team);
+    }
+
     @Override
     public Map<String, Object> toSaveMap() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();

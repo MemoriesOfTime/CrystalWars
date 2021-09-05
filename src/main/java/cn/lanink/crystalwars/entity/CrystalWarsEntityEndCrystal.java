@@ -99,7 +99,7 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
                 if (this.distance(player) <= 10) {
                     if (!this.bossBarMap.containsKey(player)) {
                         DummyBossBar bossBar = new DummyBossBar
-                                .Builder(player).text(Utils.getShowTeam(this.getTeam()) + "水晶").build();
+                                .Builder(player).text(Utils.getShowTeam(this.getTeam()) + "§e水晶").build();
                         this.bossBarMap.put(player, bossBar);
                     }
                     DummyBossBar bossBar = this.bossBarMap.get(player);

@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
@@ -15,6 +16,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,6 +54,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     private final Map<Player, PlayerData> playerDataMap = new ConcurrentHashMap<>();
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
+    private final HashMap<Team, CrystalWarsEntityBaseMerchant> teamEntityMerchantMap = new HashMap<>();
 
     private Team victoryTeam = Team.NULL;
 
@@ -361,6 +364,27 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
         }
 
+        //生成商店
+        for (Team team : Team.values()) {
+            if (team == Team.NULL || this.getPlayers(team).isEmpty()) {
+                continue;
+            }
+
+            Position shopPos = Position.fromObject(this.getTeamShop(team), this.getGameWorld());
+            //TODO
+            /*CrystalWarsEntityBaseMerchant shop = new CrystalWarsEntityBaseMerchant(
+                    shopPos.getChunk(),
+                    Entity.getDefaultNBT(shopPos),
+                    team,
+                    this
+            );
+            shop.spawnToAll();
+            CrystalWarsEntityBaseMerchant oldEntity = this.teamEntityMerchantMap.put(team, shop);
+            if (oldEntity != null) {
+                oldEntity.close();
+            }*/
+        }
+
         //游戏开始，重生所有玩家
         for (Player player : this.playerDataMap.keySet()) {
             this.playerRespawn(player);
@@ -494,6 +518,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         playerData.setDeathCount(playerData.getDeathCount() + 1);
         //TODO 可能需要调整
         playerData.setWaitSpawnTime(5);
+        player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
     }
 
     /**
