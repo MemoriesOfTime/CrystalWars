@@ -43,7 +43,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     private ArenaStatus arenaStatus;
 
     @Getter
-    private String gameWorldName;
+    private final String gameWorldName;
     @Getter
     private Level gameWorld;
 

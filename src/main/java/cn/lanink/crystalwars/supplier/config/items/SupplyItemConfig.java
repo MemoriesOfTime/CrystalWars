@@ -46,7 +46,7 @@ public class SupplyItemConfig {
         this.subTitle = config.getString("subTitle");
         this.name = name;
 
-        cost = config.getStringList("cost").stream()
+        this.cost = config.getStringList("cost").stream()
                 .filter(costStr -> Pattern.compile("\\d:\\d#\\d").matcher(costStr).find())
                 .map(filterStr -> {
                     Item item = Item.fromString(filterStr.split("#")[0]);
@@ -86,5 +86,16 @@ public class SupplyItemConfig {
         }
     }
 
+    @Deprecated
+    public Item getItem() {
+        return this.item.clone();
+    }
+
+    public Item getItem(@NotNull Team team) {
+        if (this.dynamicTeamItem) {
+            return this.dynamicTeamItems.get(team).clone();
+        }
+        return this.item.clone();
+    }
 
 }

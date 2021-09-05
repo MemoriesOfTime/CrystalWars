@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.supplier.config;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -18,7 +19,12 @@ public class SupplyConfigManager {
 
     private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
 
+    @Getter
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
+
+    private SupplyConfigManager() {
+        throw new RuntimeException("哎呀！你不能实例化这个类！");
+    }
 
     public static void loadAllSupplyConfig() {
         File dir = new File(CRYSTAL_WARS.getDataFolder(), "/Supply/");
