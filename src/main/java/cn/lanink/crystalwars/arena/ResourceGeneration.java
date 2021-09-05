@@ -3,12 +3,14 @@ package cn.lanink.crystalwars.arena;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfig;
 import cn.nukkit.math.Vector3;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author LT_Name
  */
 @Data
+@EqualsAndHashCode(exclude = "coolDownTime")
 public class ResourceGeneration {
 
     private ItemGenerationConfig config;

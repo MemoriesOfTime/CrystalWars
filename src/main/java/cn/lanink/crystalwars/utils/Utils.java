@@ -65,7 +65,18 @@ public class Utils {
      * @return 血量条
      */
     public static String getEntityShowHealth(CrystalWarsEntityEndCrystal crystal) {
-        int needShow = (int) (crystal.getHealth() / (crystal.getMaxHealth()/10));
+        return getProgressBar((int) crystal.getHealth(), crystal.getMaxHealth()) + " §e" + getShowHealth(crystal);
+    }
+
+    /**
+     * 进度条
+     *
+     * @param now 现在
+     * @param max 最大
+     * @return 进度条
+     */
+    public static String getProgressBar(int now, int max) {
+        int needShow = now / (max/10);
         StringBuilder string = new StringBuilder();
         for (int j = 0; j < 10; j++) {
             if (j < needShow) {
@@ -74,7 +85,6 @@ public class Utils {
                 string.append("§c▍");
             }
         }
-        string.append(" §e").append(getShowHealth(crystal));
         return string.toString();
     }
 

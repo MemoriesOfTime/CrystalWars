@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.arena;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityBaseMerchant;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
+import cn.lanink.crystalwars.entity.EntityText;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -55,6 +56,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
     private final HashMap<Team, CrystalWarsEntityBaseMerchant> teamEntityMerchantMap = new HashMap<>();
+    private final HashMap<ResourceGeneration, EntityText> resourceGenerationText = new HashMap<>();
 
     private Team victoryTeam = Team.NULL;
 
@@ -118,7 +120,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.waitTime = this.getSetWaitTime();
         this.gameTime = this.getSetGameTime();
         this.victoryTime = 10;
+
         this.playerDataMap.clear();
+
+        this.teamEntityEndCrystalMap.clear();
+        this.teamEntityMerchantMap.clear();
+        this.resourceGenerationText.clear();
+
         this.victoryTeam = Team.NULL;
         this.isOvertime = false;
     }
@@ -275,6 +283,21 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     item.setCount(resourceGeneration.getConfig().getSpawnCount());
                     this.getGameWorld().dropItem(resourceGeneration.getVector3(), item);
                 }
+                EntityText entityText = this.resourceGenerationText.get(resourceGeneration);
+                if (entityText == null) {
+                    entityText = new EntityText(
+                            Position.fromObject(resourceGeneration.getVector3(), this.getGameWorld()), "");
+                    entityText.spawnToAll();
+                    this.resourceGenerationText.put(resourceGeneration, entityText);
+                }
+                entityText.setNameTag(resourceGeneration.getConfig().getShowName()
+                        .replace("%progressBar%",
+                                Utils.getProgressBar(
+                                        resourceGeneration.getConfig().getSpawnTime() - resourceGeneration.getCoolDownTime(),
+                                        resourceGeneration.getConfig().getSpawnTime()
+                                )
+                        )
+                );
             }
         }
 
@@ -398,6 +421,18 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
+        }
+
+        for (CrystalWarsEntityEndCrystal crystal : this.teamEntityEndCrystalMap.values()) {
+            crystal.close();
+        }
+
+        for (CrystalWarsEntityBaseMerchant merchant : this.teamEntityMerchantMap.values()) {
+            merchant.close();
+        }
+
+        for (EntityText text : this.resourceGenerationText.values()) {
+            text.close();
         }
 
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {

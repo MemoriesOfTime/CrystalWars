@@ -53,7 +53,7 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
         this.setShowBase(true);
         this.setMaxHealth(100);
         this.setHealth(100);
-        this.setNameTag(Utils.getShowTeam(this.getTeam()) + "\n" + Utils.getEntityShowHealth(this));
+        this.setNameTag(Utils.getShowTeam(this.getTeam()) + "§e水晶\n" + Utils.getEntityShowHealth(this));
     }
 
     @Override
@@ -124,7 +124,7 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
 
         if (source.getCause() != EntityDamageEvent.DamageCause.FIRE && source.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK && source.getCause() != EntityDamageEvent.DamageCause.LAVA) {
             if (super.attack(source)) {
-                this.setNameTag(Utils.getShowTeam(this.getTeam()) + "\n" + Utils.getEntityShowHealth(this));
+                this.setNameTag(Utils.getShowTeam(this.getTeam()) + "§e水晶\n" + Utils.getEntityShowHealth(this));
                 this.lastAttackTick = Server.getInstance().getTick();
 
                 this.level.addSound(this, Sound.MOB_BLAZE_HIT);

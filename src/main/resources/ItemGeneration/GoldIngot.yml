@@ -2,7 +2,9 @@
 ---
 #物品ID
 itemID: "266:0"
-showName: "Gold Ingot"
+showName: |-
+  金锭生成点
+  %progressBar%
 #生成间隔（秒）
 spawnTime(s): 30
 #生成数量

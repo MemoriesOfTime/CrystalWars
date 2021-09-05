@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @AllArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "name")
 public class ItemGenerationConfig {
 
     private final String name;
@@ -41,9 +41,6 @@ public class ItemGenerationConfig {
         this.item = Item.fromString(config.getString("itemID"));
 
         this.showName = config.getString("showName");
-        if (!"".equals(this.showName)) {
-            this.item.setCustomName(this.showName);
-        }
 
         this.spawnTime = config.getInt("spawnTime(s)");
         this.spawnCount = config.getInt("spawnCount");
