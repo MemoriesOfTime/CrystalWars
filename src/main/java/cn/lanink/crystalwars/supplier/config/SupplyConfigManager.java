@@ -47,7 +47,8 @@ public class SupplyConfigManager {
                 });
         CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
         if(CrystalWars.debug) {
-            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP);
+            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getPageConfigMap());
+            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getItemConfigMap());
         }
     }
 

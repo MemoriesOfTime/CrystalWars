@@ -1,16 +1,13 @@
 package cn.lanink.crystalwars.entity;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.Team;
-import cn.lanink.crystalwars.listener.inventory.MerchantInventoryClickListener;
 import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.utils.RuntimeIdHolder;
+import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.gamecore.api.Info;
-import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.form.window.FormWindowSimple;
@@ -42,6 +39,9 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     @Getter
     private FormWindowSimple parentGui;
 
+    @Getter
+    private AdvancedInventory indexInventory;
+
     public CrystalWarsEntityMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull Supply supply) {
         super(chunk, nbt);
         this.team = team;
@@ -49,8 +49,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         this.setMaxHealth(100);
         this.setHealth(100F);
         generateMerchantInventory();
-        registerInventoryClickListener(); // TODO 在 GameCore 内制作一个类似 GUI快速构建 的'箱子界面交互模块'，并抛弃此 Listener
-        generateGUI();
+        generateGui();
     }
 
     @Override
@@ -62,27 +61,21 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     /**
      * 生成 Gui 界面
      */
-    public void generateGUI() {
-        // TODO 根据 Supply 生成 parentGui
+    public void generateGui() {
+        // TODO
     }
 
     /**
-     * 刷新商人的背包
+     * 生成 背包 界面
      */
     public void generateMerchantInventory() {
-
-    }
-
-    public void registerInventoryClickListener() {
-
+        this.indexInventory = this.supply.getSupplyConfig().getDefaultPageConfig().generateWindow();
     }
 
     @Override
-    @Info("商人的背包不止一个，请勿使用该方法")
     @Deprecated
     public Inventory getInventory() {
-        return null;
-        // TODO
+        return this.indexInventory;
     }
 
     @Override
@@ -118,7 +111,6 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     /**
      * 将商店发给发送给玩家 win10玩家是箱子商店，pe玩家是GUI界面
      * @param player 玩家
-     * @param arena 战局
      */
     public void sendSupplyWindow(Player player) {
         if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
@@ -128,30 +120,5 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         }
     }
 
-    public static class MerchantInventory extends ContainerInventory implements RuntimeIdHolder {
-
-        private final long runtimeId = CrystalWars.inventoryRuntimeId ++;
-
-        @Override
-        public long getRid() {
-            return runtimeId;
-        }
-
-        public MerchantInventory(InventoryHolder holder) {
-            super(holder, InventoryType.CHEST);
-        }
-
-        @Override
-        public InventoryHolder getHolder() {
-            return super.getHolder();
-        }
-
-        public CrystalWarsEntityMerchant getOwner() {
-            return (CrystalWarsEntityMerchant) getHolder();
-        }
-
-
-
-    }
 
 }

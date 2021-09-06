@@ -1,6 +1,7 @@
 # 默认页面
 ---
 title: 默认页面
+default: true
 linkItems:
   "1:0":
     pos: "0"

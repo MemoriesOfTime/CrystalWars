@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
+import cn.lanink.gamecore.api.Info;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.util.function.BiConsumer;
  * @author iGxnon
  * @date 2021/9/6
  */
-@Getter
+@Info("将会移植到 GameCore 中")
 public class AdvancedClickItem extends Item {
 
     private BiConsumer<Integer, Player> clickConsumer;
@@ -33,7 +34,7 @@ public class AdvancedClickItem extends Item {
     }
 
     public AdvancedClickItem onClick(@NotNull BiConsumer<Integer, @NotNull Player> consumer) {
-        clickConsumer = consumer;
+        this.clickConsumer = consumer;
         return this;
     }
 

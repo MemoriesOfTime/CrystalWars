@@ -1,6 +1,8 @@
 package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.gamecore.GameCore;
+import cn.lanink.gamecore.api.Info;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
@@ -20,12 +22,17 @@ import java.util.function.Consumer;
  * @author iGxnon
  * @date 2021/9/6
  */
+@Info("将会移植到 GameCore 中")
 public class AdvancedInventory extends ContainerInventory {
 
     private Consumer<Player> inventoryCloseConsumer;
 
     // slotPos , Player
     protected BiConsumer<Integer, Player> inventoryClickedConsumer;
+
+    public AdvancedInventory(CrystalWarsEntityMerchant merchant) {
+        super(merchant, InventoryType.CHEST);
+    }
 
     public AdvancedInventory(InventoryHolder holder, InventoryType type) {
         super(holder, type);

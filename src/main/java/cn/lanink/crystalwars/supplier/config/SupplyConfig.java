@@ -26,6 +26,8 @@ public class SupplyConfig {
 
     private final ImmutableMap<String, SupplyItemConfig> itemConfigMap;
 
+    private SupplyPageConfig defaultPageConfig;
+
     private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
 
     public SupplyConfig(@NotNull String dirName, File path) {
@@ -64,10 +66,17 @@ public class SupplyConfig {
                 .filter(this::checkPageFileCorrect)
                 .forEach(pageFile -> {
                     String fileName = pageFile.getName().split("\\.")[0];
-                    supplyPageConfigBuilder.put(fileName, new SupplyPageConfig(fileName, pageFile, this));
+                    SupplyPageConfig pageConfig = new SupplyPageConfig(fileName, pageFile, this);
+                    supplyPageConfigBuilder.put(fileName, pageConfig);
+                    Config config = new Config(pageFile, Config.YAML);
+                    if(config.getBoolean("default", false)) {
+                        this.defaultPageConfig = pageConfig;
+                    }
                 });
         pageConfigMap = supplyPageConfigBuilder.build();
-
+        if(this.defaultPageConfig == null) {
+            throw new RuntimeException("商店供给:" + dirName + " 无默认界面!");
+        }
     }
 
     private boolean checkItemFileCorrect(File file) {
@@ -96,11 +105,11 @@ public class SupplyConfig {
         }
 
         Config config = new Config(file, Config.YAML);
-        List<String> authorizedKey = Arrays.asList("title", "linkItems", "items");
+        List<String> authorizedKey = Arrays.asList("title", "linkItems", "items", "default");
 
         // 可以不包含 LinkItem
         if(config.getAll().keySet().size() != authorizedKey.size()) {
-            if(config.getAll().containsKey("linkItem")) {
+            if(config.getAll().containsKey("linkItem") || config.getAll().containsKey("default")) {
                 return false;
             }
         }

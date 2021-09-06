@@ -19,7 +19,7 @@ public class LinkItem {
 
     private final Item item;
 
-    @Info("从 SupplyConfig 中的 pageConfigs获取 page数据")
+    @Info("从 SupplyConfig 中的 pageConfigMap 获取 page数据")
     private final String pageFileName;
 
     private final Item afterClick;

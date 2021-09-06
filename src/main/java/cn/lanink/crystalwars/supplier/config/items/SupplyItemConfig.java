@@ -58,8 +58,8 @@ public class SupplyItemConfig {
         return item.clone();
     }
 
-    public boolean isTeamChangeItem(Item item) {
-        return SupplyConfigManager.teamChangeItemIds.contains(item.getId());
+    public boolean isTeamChangeItem() {
+        return SupplyConfigManager.teamChangeItemIds.contains(this.item.getId());
     }
 
 }

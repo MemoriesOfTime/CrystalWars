@@ -10,6 +10,7 @@ import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.Watchdog;
+import cn.lanink.crystalwars.utils.inventory.ui.listener.InventoryListener;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
@@ -128,6 +129,7 @@ public class CrystalWars extends PluginBase {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.loadAllListener();
 
+        this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         this.getServer().getScheduler().scheduleRepeatingTask(this, new ArenaTickTask(this), 1);
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this, 10), 20, true);
 
