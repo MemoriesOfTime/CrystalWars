@@ -1,6 +1,8 @@
 package cn.lanink.crystalwars.supplier.config;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.nukkit.Server;
+import cn.nukkit.scheduler.AsyncTask;
 import lombok.Getter;
 
 import java.io.File;
@@ -30,14 +32,16 @@ public class SupplyConfigManager {
         File dir = new File(CRYSTAL_WARS.getDataFolder(), "/Supply/");
         if(!dir.exists()) {
             dir.mkdirs();
-            SupplyConfigManager.saveDefaultSupply();
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
         }
         final File[] files = dir.listFiles();
-        if(files == null || Objects.requireNonNull(files).length <= 1) {
+        if(files == null) {
             return;
         }
         AtomicInteger count = new AtomicInteger();
-
         Stream.of(Objects.requireNonNull(files))
                 .filter(File::isDirectory)
                 .forEach(supplyDir -> {
@@ -50,13 +54,6 @@ public class SupplyConfigManager {
             CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getPageConfigMap());
             CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getItemConfigMap());
         }
-    }
-
-    private static void saveDefaultSupply() {
-        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
-        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
-        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
-        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
     }
 
     public static SupplyConfig getSupplyConfig(String supply) {

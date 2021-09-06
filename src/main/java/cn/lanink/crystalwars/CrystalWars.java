@@ -123,8 +123,8 @@ public class CrystalWars extends PluginBase {
 
         }
 
-        ItemGenerationConfigManager.loadAllItemGeneration();
         SupplyConfigManager.loadAllSupplyConfig();
+        ItemGenerationConfigManager.loadAllItemGeneration();
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.loadAllListener();
