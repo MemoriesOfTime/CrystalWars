@@ -1,17 +1,13 @@
 package cn.lanink.crystalwars.entity;
 
-import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.supplier.Supply;
-import cn.lanink.crystalwars.utils.RuntimeIdHolder;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
-import cn.lanink.gamecore.api.Info;
 import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.form.window.FormWindowSimple;
-import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.InventoryType;
@@ -19,7 +15,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
 
 /**
  * @author iGxnon

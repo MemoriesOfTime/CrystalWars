@@ -4,7 +4,6 @@ import cn.lanink.crystalwars.supplier.config.SupplyConfig;
 import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
-import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;

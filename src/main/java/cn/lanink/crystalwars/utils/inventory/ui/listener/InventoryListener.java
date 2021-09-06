@@ -8,7 +8,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 
-
 /**
  * @author iGxnon
  * @date 2021/9/6

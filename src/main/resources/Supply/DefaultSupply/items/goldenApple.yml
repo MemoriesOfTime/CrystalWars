@@ -1,8 +1,8 @@
 title: 金苹果
-item: "355:1"
+item: "322:1"
 count: 4
 subTitle: (5个金锭 x4)
-pos: 9
+pos: 8
 cost:
   - "266:0x5"
 lore:

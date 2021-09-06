@@ -3,7 +3,6 @@ package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 import cn.lanink.gamecore.api.Info;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;

@@ -30,7 +30,7 @@ public class AdvancedInventory extends ContainerInventory {
     // slotPos , Player
     protected BiConsumer<Integer, Player> inventoryClickedConsumer;
 
-    public AdvancedInventory(CrystalWarsEntityMerchant merchant) {
+    public AdvancedInventory(@NotNull CrystalWarsEntityMerchant merchant) {
         super(merchant, InventoryType.CHEST);
     }
 
