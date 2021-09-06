@@ -48,7 +48,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         this.supply = supply;
         this.setMaxHealth(100);
         this.setHealth(100F);
-        updateMerchantInventory();
+        generateMerchantInventory();
         registerInventoryClickListener(); // TODO 在 GameCore 内制作一个类似 GUI快速构建 的'箱子界面交互模块'，并抛弃此 Listener
         generateGUI();
     }
@@ -69,7 +69,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     /**
      * 刷新商人的背包
      */
-    public void updateMerchantInventory() {
+    public void generateMerchantInventory() {
 
     }
 
