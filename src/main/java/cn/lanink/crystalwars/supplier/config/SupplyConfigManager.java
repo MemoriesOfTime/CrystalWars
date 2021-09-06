@@ -4,9 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import lombok.Getter;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -17,6 +15,9 @@ import java.util.stream.Stream;
 public class SupplyConfigManager {
 
     private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
+
+    // 羊毛，玻璃块，粘土块，地毯
+    public static final List<Integer> teamChangeItemIds = Arrays.asList(35, 95, 159, 171);
 
     @Getter
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
@@ -46,7 +47,7 @@ public class SupplyConfigManager {
                 });
         CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
         if(CrystalWars.debug) {
-            CRYSTAL_WARS.getLogger().warning(SUPPLY_CONFIG_MAP.toString());
+            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP);
         }
     }
 
@@ -55,6 +56,10 @@ public class SupplyConfigManager {
         CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
         CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
         CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
+    }
+
+    public static SupplyConfig getSupplyConfig(String supply) {
+        return SUPPLY_CONFIG_MAP.get(supply);
     }
 
 

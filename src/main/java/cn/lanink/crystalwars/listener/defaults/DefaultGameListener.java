@@ -84,7 +84,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 return;
             }
             if(playerData.getTeam() == crystalWarsEntityMerchant.getTeam() || crystalWarsEntityMerchant.isAllowOtherTeamUse()) {
-                crystalWarsEntityMerchant.sendSupplyWindow(toucher, arena);
+                crystalWarsEntityMerchant.sendSupplyWindow(toucher);
             }
         }
     }

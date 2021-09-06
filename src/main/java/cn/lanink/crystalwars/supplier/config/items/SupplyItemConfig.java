@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.supplier.config.items;
 
+import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
@@ -55,6 +56,10 @@ public class SupplyItemConfig {
 
     public Item getItem() {
         return item.clone();
+    }
+
+    public boolean isTeamChangeItem(Item item) {
+        return SupplyConfigManager.teamChangeItemIds.contains(item.getId());
     }
 
 }

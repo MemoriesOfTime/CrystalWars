@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.arena;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.supplier.Supply;
+import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.ISaveConfig;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -79,11 +80,16 @@ public class ArenaConfig implements ISaveConfig {
                     CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误：", e);
                 }
             }
-
-            this.supply = null;
+            if(SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(config.getString("supply"))) {
+                CrystalWars.getInstance().getLogger().error("加载商店时出现错误：无 " + config.getString("supply") + " 商店供给配置！");
+                this.supply = null;
+            }else {
+                this.supply = new Supply(SupplyConfigManager.getSupplyConfig(config.getString("supply")));
+            }
 
             if (CrystalWars.debug) {
                 CrystalWars.getInstance().getLogger().info("[debug] 资源生成点:" + this.resourceGenerations);
+                CrystalWars.getInstance().getLogger().info("[debug] 商店供给:" + this.supply);
             }
         }catch (Exception e) {
             throw new ArenaLoadException("游戏房间配置读取错误！", e);

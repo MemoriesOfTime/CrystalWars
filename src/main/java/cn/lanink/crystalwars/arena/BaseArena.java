@@ -397,7 +397,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     shopPos.getChunk(),
                     Entity.getDefaultNBT(shopPos),
                     team,
-                    this
+                    this.getSupply()
             );
             shop.spawnToAll();
             CrystalWarsEntityMerchant oldEntity = this.teamEntityMerchantMap.put(team, shop);
