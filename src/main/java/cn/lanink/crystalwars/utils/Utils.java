@@ -189,14 +189,15 @@ public class Utils {
     }
 
     public static Item getTeamColorItem(Item defaultItem, String colorCode) {
-        colorCode = colorCode.split("§")[1];
-        if(defaultItem.hasMeta()) {
-            switch (defaultItem.getId()) {
-                case Item.WOOL:
-                    break;
-                case Item:
-            }
-        }
+        //TODO
+//        colorCode = colorCode.split("§")[1];
+//        if(defaultItem.hasMeta()) {
+//            switch (defaultItem.getId()) {
+//                case Item.WOOL:
+//                    break;
+//            }
+//        }
+        return null;
     }
 
 }

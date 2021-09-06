@@ -1,9 +1,18 @@
 package cn.lanink.crystalwars.supplier.config.pages;
 
+import cn.lanink.crystalwars.supplier.config.SupplyConfig;
+import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
+import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
+import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author iGxnon
@@ -17,9 +26,65 @@ public class SupplyPageConfig {
 
     private final Config config;
 
-    public SupplyPageConfig(@NotNull String fileName, @NotNull Config config) {
+    private final String title;
+
+    @ToString.Exclude // 不然会导致栈溢出
+    private final SupplyConfig parent;
+
+    // slotPos -> Item
+    private final ImmutableMap<Integer, LinkItem> linkItems;
+    // slotPos -> Item
+    private final ImmutableMap<Integer, SupplyItemConfig> items;
+
+    public SupplyPageConfig(@NotNull String fileName, @NotNull File fileConfig, @NotNull SupplyConfig parent) {
         this.fileName = fileName;
-        this.config = config;
+        this.parent = parent;
+        this.config = new Config(fileConfig, Config.YAML);
+        this.title = config.getString("title");
+        Map<String, Map<String, String>> rawLinkItemData = (Map<String, Map<String, String>>) config.get("linkItems");
+
+        ImmutableMap.Builder<Integer, LinkItem> linkItemBuilder = new ImmutableMap.Builder<>();
+        ImmutableMap.Builder<Integer, SupplyItemConfig> itemBuilder = new ImmutableMap.Builder<>();
+
+        rawLinkItemData.entrySet().stream()
+                .filter(stringMapEntry -> {
+                    String idAndMeta = stringMapEntry.getKey();
+                    if (!idAndMeta.matches("\\d{1,3}:\\d{1,4}")) {
+                        return false;
+                    }
+                    Map<String, String> value = stringMapEntry.getValue();
+                    List<String> authorizedKey = Arrays.asList("pos", "link", "afterClick");
+                    // 可以不包含 afterClick
+                    if (value.size() != authorizedKey.size()) {
+                        if (value.containsKey("afterClick")) {
+                            return false;
+                        }
+                    }
+                    for (Map.Entry<String, String> secondEntry : value.entrySet()) {
+                        if (!authorizedKey.contains(secondEntry.getKey())) {
+                            return false;
+                        }
+                    }
+                    return value.get("pos").matches("[0-26]");
+                }).forEach(stringMapEntry -> {
+                    Map<String, String> value = stringMapEntry.getValue();
+                    int slotPos = Integer.parseInt(value.get("pos"));
+                    LinkItem linkItem = new LinkItem(
+                            Item.fromString(stringMapEntry.getKey()),
+                            slotPos,
+                            value.get("link"),
+                            Item.fromString(value.get("afterClick"))
+                    );
+                    linkItemBuilder.put(slotPos, linkItem);
+                });
+
+        config.getStringList("items").forEach(item -> {
+            final SupplyItemConfig supplyItemConfig = this.parent.getItemConfigMap().get(item);
+            itemBuilder.put(supplyItemConfig.getSlotPos(), supplyItemConfig);
+        });
+
+        this.linkItems = linkItemBuilder.build();
+        this.items = itemBuilder.build();
     }
 
 }

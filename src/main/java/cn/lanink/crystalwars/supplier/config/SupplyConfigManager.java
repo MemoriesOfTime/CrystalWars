@@ -1,7 +1,6 @@
 package cn.lanink.crystalwars.supplier.config;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.nukkit.utils.Config;
 import lombok.Getter;
 
 import java.io.File;
@@ -30,24 +29,32 @@ public class SupplyConfigManager {
         File dir = new File(CRYSTAL_WARS.getDataFolder(), "/Supply/");
         if(!dir.exists()) {
             dir.mkdirs();
-            // TODO
+            SupplyConfigManager.saveDefaultSupply();
         }
-        if(dir.listFiles() == null || Objects.requireNonNull(dir.listFiles()).length <= 1) {
+        final File[] files = dir.listFiles();
+        if(files == null || Objects.requireNonNull(files).length <= 1) {
             return;
         }
         AtomicInteger count = new AtomicInteger();
-        Stream.of(Objects.requireNonNull(dir.listFiles()))
+
+        Stream.of(Objects.requireNonNull(files))
                 .filter(File::isDirectory)
                 .forEach(supplyDir -> {
                     SupplyConfig supplyConfig = new SupplyConfig(supplyDir.getName(), supplyDir);
                     SUPPLY_CONFIG_MAP.put(supplyDir.getName(), supplyConfig);
                     count.incrementAndGet();
                 });
-
         CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
         if(CrystalWars.debug) {
             CRYSTAL_WARS.getLogger().warning(SUPPLY_CONFIG_MAP.toString());
         }
+    }
+
+    private static void saveDefaultSupply() {
+        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
+        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
+        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
+        CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
     }
 
 
