@@ -125,7 +125,7 @@ public class Utils {
         return format.format(time/60) + ":" + format.format(time%60);
     }
 
-    public static String getSpace(List<?> list){
+    public static String getSpace(List<?> list) {
         return getSpace(list.size() + 1);
     }
 
@@ -135,7 +135,7 @@ public class Utils {
      * @param size 数量
      * @return 空格
      */
-    public static String getSpace(int size){
+    public static String getSpace(int size) {
         StringBuilder s = new StringBuilder();
         for(int i = 0;i < size;i++){
             s.append(" ");

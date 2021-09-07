@@ -1,8 +1,8 @@
 package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.EntityText;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
@@ -257,15 +257,18 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            list.add("§f游戏结束倒计时: §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
+            list.add("§f◎  §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
             list.add(Utils.getSpace(list));
             for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
-                list.add(Utils.getShowTeam(e1.getKey()) + "§e水晶: §a" + Utils.getShowHealth(e1.getValue()));
-            }
-            list.add(Utils.getSpace(list));
-            for (Team team : this.teamEntityEndCrystalMap.keySet()) {
-                if (!this.isTeamCrystalSurviving(team)) {
-                    list.add(Utils.getShowTeam(team) + "§e存活: §a" + this.getSurvivingPlayers(team).size());
+                if (this.isTeamCrystalSurviving(e1.getKey())) {
+                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()));
+                }else {
+                    List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
+                    if (survivingPlayers.isEmpty()) {
+                        list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
+                    }else {
+                        list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e存活:§a" + survivingPlayers.size());
+                    }
                 }
             }
             list.add(Utils.getSpace(list));

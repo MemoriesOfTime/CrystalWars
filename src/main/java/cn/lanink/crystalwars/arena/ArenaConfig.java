@@ -85,6 +85,7 @@ public class ArenaConfig implements ISaveConfig {
                 this.supply = null;
             }else {
                 this.supply = new Supply(SupplyConfigManager.getSupplyConfig(config.getString("supply")));
+
             }
 
             if (CrystalWars.debug) {
