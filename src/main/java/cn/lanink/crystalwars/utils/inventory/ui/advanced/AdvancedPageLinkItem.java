@@ -47,13 +47,11 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
         }
 
         AdvancedInventory newWindow = this.pageConfig.generateWindow((CrystalWarsEntityMerchant) clickEvent.getInventory().getHolder());
+        // 使用 afterClick 后所有的页面 linkItems 需要保持一致
         if(pageConfig.getLinkItems() != null) {
             if(pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick() != null) {
-                // TODO Fix bug
-                Item afterClick = pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick().setCustomName(clickEvent.getInventory().getName());
-                if(afterClick != null) {
-                    newWindow.setItem(clickEvent.getSlot(), afterClick);
-                }
+                Item afterClick = pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick().setCustomName(this.getCustomName());
+                newWindow.setItem(clickEvent.getSlot(), afterClick);
             }
         }
         // 延迟一下

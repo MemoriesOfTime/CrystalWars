@@ -64,7 +64,6 @@ public class SupplyPageConfig {
                         }
                         Map<String, String> value = stringMapEntry.getValue();
                         List<String> authorizedKey = Arrays.asList("pos", "link", "afterClick");
-                        // 可以不包含 afterClick TODO afterClick 有bug
                         if (value.size() != authorizedKey.size()) {
                             if (value.containsKey("afterClick")) {
                                 return false;
@@ -75,7 +74,7 @@ public class SupplyPageConfig {
                                 return false;
                             }
                         }
-                        return value.get("pos").matches("[0-26]");
+                        return value.get("pos").matches("\\d{1,2}");
                     }).forEach(stringMapEntry -> {
                         Map<String, String> value = stringMapEntry.getValue();
                         int slotPos = Integer.parseInt(value.get("pos"));

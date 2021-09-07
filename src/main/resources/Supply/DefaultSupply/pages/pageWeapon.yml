@@ -1,6 +1,6 @@
-# 道具页面
+# 武器页面
 ---
-title: 道具
+title: 武器
 linkItems:
   "288:0":
     pos: "0"
@@ -31,4 +31,3 @@ linkItems:
     link: "pageTool"
     afterClick: "399:0"
 items:
-  - goldenApple

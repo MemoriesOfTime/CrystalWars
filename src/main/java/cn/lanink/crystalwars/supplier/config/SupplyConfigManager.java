@@ -36,8 +36,12 @@ public class SupplyConfigManager {
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/wool.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageQuickBuy.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageTool.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageWeapon.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageFood.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageArmor.yml");
         }
         final File[] files = dir.listFiles();
         if(files == null) {
@@ -53,8 +57,7 @@ public class SupplyConfigManager {
                 });
         CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
         if(CrystalWars.debug) {
-            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getPageConfigMap());
-            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getItemConfigMap());
+            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP);
         }
     }
 
