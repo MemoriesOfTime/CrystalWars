@@ -4,7 +4,9 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.nukkit.Player;
 import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Position;
@@ -16,11 +18,13 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.DyeColor;
+import com.google.common.collect.BiMap;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author LT_Name
