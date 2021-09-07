@@ -12,6 +12,7 @@ import java.util.function.BiConsumer;
  * @author iGxnon
  * @date 2021/9/6
  */
+// TODO 分离该类和 Item 类的继承关系
 public class AdvancedClickItem extends Item {
 
     @Getter

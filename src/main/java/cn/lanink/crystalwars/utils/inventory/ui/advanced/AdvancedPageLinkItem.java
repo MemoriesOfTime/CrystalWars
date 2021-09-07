@@ -31,6 +31,7 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
         AdvancedInventory newWindow = this.pageConfig.generateWindow((CrystalWarsEntityMerchant) clickEvent.getInventory().getHolder());
         if(pageConfig.getLinkItems() != null) {
             if(pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick() != null) {
+                // TODO Fix bug
                 Item afterClick = pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick().setCustomName(clickEvent.getInventory().getName());
                 if(afterClick != null) {
                     newWindow.setItem(clickEvent.getSlot(), afterClick);

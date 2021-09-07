@@ -5,14 +5,11 @@ linkItems:
   "1:0":
     pos: "0"
     link: "pageDefault"
-    afterClick: "2:0"
   "2:0":
     pos: "1"
     link: "pageBlock"
-    afterClick: "1:0"
   "266:0":
     pos: "2"
     link: "pageProp"
-    afterClick: "265:0"
 items:
   - goldenApple

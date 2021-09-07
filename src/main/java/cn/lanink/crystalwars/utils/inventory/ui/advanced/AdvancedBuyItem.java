@@ -36,7 +36,7 @@ public class AdvancedBuyItem extends AdvancedClickItem{
             }
         }
         for (Item cost : this.itemConfig.getCost()) {
-            player.getInventory().remove(cost);
+            player.getInventory().removeItem(cost);
         }
         Item item = this.itemConfig.getItem();
         if(this.itemConfig.isTeamChangeItem()) {

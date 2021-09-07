@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.entity;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.passive.EntityVillager;
@@ -43,6 +44,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         this.supply = supply;
         this.setMaxHealth(100);
         this.setHealth(100F);
+        this.setNameTag(team.getColor() + "村民商店");
         generateMerchantInventory();
         generateGui();
     }
@@ -57,7 +59,13 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      * 生成 Gui 界面
      */
     public void generateGui() {
-        // TODO
+        AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.getNameTag());
+        this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
+            advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
+                player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
+            });
+        });
+        this.parentGui = advancedFormWindowSimple;
     }
 
     /**
@@ -111,7 +119,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
             player.addWindow(this.indexInventory);
         }else {
-
+            player.showFormWindow(this.parentGui);
         }
     }
 

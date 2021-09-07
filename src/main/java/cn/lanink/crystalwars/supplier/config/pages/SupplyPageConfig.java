@@ -1,8 +1,11 @@
 package cn.lanink.crystalwars.supplier.config.pages;
 
+import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.supplier.config.SupplyConfig;
 import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
+import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedBuyItem;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedPageLinkItem;
@@ -61,7 +64,7 @@ public class SupplyPageConfig {
                         }
                         Map<String, String> value = stringMapEntry.getValue();
                         List<String> authorizedKey = Arrays.asList("pos", "link", "afterClick");
-                        // 可以不包含 afterClick
+                        // 可以不包含 afterClick TODO afterClick 有bug
                         if (value.size() != authorizedKey.size()) {
                             if (value.containsKey("afterClick")) {
                                 return false;
@@ -97,7 +100,7 @@ public class SupplyPageConfig {
         this.items = itemBuilder.build();
     }
 
-    public AdvancedInventory generateWindow(CrystalWarsEntityMerchant holder) {
+    public AdvancedInventory generateWindow(@NotNull CrystalWarsEntityMerchant holder) {
         AdvancedInventory advancedInventory = new AdvancedInventory(holder, this.title);
         if(linkItems != null) {
             linkItems.forEach((slotPos, linkItem) -> {
@@ -111,8 +114,40 @@ public class SupplyPageConfig {
         return advancedInventory;
     }
 
-    public AdvancedFormWindowSimple generateForm() {
-        return null;
+    public AdvancedFormWindowSimple generateForm(@NotNull AdvancedFormWindowSimple parent) {
+        AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.title);
+        advancedFormWindowSimple.addButton("返回到主界面", player -> {
+            player.showFormWindow(parent);
+        });
+        this.items.forEach((slotPos, itemConfig) -> {
+            advancedFormWindowSimple.addButton(itemConfig.getTitle() + "§r\n" + itemConfig.getSubTitle(), player -> {
+                if(!player.getInventory().canAddItem(itemConfig.getItem())) {
+                    player.sendTip("你的背包满了！");
+                    return;
+                }
+                for (Item cost : itemConfig.getCost()) {
+                    if(!player.getInventory().contains(cost)) {
+                        player.sendTip("你还没有足够的物品来兑换");
+                        return;
+                    }
+                }
+                for (Item cost : itemConfig.getCost()) {
+                    player.getInventory().removeItem(cost);
+                }
+                Item item = itemConfig.getItem();
+                if(itemConfig.isTeamChangeItem()) {
+                    BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
+                    if(arena == null) {
+                        player.sendMessage("§c[警告] 你没有加入任何游戏！");
+                        return;
+                    }
+                    item = Utils.getTeamColorItem(item, arena.getPlayerData(player).getTeam());
+                }
+                player.getInventory().addItem(item);
+                player.sendTip("购买成功！");
+            });
+        });
+        return advancedFormWindowSimple;
     }
 
 }
