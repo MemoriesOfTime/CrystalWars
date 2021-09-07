@@ -18,7 +18,8 @@ public class AdvancedBuyItem extends AdvancedClickItem{
     private final SupplyItemConfig itemConfig;
 
     public AdvancedBuyItem(@NotNull Item item, @NotNull SupplyItemConfig itemConfig) {
-        super(item.getId(), item.getDamage(), item.getCount());
+        super(item.getId(), item.getDamage(), item.getCount(), item.getName());
+        this.setCustomName(item.getCustomName());
         this.itemConfig = itemConfig;
     }
 

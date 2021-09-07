@@ -12,7 +12,6 @@ import cn.nukkit.event.inventory.InventoryCloseEvent;
  * @author iGxnon
  * @date 2021/9/6
  */
-@Info("将会移植到 GameCore 中")
 public class InventoryListener implements Listener {
 
     @EventHandler(

@@ -2,7 +2,6 @@ package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.gamecore.GameCore;
-import cn.lanink.gamecore.api.Info;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
@@ -23,13 +22,20 @@ import java.util.function.Consumer;
  * @author iGxnon
  * @date 2021/9/6
  */
-@Info("将会移植到 GameCore 中")
+@SuppressWarnings("unused")
 public class AdvancedInventory extends ContainerInventory {
 
     private Consumer<Player> inventoryCloseConsumer;
 
+    protected Map<Integer, AdvancedClickItem> advancedClickItemMap = new HashMap<>();
+
     // slotPos , Player
-    protected BiConsumer<InventoryClickEvent, Player> inventoryClickedConsumer;
+    protected final BiConsumer<InventoryClickEvent, Player> inventoryClickedConsumer = ((clickEvent, player) -> {
+        int slotPos = clickEvent.getSlot();
+        if(advancedClickItemMap.containsKey(slotPos)) {
+            advancedClickItemMap.get(slotPos).callClick(clickEvent, player);
+        }
+    });
 
     public AdvancedInventory(@NotNull CrystalWarsEntityMerchant merchant) {
         super(merchant, InventoryType.CHEST);
@@ -61,17 +67,15 @@ public class AdvancedInventory extends ContainerInventory {
     }
 
     public boolean setItem(int slotPos, AdvancedClickItem item) {
-        return super.setItem(slotPos, item);
+        boolean result = super.setItem(slotPos, item);
+        this.advancedClickItemMap.put(slotPos, item);
+        return result;
     }
 
     public boolean setItem(int slotPos, @NotNull Item item, @NotNull BiConsumer<InventoryClickEvent, Player> clickConsumer) {
-        return setItem(slotPos, new AdvancedClickItem(item.getId(), item.getDamage(), item.getCount()).onClick(clickConsumer));
+        return setItem(slotPos, new AdvancedClickItem(item.getId(), item.getDamage(), item.getCount(), item.getName()).onClick(clickConsumer).setCustomName(item.getCustomName()));
     }
 
-    public AdvancedInventory onClick(@NotNull BiConsumer<InventoryClickEvent, Player> listener) {
-        this.inventoryClickedConsumer = listener;
-        return this;
-    }
 
     public AdvancedInventory onClose(@NotNull Consumer<Player> listener) {
         this.inventoryCloseConsumer = listener;
@@ -79,9 +83,7 @@ public class AdvancedInventory extends ContainerInventory {
     }
 
     private void callClick(InventoryClickEvent clickEvent, Player player) {
-        if(this.inventoryClickedConsumer != null) {
-            this.inventoryClickedConsumer.accept(clickEvent, player);
-        }
+        this.inventoryClickedConsumer.accept(clickEvent, player);
     }
 
     private void callClose(@NotNull Player player) {
@@ -96,13 +98,9 @@ public class AdvancedInventory extends ContainerInventory {
             return;
         }
         if(event instanceof InventoryClickEvent) {
-            Item item = ((InventoryClickEvent) event).getSourceItem();
             Player player = ((InventoryClickEvent) event).getPlayer();
-            if(item instanceof AdvancedClickItem) {
-                ((AdvancedClickItem) item).callClick((InventoryClickEvent) event, player);
-            }else {
-                ((AdvancedInventory) inventory).callClick((InventoryClickEvent) event, player);
-            }
+            ((AdvancedInventory) inventory).callClick((InventoryClickEvent) event, player);
+            event.setCancelled(true);
         }else if(event instanceof InventoryCloseEvent) {
             ((AdvancedInventory) inventory).callClose(((InventoryCloseEvent) event).getPlayer());
         }

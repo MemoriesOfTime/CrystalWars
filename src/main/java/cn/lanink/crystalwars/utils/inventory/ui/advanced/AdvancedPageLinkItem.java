@@ -16,7 +16,8 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
     private final SupplyPageConfig pageConfig;
 
     public AdvancedPageLinkItem(@NotNull Item item, @NotNull SupplyPageConfig nextPageConfig) {
-        super(item.getId(), item.getDamage(), item.getCount());
+        super(item.getId(), item.getDamage(), item.getCount(), item.getName());
+        this.setCustomName(item.getCustomName());
         this.pageConfig = nextPageConfig;
     }
 
