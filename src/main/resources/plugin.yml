@@ -3,7 +3,7 @@ main: cn.lanink.crystalwars.CrystalWars
 version: "0.0.1-SNAPSHOT"
 api: ["1.0.9"]
 load: POSTWORLD
-author: "LT_Name"
+authors: ["LT_Name", "iGxnon"]
 depend:
   - "MemoriesOfTime-GameCore"
 
