@@ -1,0 +1,15 @@
+# 方块页面
+---
+title: 方块页面
+linkItems:
+  "1:0":
+    pos: "0"
+    link: "pageDefault"
+  "2:0":
+    pos: "1"
+    link: "pageBlock"
+  "266:0":
+    pos: "2"
+    link: "pageProp"
+items:
+  - wool

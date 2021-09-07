@@ -1,0 +1,6 @@
+cmdUser: CrystalWars
+cmdUserAliases:
+  - cw
+cmdAdmin: CrystalWarsAdmin
+cmdAdminAliases:
+  - cwa

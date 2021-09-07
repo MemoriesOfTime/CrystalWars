@@ -1,0 +1,9 @@
+title: 羊毛
+item: "35:0"
+count: 16
+subTitle: (5个铁锭 x16)
+pos: 8
+cost:
+  - "265:0x5"
+lore:
+  - "想变成你的形状~"

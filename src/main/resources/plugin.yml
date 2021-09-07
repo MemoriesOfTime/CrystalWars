@@ -1,6 +1,14 @@
-name: BedWars
-main: cn.lanink.bedwars.BedWars
-version: "1.0.0-SNAPSHOT"
+name: CrystalWars
+main: cn.lanink.crystalwars.CrystalWars
+version: "0.0.1-SNAPSHOT"
 api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"
+depend:
+  - "MemoriesOfTime-GameCore"
+
+permissions:
+  crystalwars.command.user:
+    default: true
+  crystalwars.command.admin:
+    default: op
