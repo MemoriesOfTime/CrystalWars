@@ -101,7 +101,7 @@ public class SupplyPageConfig {
         AdvancedInventory advancedInventory = new AdvancedInventory(holder, this.title);
         if(linkItems != null) {
             linkItems.forEach((slotPos, linkItem) -> {
-                advancedInventory.setItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem(), getParent().getPageConfigMap().get(linkItem.getPageFileName())));
+                advancedInventory.setItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem().setCustomName(title), getParent().getPageConfigMap().get(linkItem.getPageFileName())));
             });
         }
         items.forEach((slotPos, item) -> {
