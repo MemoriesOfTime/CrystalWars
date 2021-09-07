@@ -193,7 +193,7 @@ public class Utils {
         if(!defaultItem.hasMeta()) {
             return Item.fromString("0:0");
         }
-        if(!SupplyConfigManager.teamChangeItemIds.contains(defaultItem.getId())) {
+        if(!SupplyConfigManager.TEAM_CHANGE_ITEM_IDS.contains(defaultItem.getId())) {
             return Item.fromString("0:0");
         }
         colorCode = colorCode.split("§")[1];
