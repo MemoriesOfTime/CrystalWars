@@ -3,8 +3,10 @@ package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.scheduler.Task;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,17 +25,25 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
 
     @Override
     public void callClick(InventoryClickEvent clickEvent, Player player) {
-        player.removeAllWindows();
         if(!(clickEvent.getInventory().getHolder() instanceof CrystalWarsEntityMerchant)) {
             return;
         }
         AdvancedInventory newWindow = this.pageConfig.generateWindow((CrystalWarsEntityMerchant) clickEvent.getInventory().getHolder());
         if(pageConfig.getLinkItems() != null) {
-            Item afterClick = pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick();
-            if(afterClick != null) {
-                newWindow.setItem(clickEvent.getSlot(), afterClick);
+            if(pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick() != null) {
+                Item afterClick = pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick().setCustomName(clickEvent.getInventory().getName());
+                if(afterClick != null) {
+                    newWindow.setItem(clickEvent.getSlot(), afterClick);
+                }
             }
         }
-        player.addWindow(newWindow);
+        // 延迟一下
+        Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+            @Override
+            public void onRun(int i) {
+                player.addWindow(newWindow);
+            }
+        }, 5);
+
     }
 }

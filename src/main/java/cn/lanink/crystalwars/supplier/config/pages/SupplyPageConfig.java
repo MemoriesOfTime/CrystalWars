@@ -80,7 +80,7 @@ public class SupplyPageConfig {
                                 Item.fromString(stringMapEntry.getKey()),
                                 slotPos,
                                 value.get("link"),
-                                Item.fromString(value.get("afterClick"))
+                                value.containsKey("afterClick") ? Item.fromString(value.get("afterClick")) : null
                         );
                         linkItemBuilder.put(slotPos, linkItem);
                     });
@@ -101,7 +101,8 @@ public class SupplyPageConfig {
         AdvancedInventory advancedInventory = new AdvancedInventory(holder, this.title);
         if(linkItems != null) {
             linkItems.forEach((slotPos, linkItem) -> {
-                advancedInventory.setItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem().setCustomName(title), getParent().getPageConfigMap().get(linkItem.getPageFileName())));
+                final SupplyPageConfig supplyPageConfig = getParent().getPageConfigMap().get(linkItem.getPageFileName());
+                advancedInventory.setItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem().setCustomName(supplyPageConfig.getTitle()), supplyPageConfig));
             });
         }
         items.forEach((slotPos, item) -> {
