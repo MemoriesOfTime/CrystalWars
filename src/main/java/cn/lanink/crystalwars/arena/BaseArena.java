@@ -308,7 +308,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         int count = 0;
         Team survivingTeam = Team.NULL;
         for (Team team : this.teamEntityEndCrystalMap.keySet()) {
-            if (this.isTeamCrystalSurviving(team) || !this.getSurvivingPlayers(team).isEmpty()) {
+            if ((this.isTeamCrystalSurviving(team) && !this.getPlayers(team).isEmpty()) || !this.getSurvivingPlayers(team).isEmpty()) {
                 count++;
                 survivingTeam = team;
             }
