@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
+import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
 import cn.nukkit.Player;
@@ -39,7 +40,7 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
             }
         }
         // 延迟一下
-        Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+        Server.getInstance().getScheduler().scheduleDelayedTask(CrystalWars.getInstance(), new Task() {
             @Override
             public void onRun(int i) {
                 player.addWindow(newWindow);
