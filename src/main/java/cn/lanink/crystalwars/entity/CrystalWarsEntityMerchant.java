@@ -109,7 +109,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      */
     public void sendSupplyWindow(Player player) {
         if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
-
+            player.addWindow(this.indexInventory);
         }else {
 
         }

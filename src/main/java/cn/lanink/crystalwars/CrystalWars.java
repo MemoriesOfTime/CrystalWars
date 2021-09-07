@@ -204,10 +204,15 @@ public class CrystalWars extends PluginBase {
 
     public void loadAllArena() {
         File[] files = new File(this.getDataFolder() + "/Arena").listFiles();
-        if (files != null && files.length > 0) {
-            for (File file : files) {
-                this.loadArena(file.getName().split("\\.")[0]);
-            }
+        if (files == null || files.length == 0) {
+            return;
+        }
+        files = Arrays.stream(files)
+                .filter(File::isFile)
+                .filter(file -> file.getName().endsWith(".yml"))
+                .toArray(File[]::new);
+        for (File file : files) {
+            this.loadArena(file.getName().split("\\.")[0]);
         }
     }
 
