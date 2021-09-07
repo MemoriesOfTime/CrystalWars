@@ -16,8 +16,11 @@ public class SupplyConfigManager {
 
     private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
 
-    // 羊毛，玻璃块，粘土块，地毯
-    public static final List<Integer> teamChangeItemIds = Arrays.asList(35, 95, 159, 171);
+    /**
+     * 需要根据队伍更改的物品（颜色）
+     * 羊毛，玻璃块，粘土块，地毯
+     */
+    public static final List<Integer> TEAM_CHANGE_ITEM_IDS = Arrays.asList(35, 95, 159, 171);
 
     @Getter
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
@@ -31,6 +34,7 @@ public class SupplyConfigManager {
         if(!dir.exists()) {
             dir.mkdirs();
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/wool.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
