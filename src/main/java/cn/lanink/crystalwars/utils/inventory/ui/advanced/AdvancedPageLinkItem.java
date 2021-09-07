@@ -6,9 +6,13 @@ import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.scheduler.Task;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
 
 /**
  * @author iGxnon
@@ -29,6 +33,18 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
         if(!(clickEvent.getInventory().getHolder() instanceof CrystalWarsEntityMerchant)) {
             return;
         }
+
+        Optional<Inventory> topWindow = player.getTopWindow();
+        if (topWindow.isPresent() && topWindow.get() instanceof AdvancedInventory) {
+            try {
+                Method removeWindow = player.getClass().getDeclaredMethod("removeWindow", Inventory.class, boolean.class);
+                removeWindow.setAccessible(true);
+                removeWindow.invoke(player, topWindow.get(), true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         AdvancedInventory newWindow = this.pageConfig.generateWindow((CrystalWarsEntityMerchant) clickEvent.getInventory().getHolder());
         if(pageConfig.getLinkItems() != null) {
             if(pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick() != null) {
@@ -43,7 +59,13 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
         Server.getInstance().getScheduler().scheduleDelayedTask(CrystalWars.getInstance(), new Task() {
             @Override
             public void onRun(int i) {
-                player.addWindow(newWindow);
+                int id = player.getWindowId(newWindow);
+                if (id == -1) {
+                    player.addWindow(newWindow);
+                }else {
+                    Inventory inventory = player.getWindowById(id);
+                    inventory.open(player);
+                }
             }
         }, 5);
 
