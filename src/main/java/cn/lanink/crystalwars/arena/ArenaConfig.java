@@ -80,7 +80,7 @@ public class ArenaConfig implements ISaveConfig {
                     CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误：", e);
                 }
             }
-            if(SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(config.getString("supply"))) {
+            if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(config.getString("supply"))) {
                 throw new ArenaLoadException("加载商店时出现错误：无 " + config.getString("supply") + " 商店供给配置！");
             }
             this.supply = new Supply(SupplyConfigManager.getSupplyConfig(config.getString("supply")));
