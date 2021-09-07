@@ -2,12 +2,14 @@ package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
-import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
+import cn.nukkit.event.block.BlockBreakEvent;
+import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
@@ -86,6 +88,29 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             if(playerData.getTeam() == crystalWarsEntityMerchant.getTeam() || crystalWarsEntityMerchant.isAllowOtherTeamUse()) {
                 crystalWarsEntityMerchant.sendSupplyWindow(toucher);
             }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        BaseArena baseArena = this.getListenerRoom(player.getLevel());
+        if (baseArena == null) {
+            return;
+        }
+        if (baseArena.getArenaStatus() != BaseArena.ArenaStatus.GAME) {
+            event.setCancelled(true);
+        }
+    }
+
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        BaseArena baseArena = this.getListenerRoom(player.getLevel());
+        if (baseArena == null) {
+            return;
+        }
+        if (baseArena.getArenaStatus() != BaseArena.ArenaStatus.GAME) {
+            event.setCancelled(true);
         }
     }
 
