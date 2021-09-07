@@ -12,9 +12,10 @@ import org.jetbrains.annotations.NotNull;
  */
 @AllArgsConstructor
 @Getter
-@EqualsAndHashCode(of = "name")
+@EqualsAndHashCode
 public class ItemGenerationConfig {
 
+    @EqualsAndHashCode.Exclude
     private final String name;
     private final Config config;
 

@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
  * @author LT_Name
  */
 @Data
-@EqualsAndHashCode(exclude = "coolDownTime")
+@EqualsAndHashCode
 public class ResourceGeneration {
 
     private ItemGenerationConfig config;
     private Vector3 vector3;
 
+    @EqualsAndHashCode.Exclude
     private int coolDownTime = 0;
 
     public ResourceGeneration(@NotNull ItemGenerationConfig config, @NotNull Vector3 vector3) {
