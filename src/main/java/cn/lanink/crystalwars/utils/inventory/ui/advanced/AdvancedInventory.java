@@ -14,6 +14,7 @@ import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.item.Item;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -28,10 +29,14 @@ public class AdvancedInventory extends ContainerInventory {
     private Consumer<Player> inventoryCloseConsumer;
 
     // slotPos , Player
-    protected BiConsumer<Integer, Player> inventoryClickedConsumer;
+    protected BiConsumer<InventoryClickEvent, Player> inventoryClickedConsumer;
 
     public AdvancedInventory(@NotNull CrystalWarsEntityMerchant merchant) {
         super(merchant, InventoryType.CHEST);
+    }
+
+    public AdvancedInventory(@NotNull CrystalWarsEntityMerchant merchant, @NotNull String overrideTitle) {
+        super(merchant, InventoryType.CHEST, new HashMap<>(), InventoryType.CHEST.getDefaultSize(), overrideTitle);
     }
 
     public AdvancedInventory(InventoryHolder holder, InventoryType type) {
@@ -59,11 +64,11 @@ public class AdvancedInventory extends ContainerInventory {
         return super.setItem(slotPos, item);
     }
 
-    public boolean setItem(int slotPos, @NotNull Item item, @NotNull BiConsumer<Integer, Player> clickConsumer) {
+    public boolean setItem(int slotPos, @NotNull Item item, @NotNull BiConsumer<InventoryClickEvent, Player> clickConsumer) {
         return setItem(slotPos, new AdvancedClickItem(item.getId(), item.getDamage(), item.getCount()).onClick(clickConsumer));
     }
 
-    public AdvancedInventory onClick(@NotNull BiConsumer<Integer, Player> listener) {
+    public AdvancedInventory onClick(@NotNull BiConsumer<InventoryClickEvent, Player> listener) {
         this.inventoryClickedConsumer = listener;
         return this;
     }
@@ -73,9 +78,9 @@ public class AdvancedInventory extends ContainerInventory {
         return this;
     }
 
-    private void callClick(int slotPos, Player player) {
+    private void callClick(InventoryClickEvent clickEvent, Player player) {
         if(this.inventoryClickedConsumer != null) {
-            this.inventoryClickedConsumer.accept(slotPos, player);
+            this.inventoryClickedConsumer.accept(clickEvent, player);
         }
     }
 
@@ -92,12 +97,11 @@ public class AdvancedInventory extends ContainerInventory {
         }
         if(event instanceof InventoryClickEvent) {
             Item item = ((InventoryClickEvent) event).getSourceItem();
-            int slot = ((InventoryClickEvent) event).getSlot();
             Player player = ((InventoryClickEvent) event).getPlayer();
             if(item instanceof AdvancedClickItem) {
-                ((AdvancedClickItem) item).callClick(slot, player);
+                ((AdvancedClickItem) item).callClick((InventoryClickEvent) event, player);
             }else {
-                ((AdvancedInventory) inventory).callClick(slot, player);
+                ((AdvancedInventory) inventory).callClick((InventoryClickEvent) event, player);
             }
         }else if(event instanceof InventoryCloseEvent) {
             ((AdvancedInventory) inventory).callClose(((InventoryCloseEvent) event).getPlayer());

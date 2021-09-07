@@ -5,6 +5,7 @@ import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.nukkit.Player;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,7 @@ public class AdvancedBuyItem extends AdvancedClickItem{
     }
 
     @Override
-    public void callClick(int slotPos, Player player) {
+    public void callClick(InventoryClickEvent clickEvent, Player player) {
         if(!player.getInventory().canAddItem(this.itemConfig.getItem())) {
             player.sendTip("你的背包满了！");
             return;

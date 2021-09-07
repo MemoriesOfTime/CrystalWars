@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.utils;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
+import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
@@ -189,15 +190,64 @@ public class Utils {
     }
 
     public static Item getTeamColorItem(Item defaultItem, String colorCode) {
-        //TODO
-//        colorCode = colorCode.split("§")[1];
-//        if(defaultItem.hasMeta()) {
-//            switch (defaultItem.getId()) {
-//                case Item.WOOL:
-//                    break;
-//            }
-//        }
-        return null;
+        if(!defaultItem.hasMeta()) {
+            return Item.fromString("0:0");
+        }
+        if(!SupplyConfigManager.teamChangeItemIds.contains(defaultItem.getId())) {
+            return Item.fromString("0:0");
+        }
+        colorCode = colorCode.split("§")[1];
+        int id = defaultItem.getId();
+        int meta = -1;
+        switch (colorCode) {
+            case "a":
+                meta = 5;
+                break;
+            case "b":
+                meta = 3;
+                break;
+            case "c":
+                meta = 6;
+                break;
+            case "d":
+            case "9":
+                meta = 2;
+                break;
+            case "e":
+            case "6":
+                meta = 4;
+                break;
+            case "f":
+                meta = 0;
+                break;
+            case "0":
+                meta = 15;
+                break;
+            case "1":
+                meta = 11;
+                break;
+            case "2":
+                meta = 13;
+                break;
+            case "3":
+                meta = 9;
+                break;
+            case "4":
+                meta = 14;
+                break;
+            case "5":
+                meta = 10;
+                break;
+            case "7":
+                meta = 8;
+                break;
+            case "8":
+                meta = 7;
+                break;
+            default:
+                return Item.fromString("0:0");
+        }
+        return Item.get(id, meta);
     }
 
 }

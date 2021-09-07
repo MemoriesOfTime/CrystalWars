@@ -1,8 +1,11 @@
 package cn.lanink.crystalwars.supplier.config.pages;
 
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.supplier.config.SupplyConfig;
 import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
+import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedBuyItem;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
+import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedPageLinkItem;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
@@ -94,8 +97,17 @@ public class SupplyPageConfig {
         this.items = itemBuilder.build();
     }
 
-    public AdvancedInventory generateWindow() {
-        return null;
+    public AdvancedInventory generateWindow(CrystalWarsEntityMerchant holder) {
+        AdvancedInventory advancedInventory = new AdvancedInventory(holder, this.title);
+        if(linkItems != null) {
+            linkItems.forEach((slotPos, linkItem) -> {
+                advancedInventory.setItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem(), getParent().getPageConfigMap().get(linkItem.getPageFileName())));
+            });
+        }
+        items.forEach((slotPos, item) -> {
+            advancedInventory.setItem(slotPos, new AdvancedBuyItem(item.getItem().setCustomName(item.getTitle() + "§r\n" + item.getSubTitle()), item));
+        });
+        return advancedInventory;
     }
 
     public AdvancedFormWindowSimple generateForm() {

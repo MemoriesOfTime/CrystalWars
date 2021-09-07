@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
 import cn.lanink.gamecore.api.Info;
 import cn.nukkit.Player;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ import java.util.function.BiConsumer;
 @Info("将会移植到 GameCore 中")
 public class AdvancedClickItem extends Item {
 
-    private BiConsumer<Integer, Player> clickConsumer;
+    private BiConsumer<InventoryClickEvent, Player> clickConsumer;
 
     public AdvancedClickItem(int id) {
         super(id);
@@ -32,14 +33,14 @@ public class AdvancedClickItem extends Item {
         super(id, meta, count, name);
     }
 
-    public AdvancedClickItem onClick(@NotNull BiConsumer<Integer, @NotNull Player> consumer) {
+    public AdvancedClickItem onClick(@NotNull BiConsumer<InventoryClickEvent, @NotNull Player> consumer) {
         this.clickConsumer = consumer;
         return this;
     }
 
-    public void callClick(int slotPos, Player player) {
+    public void callClick(InventoryClickEvent clickEvent, Player player) {
         if(this.clickConsumer != null) {
-            this.clickConsumer.accept(slotPos, player);
+            this.clickConsumer.accept(clickEvent, player);
         }
     }
 

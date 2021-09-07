@@ -64,7 +64,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      * 生成 背包 界面
      */
     public void generateMerchantInventory() {
-        this.indexInventory = this.supply.getSupplyConfig().getDefaultPageConfig().generateWindow();
+        this.indexInventory = this.supply.getSupplyConfig().getDefaultPageConfig().generateWindow(this);
     }
 
     @Override

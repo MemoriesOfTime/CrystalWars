@@ -1,7 +1,9 @@
 package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
+import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
 import cn.nukkit.Player;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,13 +21,16 @@ public class AdvancedPageLinkItem extends AdvancedClickItem {
     }
 
     @Override
-    public void callClick(int slotPos, Player player) {
+    public void callClick(InventoryClickEvent clickEvent, Player player) {
         player.removeAllWindows();
-        AdvancedInventory newWindow = this.pageConfig.generateWindow();
+        if(!(clickEvent.getInventory().getHolder() instanceof CrystalWarsEntityMerchant)) {
+            return;
+        }
+        AdvancedInventory newWindow = this.pageConfig.generateWindow((CrystalWarsEntityMerchant) clickEvent.getInventory().getHolder());
         if(pageConfig.getLinkItems() != null) {
-            Item afterClick = pageConfig.getLinkItems().get(slotPos).getAfterClick();
+            Item afterClick = pageConfig.getLinkItems().get(clickEvent.getSlot()).getAfterClick();
             if(afterClick != null) {
-                newWindow.setItem(slotPos, afterClick);
+                newWindow.setItem(clickEvent.getSlot(), afterClick);
             }
         }
         player.addWindow(newWindow);

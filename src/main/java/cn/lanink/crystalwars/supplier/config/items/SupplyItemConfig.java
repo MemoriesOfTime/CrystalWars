@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.supplier.config.items;
 
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.gamecore.api.Info;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
@@ -52,6 +53,8 @@ public class SupplyItemConfig {
 
         this.item = Item.fromString(config.getString("item"));
         this.item.setCount(config.getInt("count"));
+        this.item.setLore(this.lore.toArray(new String[0]));
+        this.item.setCustomName(this.title);
     }
 
     public Item getItem() {
