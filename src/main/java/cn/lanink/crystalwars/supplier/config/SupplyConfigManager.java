@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.supplier.config;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.nukkit.item.Item;
 import lombok.Getter;
 
 import java.io.File;
@@ -20,7 +21,10 @@ public class SupplyConfigManager {
      * 需要根据队伍更改的物品（颜色）
      * 羊毛，玻璃块，粘土块，地毯
      */
-    public static final List<Integer> TEAM_CHANGE_ITEM_IDS = Arrays.asList(35, 95, 159, 171);
+    public static final List<Integer> TEAM_CHANGE_ITEM_IDS = Arrays.asList(
+            35, 95, 159, 171,
+            Item.LEATHER_CAP, Item.LEATHER_TUNIC, Item.LEATHER_PANTS, Item.LEATHER_BOOTS //皮革甲
+    );
 
     @Getter
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();

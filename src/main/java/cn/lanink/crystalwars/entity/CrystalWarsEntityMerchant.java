@@ -2,7 +2,6 @@ package cn.lanink.crystalwars.entity;
 
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.supplier.Supply;
-import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.EntityUtils;
@@ -45,7 +44,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         this.supply = supply;
         this.setMaxHealth(100);
         this.setHealth(100F);
-        this.setNameTag(team.getColor() + "村民商店");
+        this.setNameTag(team.getStringColor() + "村民商店");
         generateMerchantInventory();
         generateGui();
     }
