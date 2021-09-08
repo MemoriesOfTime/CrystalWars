@@ -1,7 +1,7 @@
 #铁锭生成器配置
 ---
 itemID: "265:0"
-showName: "Iron Ingot"
+showName: "铁锭生成点"
 spawnTime(s): 1
 spawnCount: 1
 canSpawnOnDay: true

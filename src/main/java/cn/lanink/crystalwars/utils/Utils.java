@@ -79,6 +79,10 @@ public class Utils {
      * @return 进度条
      */
     public static String getProgressBar(int now, int max) {
+        if (max <= 1) {
+            max = 10;
+            now = max;
+        }
         int needShow = now / (max/10);
         StringBuilder string = new StringBuilder();
         for (int j = 0; j < 10; j++) {
@@ -204,7 +208,7 @@ public class Utils {
 
         String colorCode = team.getStringColor().split("§")[1];
         int id = defaultItem.getId();
-        int meta = -1;
+        int meta;
         switch (colorCode) {
             case "a":
                 meta = 5;
