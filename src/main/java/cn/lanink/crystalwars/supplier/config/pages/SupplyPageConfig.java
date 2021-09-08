@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -92,9 +93,15 @@ public class SupplyPageConfig {
             this.linkItems = null;
         }
 
+        ArrayList<Integer> list = new ArrayList<>();
         config.getStringList("items").forEach(item -> {
             final SupplyItemConfig supplyItemConfig = this.parent.getItemConfigMap().get(item);
-            itemBuilder.put(supplyItemConfig.getSlotPos(), supplyItemConfig);
+            int slotPos = supplyItemConfig.getSlotPos();
+            while (list.contains(slotPos)) {
+                slotPos++;
+            }
+            itemBuilder.put(slotPos, supplyItemConfig);
+            list.add(slotPos);
         });
         this.items = itemBuilder.build();
     }
