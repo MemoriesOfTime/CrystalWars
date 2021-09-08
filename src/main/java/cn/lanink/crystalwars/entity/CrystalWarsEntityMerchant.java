@@ -8,7 +8,6 @@ import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.InventoryType;
@@ -33,9 +32,6 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     private final Supply supply;
 
     @Getter
-    private FormWindowSimple parentGui;
-
-    @Getter
     private AdvancedInventory indexInventory;
 
     public CrystalWarsEntityMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull Supply supply) {
@@ -58,14 +54,14 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     /**
      * 生成 Gui 界面
      */
-    public void generateGui() {
+    public AdvancedFormWindowSimple generateGui() {
         AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.getNameTag());
         this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
             advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
                 player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
             });
         });
-        this.parentGui = advancedFormWindowSimple;
+        return advancedFormWindowSimple;
     }
 
     /**
@@ -125,7 +121,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
                 inventory.open(player);
             }
         }else {
-            player.showFormWindow(this.parentGui);
+            player.showFormWindow(this.generateGui());
         }
     }
 
