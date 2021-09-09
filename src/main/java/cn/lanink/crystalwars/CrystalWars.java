@@ -9,6 +9,7 @@ import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.utils.MetricsLite;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.inventory.ui.listener.InventoryListener;
 import cn.lanink.gamecore.listener.BaseGameListener;
@@ -142,6 +143,12 @@ public class CrystalWars extends PluginBase {
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
         this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
+
+        try {
+            new MetricsLite(this, 12737);
+        }catch (Exception ignored) {
+
+        }
 
         this.getLogger().info("插件加载完成！ 版本: " + VERSION);
     }
