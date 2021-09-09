@@ -165,11 +165,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             Tips.removeTipsConfig(this.getGameWorldName(), player);
         }
 
-        PlayerData playerData = this.getPlayerData(player);
+        PlayerData playerData = this.getPlayerDataMap().remove(player);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         playerData.restoreBeforePlayerData();
-        this.getPlayerDataMap().remove(player);
         return true;
     }
 
