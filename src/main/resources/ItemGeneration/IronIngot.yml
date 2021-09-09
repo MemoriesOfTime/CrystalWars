@@ -1,8 +1,16 @@
 #铁锭生成器配置
 ---
+#物品ID
 itemID: "265:0"
+#生成点显示名称（浮空字）
 showName: "铁锭生成点"
+#生成间隔（秒）
 spawnTime(s): 1
+#生成数量
 spawnCount: 1
+#可以在白天生成
 canSpawnOnDay: true
+#可以在晚上生成
 canSpawnOnNight: true
+#可以在加时赛生成
+canSpawnOnOvertime: true

@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.entity;
 
+import cn.lanink.gamecore.api.Info;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
@@ -10,6 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class EntityText extends Entity {
 
+    @Info("只是为了兼容PN核心")
     @Deprecated
     public EntityText(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

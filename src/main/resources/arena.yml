@@ -7,6 +7,8 @@ waitTime: 60
 gameTime: 600
 #加时赛时间
 overtime: 180
+#胜利结算时间
+victoryTime: 10
 #供给物品配置(商店)
 supply: DefaultSupply
 

@@ -119,7 +119,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     public void initData() {
         this.waitTime = this.getSetWaitTime();
         this.gameTime = this.getSetGameTime();
-        this.victoryTime = 10;
+        this.victoryTime = this.getSetVictoryTime();
 
         this.playerDataMap.clear();
 
@@ -133,10 +133,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     public boolean canJoin() {
         return (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED || this.getArenaStatus() == ArenaStatus.WAIT) &&
-                this.getPlayerDataMap().size() < this.getMaxPlayers();
+                this.getPlayerCount() < this.getMaxPlayers();
     }
 
     public boolean joinRoom(@NotNull Player player) {
+        if (!this.canJoin() || this.getPlayerDataMap().containsKey(player)) {
+            return false;
+        }
+
         if (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED) {
             this.setArenaStatus(ArenaStatus.WAIT);
             ArenaTickTask.addArena(this);
@@ -206,7 +210,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             ArenaTickTask.removeArena(this);
             return;
         }else {
-            if (this.getPlayerDataMap().size() >= this.getMinPlayers()) {
+            if (this.getPlayerCount() >= this.getMinPlayers()) {
                 this.waitTime--;
                 if (this.waitTime <= 0) {
                     this.gameStart();
@@ -221,13 +225,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            if (this.getPlayerDataMap().size() >= this.getMinPlayers()) {
+            if (this.getPlayerCount() >= this.getMinPlayers()) {
                 list.add("§f◎ §f开始倒计时:  §a" + Utils.formatCountdown(this.waitTime));
             }else {
                 list.add("§f◎ §c等待玩家加入中...");
             }
             list.add(Utils.getSpace(list));
-            list.add("§f◎  §a" + this.getPlayerDataMap().size() + "§e/§a" + this.getMinPlayers() + " §8(§6Max:§a" + this.getMaxPlayers() + "§8)");
+            list.add("§f◎  §a" + this.getPlayerCount() + "§e/§a" + this.getMinPlayers() + " §8(§6Max:§a" + this.getMaxPlayers() + "§8)");
             list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
@@ -273,8 +277,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         //资源生成
         for (ResourceGeneration resourceGeneration : this.getResourceGenerations()) {
-            if ((this.getGameWorld().isDaytime() && resourceGeneration.getConfig().isCanSpawnOnDay()) ||
-                    (!this.getGameWorld().isDaytime() && resourceGeneration.getConfig().isCanSpawnOnNight())) {
+            if (resourceGeneration.canSpawn(this)) {
                 resourceGeneration.setCoolDownTime(resourceGeneration.getCoolDownTime() - 1);
                 if (resourceGeneration.getCoolDownTime() <= 0) {
                     resourceGeneration.setCoolDownTime(resourceGeneration.getConfig().getSpawnTime());
@@ -349,9 +352,20 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 }
             }
 
-            //TODO 胜利提示
-            LinkedList<String> list = new LinkedList<>();
+            if (this.victoryTeam == Team.NULL) {
+                entry.getKey().sendTip("§e胜利队伍: §f平局§e！");
+            }else {
+                entry.getKey().sendTip("§e胜利队伍: " + Utils.getShowTeam(this.victoryTeam) + "§e！");
+            }
 
+            LinkedList<String> list = new LinkedList<>();
+            list.add(Utils.getSpace(list));
+            if (this.victoryTeam == Team.NULL) {
+                list.add("§f◎ §e胜利队伍: §f平局§e！");
+            }else {
+                list.add("§f◎ §e胜利队伍: " + Utils.getShowTeam(this.victoryTeam) + "§e！");
+            }
+            list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
 
@@ -454,7 +468,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     }
                 }else {
                     this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
-                    this.crystalWars.unloadArena(getGameWorldName());
+                    Server.getInstance().getScheduler().scheduleTask(
+                            this.crystalWars,
+                            () -> this.crystalWars.unloadArena(getGameWorldName())
+                    );
                 }
             }, CrystalWars.EXECUTOR);
         }
@@ -464,10 +481,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
      * 分配玩家队伍
      */
     public void assignTeam() {
-        int baseCount = this.getPlayerDataMap().size() / (Team.values().length - 1);
-        if (baseCount < 1) {
-            baseCount = 1;
-        }
+        ArrayList<Team> teams = new ArrayList<>(Arrays.asList(Team.values()));
+        teams.remove(Team.NULL);
+
+        int baseCount = Math.max(1, this.getPlayerCount() / teams.size());
 
         HashMap<Team, LinkedList<Player>> teamPlayers = new HashMap<>();
         for (Team team : Team.values()) {
@@ -516,8 +533,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
 
             if (cache != null) {
-                ArrayList<Team> teams = new ArrayList<>(Arrays.asList(Team.values()));
-                teams.remove(Team.NULL);
                 teamPlayers.get(teams.get(CrystalWars.RANDOM.nextInt(teams.size()))).add(cache);
             }
         }
@@ -574,6 +589,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     public boolean isPlaying(@NotNull Player player) {
         return this.playerDataMap.containsKey(player);
+    }
+
+    public int getPlayerCount() {
+        return this.getPlayerDataMap().size();
     }
 
     public PlayerData getPlayerData(@NotNull Player player) {

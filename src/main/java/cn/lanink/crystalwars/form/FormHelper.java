@@ -84,7 +84,7 @@ public class FormHelper {
                         "返回");
                 modal.onClickedTrue(FormHelper::sendUserArenaListMenu);
                 modal.onClickedFalse(FormHelper::sendUserArenaListMenu);
-            }else if (arena.getPlayerDataMap().size() >= arena.getMaxPlayers()) {
+            }else if (arena.getPlayerCount() >= arena.getMaxPlayers()) {
                 modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
                         "游戏房间: " + world + " 人数已满，无法加入！",
                         "返回",

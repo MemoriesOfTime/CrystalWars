@@ -28,6 +28,7 @@ public class ArenaConfig implements ISaveConfig {
     private final int setWaitTime;
     private final int setGameTime;
     private final int setOvertime;
+    private final int setVictoryTime;
 
     private final int minPlayers;
     private final int maxPlayers;
@@ -41,12 +42,13 @@ public class ArenaConfig implements ISaveConfig {
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
         try {
-            this.setWaitTime = config.getInt("waitTime");
-            this.setGameTime = config.getInt("gameTime");
-            this.setOvertime = config.getInt("overtime");
+            this.setWaitTime = config.getInt("waitTime", 60);
+            this.setGameTime = config.getInt("gameTime", 600);
+            this.setOvertime = config.getInt("overtime", 180);
+            this.setVictoryTime = config.getInt("victoryTime", 10);
 
-            this.minPlayers = config.getInt("minPlayers");
-            this.maxPlayers = config.getInt("maxPlayers");
+            this.minPlayers = config.getInt("minPlayers", 2);
+            this.maxPlayers = config.getInt("maxPlayers", 16);
 
             this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn"));
 
