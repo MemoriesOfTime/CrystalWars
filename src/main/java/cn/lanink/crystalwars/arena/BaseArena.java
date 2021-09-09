@@ -132,7 +132,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public boolean canJoin() {
-        return (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED || this.getArenaStatus() == ArenaStatus.WAIT);
+        return (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED || this.getArenaStatus() == ArenaStatus.WAIT) &&
+                this.getPlayerDataMap().size() < this.getMaxPlayers();
     }
 
     public boolean joinRoom(@NotNull Player player) {
