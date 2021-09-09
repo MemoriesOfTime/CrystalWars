@@ -222,12 +222,12 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
             if (this.getPlayerDataMap().size() >= this.getMinPlayers()) {
-                list.add("开始倒计时: " + Utils.formatCountdown(this.waitTime));
+                list.add("§f◎ §f开始倒计时:  §a" + Utils.formatCountdown(this.waitTime));
             }else {
-                list.add("等待玩家加入中...");
+                list.add("§f◎ §c等待玩家加入中...");
             }
             list.add(Utils.getSpace(list));
-            list.add("玩家数量: " + getPlayerDataMap().size() + "/" + this.getMaxPlayers());
+            list.add("§f◎  §a" + this.getPlayerDataMap().size() + "§e/§a" + this.getMinPlayers() + " §8(§6Max:§a" + this.getMaxPlayers() + "§8)");
             list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
@@ -257,14 +257,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            list.add("§f◎  §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
+            list.add("§f◎ §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
             list.add(Utils.getSpace(list));
             for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
                 List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
                 if (this.isTeamCrystalSurviving(e1.getKey()) || !survivingPlayers.isEmpty()) {
-                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()) + " §8(§a" + survivingPlayers.size() + "§8)");
+                    list.add("§f◎ -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()) + " §8(§a" + survivingPlayers.size() + "§8)");
                 }else {
-                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
+                    list.add("§f◎ -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
                 }
             }
             list.add(Utils.getSpace(list));
