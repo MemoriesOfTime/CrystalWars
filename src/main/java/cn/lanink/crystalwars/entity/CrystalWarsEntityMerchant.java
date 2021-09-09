@@ -56,11 +56,13 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      */
     public AdvancedFormWindowSimple generateGui() {
         AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.getNameTag());
-        this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
-            advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
-                player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
+        if (this.supply.getSupplyConfig() != null) {
+            this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
+                advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
+                    player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
+                });
             });
-        });
+        }
         return advancedFormWindowSimple;
     }
 
@@ -68,6 +70,10 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      * 生成 背包 界面
      */
     public void generateMerchantInventory() {
+        if (this.supply.getSupplyConfig() == null) {
+            this.indexInventory = new AdvancedInventory(this, "null");
+            return;
+        }
         this.indexInventory = this.supply.getSupplyConfig().getDefaultPageConfig().generateWindow(this);
     }
 
@@ -104,14 +110,14 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putBoolean("allowOtherTeamUse", allowOtherTeamUse);
+        this.namedTag.putBoolean("allowOtherTeamUse", this.allowOtherTeamUse);
     }
 
     /**
      * 将商店发给发送给玩家 win10玩家是箱子商店，pe玩家是GUI界面
      * @param player 玩家
      */
-    public void sendSupplyWindow(Player player) {
+    public void sendSupplyWindow(@NotNull Player player) {
         if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
             int id = player.getWindowId(this.indexInventory);
             if (id == -1) {
