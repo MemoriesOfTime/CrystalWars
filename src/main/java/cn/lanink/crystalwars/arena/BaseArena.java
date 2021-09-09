@@ -260,15 +260,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             list.add("§f◎  §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
             list.add(Utils.getSpace(list));
             for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
-                if (this.isTeamCrystalSurviving(e1.getKey())) {
-                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()));
+                List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
+                if (this.isTeamCrystalSurviving(e1.getKey()) || !survivingPlayers.isEmpty()) {
+                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()) + " §8(§a" + survivingPlayers.size() + "§8)");
                 }else {
-                    List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
-                    if (survivingPlayers.isEmpty()) {
-                        list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
-                    }else {
-                        list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e存活:§a" + survivingPlayers.size());
-                    }
+                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
                 }
             }
             list.add(Utils.getSpace(list));
