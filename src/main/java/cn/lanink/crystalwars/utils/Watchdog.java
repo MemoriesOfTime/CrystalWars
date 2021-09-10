@@ -58,11 +58,11 @@ public class Watchdog extends PluginTask<CrystalWars> {
         }
     }
 
-    public static void add(BaseArena arena) {
+    public static void addArena(BaseArena arena) {
         ARENA_RUN_TIME.put(arena, 0);
     }
 
-    public static void remove(BaseArena arena) {
+    public static void removeArena(BaseArena arena) {
         ARENA_RUN_TIME.remove(arena);
     }
 

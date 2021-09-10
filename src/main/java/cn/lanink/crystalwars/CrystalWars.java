@@ -272,6 +272,8 @@ public class CrystalWars extends PluginBase {
             for (BaseGameListener<BaseArena> listener : this.gameListeners.values()) {
                 listener.removeListenerRoom(world);
             }
+            ArenaTickTask.removeArena(arena);
+            Watchdog.removeArena(arena);
             this.getLogger().info("游戏房间: " + world + " 卸载完成！");
             this.arenaConfigs.remove(world);
         }

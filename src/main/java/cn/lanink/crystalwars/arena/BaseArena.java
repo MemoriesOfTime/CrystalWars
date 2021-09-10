@@ -97,7 +97,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
-        Watchdog.add(this);
+        Watchdog.addArena(this);
     }
 
     public final void setGameMode(String gameMode) {
