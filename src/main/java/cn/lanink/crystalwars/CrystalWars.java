@@ -136,10 +136,10 @@ public class CrystalWars extends PluginBase {
         SupplyConfigManager.loadAllSupplyConfig();
         ItemGenerationConfigManager.loadAllItemGeneration();
 
+        this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.loadAllListener();
 
-        this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         this.getServer().getScheduler().scheduleRepeatingTask(this, new ArenaTickTask(this), 1);
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this, 10), 20, true);
 
