@@ -18,6 +18,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,6 +60,7 @@ public class CrystalWars extends PluginBase {
     @Getter
     private final LinkedHashMap<String, BaseGameListener<BaseArena>> gameListeners = new LinkedHashMap<>();
 
+    @Getter
     private final HashMap<String, Config> arenaConfigs = new HashMap<>();
     @Getter
     private final LinkedHashMap<String, BaseArena> arenas = new LinkedHashMap<>();
@@ -68,7 +70,7 @@ public class CrystalWars extends PluginBase {
     @Getter
     private String worldBackupPath;
     @Getter
-    private String roomConfigPath;
+    private String arenaConfigPath;
 
     @Getter
     private String cmdUser;
@@ -85,11 +87,20 @@ public class CrystalWars extends PluginBase {
 
     @Override
     public void onLoad() {
+        Preconditions.checkState(crystalWars == null, "Already initialized!");
         crystalWars = this;
 
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
-        this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
-        this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+        this.worldBackupPath = this.getDataFolder() + "/LevelBackup/";
+        this.arenaConfigPath = this.getDataFolder() + "/Arena/";
+
+        List<String> list = Arrays.asList("Arena", "LevelBackup");
+        for (String fileName : list) {
+            File file = new File(this.getDataFolder(), fileName);
+            if (!file.exists() && !file.mkdirs()) {
+                getLogger().error(fileName + " 文件夹初始化失败");
+            }
+        }
 
         this.saveDefaultConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
@@ -205,6 +216,7 @@ public class CrystalWars extends PluginBase {
                 this.getLogger().info("[debug] unregisterListener: " + listener.getListenerName());
             }
         }
+        this.gameListeners.clear();
     }
 
     public void loadAllArena() {
@@ -222,7 +234,7 @@ public class CrystalWars extends PluginBase {
     }
 
     public void loadArena(String world) {
-        Config config = this.getArenaConfig(world);
+        Config config = this.getOrCreateArenaConfig(world);
         if (!Server.getInstance().loadLevel(world)) {
             this.getLogger().error("游戏房间: " + world + " 地图不存在！无法加载！");
             return;
@@ -265,13 +277,15 @@ public class CrystalWars extends PluginBase {
         }
     }
 
-    public Config getArenaConfig(Level level) {
-        return this.getArenaConfig(level.getFolderName());
+    public Config getOrCreateArenaConfig(Level level) {
+        return this.getOrCreateArenaConfig(level.getFolderName());
     }
 
-    public Config getArenaConfig(String level) {
+    public Config getOrCreateArenaConfig(String level) {
         if (!this.arenaConfigs.containsKey(level)) {
-            Config config = new Config(this.getDataFolder() + "/Arena/" + level + ".yml", Config.YAML);
+            String targetFile = "/Arena/" + level + ".yml";
+            this.saveResource("arena.yml", targetFile, false);
+            Config config = new Config(this.getDataFolder() + targetFile, Config.YAML);
             this.arenaConfigs.put(level, config);
         }
         return this.arenaConfigs.get(level);

@@ -27,8 +27,9 @@ public class UserCommand extends BaseCommand {
     public void sendHelp(CommandSender sender) {
         sender.sendMessage(
                 "§a/" + this.getName() + " §e打开GUI\n" +
-                "§a/" + this.getName() + " join §e加入游戏房间\n" +
-                "§a/" + this.getName() + " quit §e退出游戏房间\n");
+                "§a/" + this.getName() + " join <游戏房间名称> §e加入游戏房间\n" +
+                "§a/" + this.getName() + " quit §e退出游戏房间\n"
+        );
     }
 
     @Override

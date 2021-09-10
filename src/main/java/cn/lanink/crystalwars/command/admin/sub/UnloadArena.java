@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.command.admin.sub;
 
 import cn.lanink.crystalwars.command.BaseSubCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 
 /**
@@ -42,7 +43,7 @@ public class UnloadArena extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[0];
+        return new CommandParameter[]{ CommandParameter.newType("roomName", true, CommandParamType.TEXT) };
     }
 
 }

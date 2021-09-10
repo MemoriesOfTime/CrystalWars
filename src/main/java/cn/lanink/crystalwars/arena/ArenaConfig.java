@@ -25,6 +25,8 @@ import java.util.Map;
 @Getter
 public class ArenaConfig implements ISaveConfig {
 
+    private Config config;
+
     private final int setWaitTime;
     private final int setGameTime;
     private final int setOvertime;
@@ -41,7 +43,13 @@ public class ArenaConfig implements ISaveConfig {
     private final Supply supply;
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
+        this(config, false);
+    }
+
+    public ArenaConfig(@NotNull Config config, boolean isSet) throws ArenaLoadException {
         try {
+            this.config = config;
+
             this.setWaitTime = config.getInt("waitTime", 60);
             this.setGameTime = config.getInt("gameTime", 600);
             this.setOvertime = config.getInt("overtime", 180);
@@ -50,7 +58,7 @@ public class ArenaConfig implements ISaveConfig {
             this.minPlayers = config.getInt("minPlayers", 2);
             this.maxPlayers = config.getInt("maxPlayers", 16);
 
-            this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn"));
+            this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn", "0:0:0"));
 
             Map<String, Map<String, Double>> spawn = config.get("spawn", new HashMap<>());
             for (Map.Entry<String, Map<String, Double>> entry : spawn.entrySet()) {
@@ -84,7 +92,7 @@ public class ArenaConfig implements ISaveConfig {
             }
 
             String supplyName = config.getString("supply");
-            if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(supplyName)) {
+            if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(supplyName) && !isSet) {
                 CrystalWars.getInstance().getLogger().error("加载商店时出现错误：无 " + supplyName + " 商店供给配置！");
             }
             this.supply = new Supply(SupplyConfigManager.getSupplyConfig(supplyName));
@@ -111,14 +119,27 @@ public class ArenaConfig implements ISaveConfig {
     }
 
     @Override
+    public void save() {
+        this.saveConfig(this.config);
+    }
+
+    @Override
     public Map<String, Object> toSaveMap() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("waitTime", this.getSetWaitTime());
         map.put("gameTime", this.getSetGameTime());
+        map.put("overtime", this.getSetOvertime());
+        map.put("victoryTime", this.getSetVictoryTime());
+
+        map.put("minPlayers", this.getMinPlayers());
+        map.put("maxPlayers", this.getMaxPlayers());
 
         map.put("waitSpawn", Utils.vector3ToString(this.getWaitSpawn()));
+
         map.put("spawn", this.getSavePosMap(this.getTeamSpawn()));
         map.put("crystal", this.getSavePosMap(this.getTeamCrystal()));
+        map.put("shop", this.getSavePosMap(this.getTeamShop()));
+
         return map;
     }
 

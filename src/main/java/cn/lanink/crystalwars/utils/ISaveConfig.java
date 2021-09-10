@@ -11,6 +11,8 @@ import java.util.Map;
  */
 public interface ISaveConfig {
 
+    void save();
+
     Map<String, Object> toSaveMap();
 
     default void saveConfig(@NonNull File file) {
