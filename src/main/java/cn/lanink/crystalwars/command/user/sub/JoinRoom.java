@@ -56,7 +56,8 @@ public class JoinRoom extends BaseSubCommand {
                     }
                 }
                 if (arenas.size() > 0) {
-                    BaseArena arena = arenas.get(CrystalWars.RANDOM.nextInt(arenas.size()));
+                    int index = CrystalWars.RANDOM.nextInt(arenas.size());
+                    BaseArena arena = arenas.get(index);
                     arena.joinRoom(player);
                     sender.sendMessage("§a已为你随机分配房间！");
                     return true;
