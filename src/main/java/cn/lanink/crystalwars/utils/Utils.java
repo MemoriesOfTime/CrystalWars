@@ -79,10 +79,7 @@ public class Utils {
      * @return 进度条
      */
     public static String getProgressBar(int now, int max) {
-        if (max <= 1) {
-            max = 10;
-        }
-        int needShow = Math.max(1, now) / (max/10);
+        int needShow = Math.max(10, now) / (Math.max(10, max) / 10);
         StringBuilder string = new StringBuilder();
         for (int j = 0; j < 10; j++) {
             if (j < needShow) {
