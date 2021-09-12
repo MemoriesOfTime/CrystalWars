@@ -6,6 +6,7 @@ import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitMath;
@@ -34,16 +35,16 @@ public class Utils {
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:
-                return team.getColor() + "§l红队§r";
+                return team.getStringColor() + "§l红队§r";
             case YELLOW:
-                return team.getColor() + "§l黄队§r";
+                return team.getStringColor() + "§l黄队§r";
             case BLUE:
-                return team.getColor() + "§l蓝队§r";
+                return team.getStringColor() + "§l蓝队§r";
             case GREEN:
-                return team.getColor() + "§l绿队§r";
+                return team.getStringColor() + "§l绿队§r";
             case NULL:
             default:
-                return team.getColor() + "§l未加入队伍§r";
+                return team.getStringColor() + "§l未加入队伍§r";
         }
     }
 
@@ -78,7 +79,7 @@ public class Utils {
      * @return 进度条
      */
     public static String getProgressBar(int now, int max) {
-        int needShow = now / (max/10);
+        int needShow = Math.max(10, now) / (Math.max(10, max) / 10);
         StringBuilder string = new StringBuilder();
         for (int j = 0; j < 10; j++) {
             if (j < needShow) {
@@ -186,19 +187,24 @@ public class Utils {
     }
 
     public static Item getTeamColorItem(Item defaultItem, Team team) {
-        return getTeamColorItem(defaultItem, team.getColor());
-    }
-
-    public static Item getTeamColorItem(Item defaultItem, String colorCode) {
         if(!defaultItem.hasMeta()) {
-            return Item.fromString("0:0");
+            return Item.get(Item.AIR);
         }
         if(!SupplyConfigManager.TEAM_CHANGE_ITEM_IDS.contains(defaultItem.getId())) {
-            return Item.fromString("0:0");
+            return Item.get(Item.AIR);
         }
-        colorCode = colorCode.split("§")[1];
+
+        //皮革护甲染色
+        Item item = Item.get(defaultItem.getId(), defaultItem.getDamage(), defaultItem.getCount());
+        if (item instanceof ItemColorArmor) {
+            ItemColorArmor colorArmor = (ItemColorArmor) item;
+            colorArmor.setColor(team.getBlockColor());
+            return colorArmor;
+        }
+
+        String colorCode = team.getStringColor().split("§")[1];
         int id = defaultItem.getId();
-        int meta = -1;
+        int meta;
         switch (colorCode) {
             case "a":
                 meta = 5;
@@ -247,7 +253,7 @@ public class Utils {
             default:
                 return Item.fromString("0:0");
         }
-        return Item.get(id, meta);
+        return Item.get(id, meta, defaultItem.getCount());
     }
 
 }

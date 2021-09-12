@@ -47,7 +47,7 @@ public class JoinRoom extends BaseSubCommand {
                 LinkedList<BaseArena> arenas = new LinkedList<>();
                 for (BaseArena arena : this.crystalWars.getArenas().values()) {
                     if (arena.canJoin()) {
-                        if (arena.getPlayerDataMap().size() > 0) {
+                        if (arena.getPlayerCount() > 0) {
                             arena.joinRoom(player);
                             sender.sendMessage("§a已为你随机分配房间！");
                             return true;
@@ -56,7 +56,8 @@ public class JoinRoom extends BaseSubCommand {
                     }
                 }
                 if (arenas.size() > 0) {
-                    BaseArena arena = arenas.get(CrystalWars.RANDOM.nextInt(arenas.size()));
+                    int index = CrystalWars.RANDOM.nextInt(arenas.size());
+                    BaseArena arena = arenas.get(index);
                     arena.joinRoom(player);
                     sender.sendMessage("§a已为你随机分配房间！");
                     return true;
@@ -68,7 +69,7 @@ public class JoinRoom extends BaseSubCommand {
                     LinkedList<BaseArena> arenas = new LinkedList<>();
                     for (BaseArena room : this.crystalWars.getArenas().values()) {
                         if (room.canJoin() && room.getGameMode().equals(modeName)) {
-                            if (room.getPlayerDataMap().size() > 0) {
+                            if (room.getPlayerCount() > 0) {
                                 room.joinRoom(player);
                                 sender.sendMessage("§a已为你随机分配房间！");
                                 return true;
@@ -93,7 +94,7 @@ public class JoinRoom extends BaseSubCommand {
                         }else if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME ||
                                 arena.getArenaStatus() == BaseArena.ArenaStatus.VICTORY) {
                             sender.sendMessage("§a该房间正在游戏中，请稍后...");
-                        }else if (arena.getPlayerDataMap().size() >= arena.getMaxPlayers()) {
+                        }else if (arena.getPlayerCount() >= arena.getMaxPlayers()) {
                             sender.sendMessage("§a该房间已满人，请稍后...");
                         }else {
                             arena.joinRoom(player);

@@ -1,9 +1,9 @@
 title: 金苹果
 item: "322:0"
-count: 4
-subTitle: (5个金锭 x4)
-pos: 8
+count: 1
+subTitle: (3个金锭 x1)
+pos: 9
 cost:
-  - "266:0x5"
+  - "266:0x3"
 lore:
   - "吃了就会变强"

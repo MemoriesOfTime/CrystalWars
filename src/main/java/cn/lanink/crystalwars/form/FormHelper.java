@@ -84,7 +84,7 @@ public class FormHelper {
                         "返回");
                 modal.onClickedTrue(FormHelper::sendUserArenaListMenu);
                 modal.onClickedFalse(FormHelper::sendUserArenaListMenu);
-            }else if (arena.getPlayerDataMap().size() >= arena.getMaxPlayers()) {
+            }else if (arena.getPlayerCount() >= arena.getMaxPlayers()) {
                 modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
                         "游戏房间: " + world + " 人数已满，无法加入！",
                         "返回",
@@ -108,6 +108,24 @@ public class FormHelper {
         }
         
         player.showFormWindow(modal);
+    }
+
+
+    /**
+     * 显示管理主菜单
+     *
+     * @param player 玩家
+     */
+    public static void sendAdminMainMenu(@NotNull Player player) {
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
+
+        //TODO
+        simple.addButton(new ResponseElementButton("卸载所有游戏房间")
+                .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " UnloadArena")));
+        simple.addButton(new ResponseElementButton("重载配置")
+                .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " reload")));
+
+        player.showFormWindow(simple);
     }
 
 }

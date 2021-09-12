@@ -1,0 +1,8 @@
+title: 钻石剑
+item: "276:0"
+count: 1
+subTitle: (4个钻石 x1)
+pos: 9
+cost:
+  - "264:0x4"
+lore: []

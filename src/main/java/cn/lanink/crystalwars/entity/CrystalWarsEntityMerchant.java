@@ -8,7 +8,6 @@ import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.InventoryType;
@@ -33,9 +32,6 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     private final Supply supply;
 
     @Getter
-    private FormWindowSimple parentGui;
-
-    @Getter
     private AdvancedInventory indexInventory;
 
     public CrystalWarsEntityMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull Supply supply) {
@@ -44,7 +40,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         this.supply = supply;
         this.setMaxHealth(100);
         this.setHealth(100F);
-        this.setNameTag(team.getColor() + "村民商店");
+        this.setNameTag(team.getStringColor() + "村民商店");
         generateMerchantInventory();
         generateGui();
     }
@@ -58,20 +54,26 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     /**
      * 生成 Gui 界面
      */
-    public void generateGui() {
+    public AdvancedFormWindowSimple generateGui() {
         AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.getNameTag());
-        this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
-            advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
-                player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
+        if (this.supply.getSupplyConfig() != null) {
+            this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
+                advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
+                    player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
+                });
             });
-        });
-        this.parentGui = advancedFormWindowSimple;
+        }
+        return advancedFormWindowSimple;
     }
 
     /**
      * 生成 背包 界面
      */
     public void generateMerchantInventory() {
+        if (this.supply.getSupplyConfig() == null) {
+            this.indexInventory = new AdvancedInventory(this, "null");
+            return;
+        }
         this.indexInventory = this.supply.getSupplyConfig().getDefaultPageConfig().generateWindow(this);
     }
 
@@ -108,14 +110,14 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putBoolean("allowOtherTeamUse", allowOtherTeamUse);
+        this.namedTag.putBoolean("allowOtherTeamUse", this.allowOtherTeamUse);
     }
 
     /**
      * 将商店发给发送给玩家 win10玩家是箱子商店，pe玩家是GUI界面
      * @param player 玩家
      */
-    public void sendSupplyWindow(Player player) {
+    public void sendSupplyWindow(@NotNull Player player) {
         if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
             int id = player.getWindowId(this.indexInventory);
             if (id == -1) {
@@ -125,9 +127,11 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
                 inventory.open(player);
             }
         }else {
-            player.showFormWindow(this.parentGui);
+            player.showFormWindow(this.generateGui());
         }
     }
+
+
 
 
 }

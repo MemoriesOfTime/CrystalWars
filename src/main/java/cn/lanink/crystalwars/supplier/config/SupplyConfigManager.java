@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.supplier.config;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.nukkit.item.Item;
 import lombok.Getter;
 
 import java.io.File;
@@ -20,7 +21,10 @@ public class SupplyConfigManager {
      * 需要根据队伍更改的物品（颜色）
      * 羊毛，玻璃块，粘土块，地毯
      */
-    public static final List<Integer> TEAM_CHANGE_ITEM_IDS = Arrays.asList(35, 95, 159, 171);
+    public static final List<Integer> TEAM_CHANGE_ITEM_IDS = Arrays.asList(
+            35, 95, 159, 171,
+            Item.LEATHER_CAP, Item.LEATHER_TUNIC, Item.LEATHER_PANTS, Item.LEATHER_BOOTS //皮革甲
+    );
 
     @Getter
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
@@ -34,10 +38,18 @@ public class SupplyConfigManager {
         if(!dir.exists()) {
             dir.mkdirs();
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordDiamond.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordIron.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordStone.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/wool.yml");
+
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageDefault.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageQuickBuy.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageTool.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageWeapon.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageFood.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageArmor.yml");
         }
         final File[] files = dir.listFiles();
         if(files == null) {
@@ -53,8 +65,7 @@ public class SupplyConfigManager {
                 });
         CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
         if(CrystalWars.debug) {
-            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getPageConfigMap());
-            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP.get("DefaultSupply").getItemConfigMap());
+            CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP);
         }
     }
 

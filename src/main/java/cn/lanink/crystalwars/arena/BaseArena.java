@@ -97,7 +97,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
-        Watchdog.add(this);
+        Watchdog.addArena(this);
     }
 
     public final void setGameMode(String gameMode) {
@@ -119,7 +119,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     public void initData() {
         this.waitTime = this.getSetWaitTime();
         this.gameTime = this.getSetGameTime();
-        this.victoryTime = 10;
+        this.victoryTime = this.getSetVictoryTime();
 
         this.playerDataMap.clear();
 
@@ -132,10 +132,15 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public boolean canJoin() {
-        return (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED || this.getArenaStatus() == ArenaStatus.WAIT);
+        return (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED || this.getArenaStatus() == ArenaStatus.WAIT) &&
+                this.getPlayerCount() < this.getMaxPlayers();
     }
 
     public boolean joinRoom(@NotNull Player player) {
+        if (!this.canJoin() || this.getPlayerDataMap().containsKey(player)) {
+            return false;
+        }
+
         if (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED) {
             this.setArenaStatus(ArenaStatus.WAIT);
             ArenaTickTask.addArena(this);
@@ -165,11 +170,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             Tips.removeTipsConfig(this.getGameWorldName(), player);
         }
 
-        PlayerData playerData = this.getPlayerData(player);
+        PlayerData playerData = this.getPlayerDataMap().remove(player);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         playerData.restoreBeforePlayerData();
-        this.getPlayerDataMap().remove(player);
         return true;
     }
 
@@ -206,7 +210,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             ArenaTickTask.removeArena(this);
             return;
         }else {
-            if (this.getPlayerDataMap().size() >= this.getMinPlayers()) {
+            if (this.getPlayerCount() >= this.getMinPlayers()) {
                 this.waitTime--;
                 if (this.waitTime <= 0) {
                     this.gameStart();
@@ -221,13 +225,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            if (this.getPlayerDataMap().size() >= this.getMinPlayers()) {
-                list.add("开始倒计时: " + Utils.formatCountdown(this.waitTime));
+            if (this.getPlayerCount() >= this.getMinPlayers()) {
+                list.add("§f◎ §f开始倒计时:  §a" + Utils.formatCountdown(this.waitTime));
             }else {
-                list.add("等待玩家加入中...");
+                list.add("§f◎ §c等待玩家加入中...");
             }
             list.add(Utils.getSpace(list));
-            list.add("玩家数量: " + getPlayerDataMap().size() + "/" + this.getMaxPlayers());
+            list.add("§f◎  §a" + this.getPlayerCount() + "§e/§a" + this.getMinPlayers() + " §8(§6Max:§a" + this.getMaxPlayers() + "§8)");
             list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
@@ -245,9 +249,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
-                    entry.getValue().setWaitSpawnTime(entry.getValue().getWaitSpawnTime() - 1);
-                    if (entry.getValue().getWaitSpawnTime() <= 0) {
+                    int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
+                    entry.getValue().setWaitSpawnTime(waitSpawnTime);
+                    if (waitSpawnTime <= 0) {
+                        entry.getKey().sendTitle("", ""); //清掉之前的内容
                         this.playerRespawn(entry.getKey());
+                    }else {
+                        entry.getKey().sendTitle("", "§e" + waitSpawnTime + "§a秒后复活！");
                     }
                 }else {
                     entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
@@ -257,18 +265,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //计分板
             LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
-            list.add("§f◎  §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
+            list.add("§f◎ §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
             list.add(Utils.getSpace(list));
             for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
-                if (this.isTeamCrystalSurviving(e1.getKey())) {
-                    list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()));
+                List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
+                if (this.isTeamCrystalSurviving(e1.getKey()) || !survivingPlayers.isEmpty()) {
+                    list.add("§f◎ -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()) + " §8(§a" + survivingPlayers.size() + "§8)");
                 }else {
-                    List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
-                    if (survivingPlayers.isEmpty()) {
-                        list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
-                    }else {
-                        list.add("§f◎  -" + Utils.getShowTeam(e1.getKey()) + "§f- §e存活:§a" + survivingPlayers.size());
-                    }
+                    list.add("§f◎ -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
                 }
             }
             list.add(Utils.getSpace(list));
@@ -277,8 +281,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         //资源生成
         for (ResourceGeneration resourceGeneration : this.getResourceGenerations()) {
-            if ((this.getGameWorld().isDaytime() && resourceGeneration.getConfig().isCanSpawnOnDay()) ||
-                    (!this.getGameWorld().isDaytime() && resourceGeneration.getConfig().isCanSpawnOnNight())) {
+            if (resourceGeneration.canSpawn(this)) {
                 resourceGeneration.setCoolDownTime(resourceGeneration.getCoolDownTime() - 1);
                 if (resourceGeneration.getCoolDownTime() <= 0) {
                     resourceGeneration.setCoolDownTime(resourceGeneration.getConfig().getSpawnTime());
@@ -353,9 +356,20 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 }
             }
 
-            //TODO 胜利提示
-            LinkedList<String> list = new LinkedList<>();
+            if (this.victoryTeam == Team.NULL) {
+                entry.getKey().sendTip("§e胜利队伍: §f平局§e！");
+            }else {
+                entry.getKey().sendTip("§e胜利队伍: " + Utils.getShowTeam(this.victoryTeam) + "§e！");
+            }
 
+            LinkedList<String> list = new LinkedList<>();
+            list.add(Utils.getSpace(list));
+            if (this.victoryTeam == Team.NULL) {
+                list.add("§f◎ §e胜利队伍: §f平局§e！");
+            }else {
+                list.add("§f◎ §e胜利队伍: " + Utils.getShowTeam(this.victoryTeam) + "§e！");
+            }
+            list.add(Utils.getSpace(list));
             ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
         }
 
@@ -436,6 +450,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             text.close();
         }
 
+        this.initData();
+
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
             this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
             if (CrystalWars.debug) {
@@ -458,7 +474,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     }
                 }else {
                     this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
-                    this.crystalWars.unloadArena(getGameWorldName());
+                    Server.getInstance().getScheduler().scheduleTask(
+                            this.crystalWars,
+                            () -> this.crystalWars.unloadArena(getGameWorldName())
+                    );
                 }
             }, CrystalWars.EXECUTOR);
         }
@@ -468,10 +487,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
      * 分配玩家队伍
      */
     public void assignTeam() {
-        int baseCount = this.getPlayerDataMap().size() / (Team.values().length - 1);
-        if (baseCount < 1) {
-            baseCount = 1;
-        }
+        ArrayList<Team> teams = new ArrayList<>(Arrays.asList(Team.values()));
+        teams.remove(Team.NULL);
+
+        int baseCount = Math.max(1, this.getPlayerCount() / teams.size());
 
         HashMap<Team, LinkedList<Player>> teamPlayers = new HashMap<>();
         for (Team team : Team.values()) {
@@ -520,8 +539,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
 
             if (cache != null) {
-                ArrayList<Team> teams = new ArrayList<>(Arrays.asList(Team.values()));
-                teams.remove(Team.NULL);
                 teamPlayers.get(teams.get(CrystalWars.RANDOM.nextInt(teams.size()))).add(cache);
             }
         }
@@ -542,6 +559,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
      * @param player 玩家
      */
     public void playerDeath(@NotNull Player player) {
+        player.sendTitle("§c死亡");
         PlayerData playerData = this.getPlayerData(player);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -551,8 +569,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }else {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
         }
-        playerData.setDeathCount(playerData.getDeathCount() + 1);
-        //TODO 可能需要调整
+        playerData.addDeathCount();
         playerData.setWaitSpawnTime(5);
         player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
     }
@@ -569,6 +586,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
+        player.getInventory().setHelmet(Utils.getTeamColorItem(Item.get(Item.LEATHER_CAP), playerData.getTeam()));
+        player.getInventory().setChestplate(Utils.getTeamColorItem(Item.get(Item.LEATHER_TUNIC), playerData.getTeam()));
+        player.getInventory().addItem(Item.get(Item.WOODEN_SWORD));
+
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);
         player.setHealth(player.getMaxHealth());
@@ -578,6 +600,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     public boolean isPlaying(@NotNull Player player) {
         return this.playerDataMap.containsKey(player);
+    }
+
+    public int getPlayerCount() {
+        return this.getPlayerDataMap().size();
     }
 
     public PlayerData getPlayerData(@NotNull Player player) {

@@ -1,6 +1,10 @@
 package cn.lanink.crystalwars.command.admin;
 
 import cn.lanink.crystalwars.command.BaseCommand;
+import cn.lanink.crystalwars.command.admin.sub.CreateArena;
+import cn.lanink.crystalwars.command.admin.sub.Reload;
+import cn.lanink.crystalwars.command.admin.sub.UnloadArena;
+import cn.lanink.crystalwars.form.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -12,18 +16,30 @@ public class AdminCommand extends BaseCommand {
     public AdminCommand(String name, String[] aliases) {
         super(name, "CrystalWars 管理命令");
         this.setAliases(aliases);
+        this.setPermission("crystalwars.command.admin");
 
         //TODO
+        this.addSubCommand(new CreateArena("CreateArena"));
+
+        this.addSubCommand(new UnloadArena("UnloadArena"));
+        this.addSubCommand(new Reload("reload"));
 
     }
 
     @Override
     public void sendHelp(CommandSender sender) {
+        sender.sendMessage(
+                "§a/" + this.getName() + " §e打开GUI\n" +
+                        "§a/" + this.getName() + " CreateArena <地图名称> §e创建新的游戏房间\n" +
+                        "§a/" + this.getName() + " UnloadArena <游戏房间名称> §e卸载指定游戏房间\n" +
+                        "§a/" + this.getName() + " UnloadArena §e卸载所有游戏房间\n" +
+                        "§a/" + this.getName() + " reload §e重载插件配置\n"
 
+        );
     }
 
     @Override
     public void sendGUI(Player player) {
-
+        FormHelper.sendAdminMainMenu(player);
     }
 }

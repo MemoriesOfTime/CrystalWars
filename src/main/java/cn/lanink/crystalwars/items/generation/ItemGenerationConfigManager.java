@@ -28,6 +28,7 @@ public class ItemGenerationConfigManager {
         File dataFolder = new File(CRYSTAL_WARS.getDataFolder(), "/ItemGeneration/");
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
+            CRYSTAL_WARS.saveResource("ItemGeneration/Diamond.yml");
             CRYSTAL_WARS.saveResource("ItemGeneration/GoldIngot.yml");
             CRYSTAL_WARS.saveResource("ItemGeneration/IronIngot.yml");
         }

@@ -37,13 +37,21 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                         EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                         if (entityDamageByEntityEvent.getDamager() instanceof Player) {
                              PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
-                             damagerData.setKillCount(damagerData.getKillCount() + 1);
+                             damagerData.addKillCount();
                         }
                     }
                     arena.playerDeath(player);
-                    event.setDamage(0);
+                    for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
+                        event.setDamage(0, modifier);
+                    }
                 }
             } else {
+                if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                    player.teleport(arena.getWaitSpawn());
+                }
+                for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
+                    event.setDamage(0, modifier);
+                }
                 event.setCancelled(true);
             }
         }else if (event.getEntity() instanceof CrystalWarsEntityEndCrystal) {

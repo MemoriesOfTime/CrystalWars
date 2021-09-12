@@ -1,6 +1,7 @@
-# 道具页面
+# 快速购买 默认页面
 ---
-title: 道具
+title: 快速购买
+default: true
 linkItems:
   "288:0":
     pos: "0"
@@ -32,3 +33,4 @@ linkItems:
     afterClick: "399:0"
 items:
   - goldenApple
+  - wool

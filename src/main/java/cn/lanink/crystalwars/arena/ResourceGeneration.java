@@ -24,4 +24,12 @@ public class ResourceGeneration {
         this.vector3 = vector3;
     }
 
+    public boolean canSpawn(BaseArena arena) {
+        if (arena.isOvertime() && !this.getConfig().isCanSpawnOnOvertime()) {
+            return false;
+        }
+        return (arena.getGameWorld().isDaytime() && this.getConfig().isCanSpawnOnDay()) ||
+                (!arena.getGameWorld().isDaytime() && this.getConfig().isCanSpawnOnNight());
+    }
+
 }

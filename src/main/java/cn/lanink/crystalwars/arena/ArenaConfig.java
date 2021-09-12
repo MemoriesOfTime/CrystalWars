@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.items.generation.ItemGenerationConfig;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
@@ -25,9 +26,12 @@ import java.util.Map;
 @Getter
 public class ArenaConfig implements ISaveConfig {
 
+    private Config config;
+
     private final int setWaitTime;
     private final int setGameTime;
     private final int setOvertime;
+    private final int setVictoryTime;
 
     private final int minPlayers;
     private final int maxPlayers;
@@ -40,15 +44,22 @@ public class ArenaConfig implements ISaveConfig {
     private final Supply supply;
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
+        this(config, false);
+    }
+
+    public ArenaConfig(@NotNull Config config, boolean isSet) throws ArenaLoadException {
         try {
-            this.setWaitTime = config.getInt("waitTime");
-            this.setGameTime = config.getInt("gameTime");
-            this.setOvertime = config.getInt("overtime");
+            this.config = config;
 
-            this.minPlayers = config.getInt("minPlayers");
-            this.maxPlayers = config.getInt("maxPlayers");
+            this.setWaitTime = config.getInt("waitTime", 60);
+            this.setGameTime = config.getInt("gameTime", 600);
+            this.setOvertime = config.getInt("overtime", 180);
+            this.setVictoryTime = config.getInt("victoryTime", 10);
 
-            this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn"));
+            this.minPlayers = config.getInt("minPlayers", 2);
+            this.maxPlayers = config.getInt("maxPlayers", 16);
+
+            this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn", "0:0:0"));
 
             Map<String, Map<String, Double>> spawn = config.get("spawn", new HashMap<>());
             for (Map.Entry<String, Map<String, Double>> entry : spawn.entrySet()) {
@@ -70,21 +81,24 @@ public class ArenaConfig implements ISaveConfig {
 
             for (Map map : config.getMapList("resourceGenerations")) {
                 try {
+                    String name = (String) map.get("itemGenerationConfigName");
+                    ItemGenerationConfig generationConfig = ItemGenerationConfigManager.getItemGenerationConfig(name);
+                    if (generationConfig == null) {
+                        throw new RuntimeException("资源生成点配置: " + name + " 不存在！");
+                    }
                     this.resourceGenerations.add(
-                            new ResourceGeneration(
-                                    ItemGenerationConfigManager.getItemGenerationConfig((String) map.get("itemGenerationConfigName")),
-                                    Utils.mapToVector3(map)
-                            )
+                            new ResourceGeneration(generationConfig, Utils.mapToVector3(map))
                     );
                 } catch (Exception e) {
-                    CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误：", e);
+                    CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误: ", e);
                 }
             }
 
-            if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(config.getString("supply"))) {
-                CrystalWars.getInstance().getLogger().error("加载商店时出现错误：无 " + config.getString("supply") + " 商店供给配置！");
+            String supplyName = config.getString("supply");
+            if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(supplyName) && !isSet) {
+                CrystalWars.getInstance().getLogger().error("加载商店时出现错误：无 " + supplyName + " 商店供给配置！");
             }
-            this.supply = new Supply(SupplyConfigManager.getSupplyConfig(config.getString("supply")));
+            this.supply = new Supply(SupplyConfigManager.getSupplyConfig(supplyName));
 
             if (CrystalWars.debug) {
                 CrystalWars.getInstance().getLogger().info("[debug] 资源生成点:" + this.resourceGenerations);
@@ -108,14 +122,27 @@ public class ArenaConfig implements ISaveConfig {
     }
 
     @Override
+    public void save() {
+        this.saveConfig(this.config);
+    }
+
+    @Override
     public Map<String, Object> toSaveMap() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("waitTime", this.getSetWaitTime());
         map.put("gameTime", this.getSetGameTime());
+        map.put("overtime", this.getSetOvertime());
+        map.put("victoryTime", this.getSetVictoryTime());
+
+        map.put("minPlayers", this.getMinPlayers());
+        map.put("maxPlayers", this.getMaxPlayers());
 
         map.put("waitSpawn", Utils.vector3ToString(this.getWaitSpawn()));
+
         map.put("spawn", this.getSavePosMap(this.getTeamSpawn()));
         map.put("crystal", this.getSavePosMap(this.getTeamCrystal()));
+        map.put("shop", this.getSavePosMap(this.getTeamShop()));
+
         return map;
     }
 

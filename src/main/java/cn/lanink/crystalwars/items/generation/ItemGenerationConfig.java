@@ -33,6 +33,10 @@ public class ItemGenerationConfig {
      * 可以在晚上生成
      */
     private final boolean canSpawnOnNight;
+    /**
+     * 可以在加时赛生成
+     */
+    private final boolean canSpawnOnOvertime;
 
     public ItemGenerationConfig(@NotNull String name, @NotNull Config config) {
         this.name = name;
@@ -47,6 +51,7 @@ public class ItemGenerationConfig {
 
         this.canSpawnOnDay = config.getBoolean("canSpawnOnDay");
         this.canSpawnOnNight = config.getBoolean("canSpawnOnNight");
+        this.canSpawnOnOvertime = config.getBoolean("canSpawnOnOvertime");
     }
 
     public Item getItem() {
@@ -54,6 +59,10 @@ public class ItemGenerationConfig {
     }
 
     public void save() {
+        this.save(false);
+    }
+
+    public void save(boolean async) {
         this.config.set("itemID", this.getItem().getId() + ":" + this.getItem().getDamage());
 
         this.config.set("showName", this.getItem().getCustomName());
@@ -63,6 +72,9 @@ public class ItemGenerationConfig {
 
         this.config.set("canSpawnOnDay", this.isCanSpawnOnDay());
         this.config.set("canSpawnOnNight", this.isCanSpawnOnNight());
+        this.config.set("canSpawnOnOvertime", this.isCanSpawnOnOvertime());
+
+        this.config.save(async);
     }
 
 }
