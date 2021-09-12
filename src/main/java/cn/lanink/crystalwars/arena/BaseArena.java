@@ -253,10 +253,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     entry.getValue().setWaitSpawnTime(waitSpawnTime);
                     if (waitSpawnTime <= 0) {
                         //清掉之前的内容
-                        entry.getKey().sendTitle("", "");
+                        entry.getKey().sendTitle("§a已复活!", "", 5, 15, 10);
                         this.playerRespawn(entry.getKey());
                     }else {
-                        entry.getKey().sendTitle("", "§e" + waitSpawnTime + "§a秒后复活！");
+                        entry.getKey().sendTitle("§c死亡", "§a将在§e" + waitSpawnTime + "§a秒后复活!", 0, 30, 10);
                     }
                 }else {
                     entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
@@ -331,7 +331,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //加时赛
             if (this.isOvertime()) {
                 this.setArenaStatus(ArenaStatus.VICTORY);
-                this.victoryTeam = survivingTeam;
+                this.victoryTeam = Team.NULL;
             }else {
                 this.isOvertime = true;
                 this.gameTime = this.getSetOvertime();
