@@ -252,7 +252,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
                     entry.getValue().setWaitSpawnTime(waitSpawnTime);
                     if (waitSpawnTime <= 0) {
-                        entry.getKey().sendTitle("", ""); //清掉之前的内容
+                        //清掉之前的内容
+                        entry.getKey().sendTitle("", "");
                         this.playerRespawn(entry.getKey());
                     }else {
                         entry.getKey().sendTitle("", "§e" + waitSpawnTime + "§a秒后复活！");
@@ -289,21 +290,23 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     item.setCount(resourceGeneration.getConfig().getSpawnCount());
                     this.getGameWorld().dropItem(resourceGeneration.getVector3(), item);
                 }
-                EntityText entityText = this.resourceGenerationText.get(resourceGeneration);
-                if (entityText == null) {
-                    entityText = new EntityText(
-                            Position.fromObject(resourceGeneration.getVector3(), this.getGameWorld()), "");
-                    entityText.spawnToAll();
-                    this.resourceGenerationText.put(resourceGeneration, entityText);
+                if (!"".equals(resourceGeneration.getConfig().getShowName().trim())) {
+                    EntityText entityText = this.resourceGenerationText.get(resourceGeneration);
+                    if (entityText == null) {
+                        entityText = new EntityText(
+                                Position.fromObject(resourceGeneration.getVector3(), this.getGameWorld()), "");
+                        entityText.spawnToAll();
+                        this.resourceGenerationText.put(resourceGeneration, entityText);
+                    }
+                    entityText.setNameTag(resourceGeneration.getConfig().getShowName()
+                            .replace("%progressBar%",
+                                    Utils.getProgressBar(
+                                            resourceGeneration.getConfig().getSpawnTime() - resourceGeneration.getCoolDownTime(),
+                                            resourceGeneration.getConfig().getSpawnTime()
+                                    )
+                            )
+                    );
                 }
-                entityText.setNameTag(resourceGeneration.getConfig().getShowName()
-                        .replace("%progressBar%",
-                                Utils.getProgressBar(
-                                        resourceGeneration.getConfig().getSpawnTime() - resourceGeneration.getCoolDownTime(),
-                                        resourceGeneration.getConfig().getSpawnTime()
-                                )
-                        )
-                );
             }
         }
 
@@ -311,6 +314,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         int count = 0;
         Team survivingTeam = Team.NULL;
         for (Team team : this.teamEntityEndCrystalMap.keySet()) {
+            //队伍中的玩家都离开游戏后炸掉水晶
+            if (this.getPlayers(team).isEmpty() && this.isTeamCrystalSurviving(team)) {
+                this.teamEntityEndCrystalMap.get(team).explode();
+                continue;
+            }
             if ((this.isTeamCrystalSurviving(team) && !this.getPlayers(team).isEmpty()) || !this.getSurvivingPlayers(team).isEmpty()) {
                 count++;
                 survivingTeam = team;
