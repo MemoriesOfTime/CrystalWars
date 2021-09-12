@@ -31,3 +31,6 @@ linkItems:
     link: "pageTool"
     afterClick: "399:0"
 items:
+  - swordStone
+  - swordIron
+  - swordDiamond

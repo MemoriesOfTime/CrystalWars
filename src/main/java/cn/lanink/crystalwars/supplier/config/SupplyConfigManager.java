@@ -38,7 +38,11 @@ public class SupplyConfigManager {
         if(!dir.exists()) {
             dir.mkdirs();
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordDiamond.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordIron.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordStone.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/wool.yml");
+
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageQuickBuy.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");

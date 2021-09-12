@@ -5,7 +5,7 @@ itemID: "265:0"
 #生成点显示名称（浮空字）
 showName: "铁锭生成点"
 #生成间隔（秒）
-spawnTime(s): 1
+spawnTime(s): 3
 #生成数量
 spawnCount: 1
 #可以在白天生成

@@ -1,0 +1,8 @@
+title: 铁剑
+item: "267:0"
+count: 1
+subTitle: (6个金锭 x1)
+pos: 9
+cost:
+  - "266:0x6"
+lore: []

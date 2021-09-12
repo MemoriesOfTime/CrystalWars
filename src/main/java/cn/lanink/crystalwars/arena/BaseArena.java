@@ -580,6 +580,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
+        player.getInventory().setHelmet(Utils.getTeamColorItem(Item.get(Item.LEATHER_CAP), playerData.getTeam()));
+        player.getInventory().setChestplate(Utils.getTeamColorItem(Item.get(Item.LEATHER_TUNIC), playerData.getTeam()));
+        player.getInventory().addItem(Item.get(Item.WOODEN_SWORD));
+
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);
         player.setHealth(player.getMaxHealth());
