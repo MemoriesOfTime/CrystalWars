@@ -450,6 +450,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             text.close();
         }
 
+        this.initData();
+
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
             this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
             if (CrystalWars.debug) {
