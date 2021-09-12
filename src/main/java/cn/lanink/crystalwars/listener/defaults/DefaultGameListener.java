@@ -23,7 +23,7 @@ import cn.nukkit.level.Level;
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseArena> {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
@@ -31,12 +31,18 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             if (arena == null) {
                 return;
             }
-            if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME) {
+            PlayerData playerData = arena.getPlayerData(player);
+            if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME &&
+                    playerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
                 if (event.getFinalDamage() + 1 > player.getHealth()) {
                     if (event instanceof EntityDamageByEntityEvent) {
                         EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                         if (entityDamageByEntityEvent.getDamager() instanceof Player) {
                              PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
+                             if (damagerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
+                                 event.setCancelled(true);
+                                 return;
+                             }
                              damagerData.addKillCount();
                         }
                     }
@@ -47,7 +53,11 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 }
             } else {
                 if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                    player.teleport(arena.getWaitSpawn());
+                    if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME) {
+                        player.teleport(arena.getTeamSpawn(playerData.getTeam()));
+                    }else {
+                        player.teleport(arena.getWaitSpawn());
+                    }
                 }
                 for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
                     event.setDamage(0, modifier);
@@ -99,7 +109,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         BaseArena baseArena = this.getListenerRoom(player.getLevel());
@@ -111,6 +121,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         BaseArena baseArena = this.getListenerRoom(player.getLevel());

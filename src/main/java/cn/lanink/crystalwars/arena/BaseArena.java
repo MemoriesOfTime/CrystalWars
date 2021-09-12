@@ -571,7 +571,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         PlayerData playerData = this.getPlayerData(player);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
-        player.setGamemode(Player.VIEW);
+        player.setGamemode(Player.SPECTATOR);
         if (this.isTeamCrystalSurviving(playerData.getTeam())) {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
         }else {
