@@ -44,6 +44,9 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     event.setDamage(0);
                 }
             } else {
+                if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                    player.teleport(arena.getWaitSpawn());
+                }
                 event.setCancelled(true);
             }
         }else if (event.getEntity() instanceof CrystalWarsEntityEndCrystal) {
