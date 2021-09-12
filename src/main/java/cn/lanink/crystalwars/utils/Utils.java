@@ -81,9 +81,8 @@ public class Utils {
     public static String getProgressBar(int now, int max) {
         if (max <= 1) {
             max = 10;
-            now = max;
         }
-        int needShow = now / (max/10);
+        int needShow = Math.max(1, now) / (max/10);
         StringBuilder string = new StringBuilder();
         for (int j = 0; j < 10; j++) {
             if (j < needShow) {
