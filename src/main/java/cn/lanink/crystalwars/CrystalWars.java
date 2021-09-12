@@ -10,6 +10,7 @@ import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.MetricsLite;
+import cn.lanink.crystalwars.utils.RsNpcVariable;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.inventory.ui.listener.InventoryListener;
 import cn.lanink.gamecore.listener.BaseGameListener;
@@ -19,6 +20,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import com.google.common.base.Preconditions;
+import com.smallaswater.npc.variable.VariableManage;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -154,6 +156,14 @@ public class CrystalWars extends PluginBase {
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
         this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
+
+        //注册RsNpcX变量
+        try {
+            Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
+            VariableManage.addVariableV2("CrystalWars", RsNpcVariable.class);
+        }catch (Exception ignored) {
+
+        }
 
         try {
             new MetricsLite(this, 12737);

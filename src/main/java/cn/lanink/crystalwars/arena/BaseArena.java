@@ -559,6 +559,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
      * @param player 玩家
      */
     public void playerDeath(@NotNull Player player) {
+        player.sendTitle("§c死亡");
         PlayerData playerData = this.getPlayerData(player);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -569,7 +570,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
         }
         playerData.setDeathCount(playerData.getDeathCount() + 1);
-        //TODO 可能需要调整
         playerData.setWaitSpawnTime(5);
         player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
     }

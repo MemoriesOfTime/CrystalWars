@@ -41,11 +41,16 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                         }
                     }
                     arena.playerDeath(player);
-                    event.setDamage(0);
+                    for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
+                        event.setDamage(0, modifier);
+                    }
                 }
             } else {
                 if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                     player.teleport(arena.getWaitSpawn());
+                }
+                for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
+                    event.setDamage(0, modifier);
                 }
                 event.setCancelled(true);
             }
