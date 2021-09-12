@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.items.generation.ItemGenerationConfig;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
@@ -80,14 +81,16 @@ public class ArenaConfig implements ISaveConfig {
 
             for (Map map : config.getMapList("resourceGenerations")) {
                 try {
+                    String name = (String) map.get("itemGenerationConfigName");
+                    ItemGenerationConfig generationConfig = ItemGenerationConfigManager.getItemGenerationConfig(name);
+                    if (generationConfig == null) {
+                        throw new RuntimeException("资源生成点配置: " + name + " 不存在！");
+                    }
                     this.resourceGenerations.add(
-                            new ResourceGeneration(
-                                    ItemGenerationConfigManager.getItemGenerationConfig((String) map.get("itemGenerationConfigName")),
-                                    Utils.mapToVector3(map)
-                            )
+                            new ResourceGeneration(generationConfig, Utils.mapToVector3(map))
                     );
                 } catch (Exception e) {
-                    CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误：", e);
+                    CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误: ", e);
                 }
             }
 
