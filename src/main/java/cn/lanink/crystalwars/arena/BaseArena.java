@@ -249,9 +249,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
-                    entry.getValue().setWaitSpawnTime(entry.getValue().getWaitSpawnTime() - 1);
-                    if (entry.getValue().getWaitSpawnTime() <= 0) {
+                    int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
+                    entry.getValue().setWaitSpawnTime(waitSpawnTime);
+                    if (waitSpawnTime <= 0) {
+                        entry.getKey().sendTitle("", ""); //清掉之前的内容
                         this.playerRespawn(entry.getKey());
+                    }else {
+                        entry.getKey().sendTitle("", "§e" + waitSpawnTime + "§a秒后复活！");
                     }
                 }else {
                     entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
