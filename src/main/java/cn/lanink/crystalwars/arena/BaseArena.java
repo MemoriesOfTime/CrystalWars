@@ -569,7 +569,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }else {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
         }
-        playerData.setDeathCount(playerData.getDeathCount() + 1);
+        playerData.addDeathCount();
         playerData.setWaitSpawnTime(5);
         player.getLevel().addSound(player, Sound.GAME_PLAYER_HURT);
     }

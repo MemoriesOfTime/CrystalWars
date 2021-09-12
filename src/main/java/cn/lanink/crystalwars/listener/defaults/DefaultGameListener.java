@@ -37,7 +37,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                         EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                         if (entityDamageByEntityEvent.getDamager() instanceof Player) {
                              PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
-                             damagerData.setKillCount(damagerData.getKillCount() + 1);
+                             damagerData.addKillCount();
                         }
                     }
                     arena.playerDeath(player);
