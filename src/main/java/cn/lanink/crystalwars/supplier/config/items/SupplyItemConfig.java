@@ -1,7 +1,9 @@
 package cn.lanink.crystalwars.supplier.config.items;
 
+import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author iGxnon
@@ -54,6 +57,18 @@ public class SupplyItemConfig {
         this.item.setCount(config.getInt("count"));
         this.item.setLore(this.lore.toArray(new String[0]));
         this.item.setCustomName(this.title);
+
+        for (Map map : config.getMapList("enchantment")) {
+            try {
+                int id = (int) map.getOrDefault("id", 17);
+                int level = (int) map.getOrDefault("level", 1);
+                Enchantment enchantment = Enchantment.get(id);
+                enchantment.setLevel(level);
+                this.item.addEnchantment(enchantment);
+            } catch (Exception e) {
+                CrystalWars.getInstance().getLogger().error("加载物品附魔时出现错误！物品：" + this.fileName, e);
+            }
+        }
     }
 
     public Item getItem() {

@@ -1,0 +1,12 @@
+title: 铁剑(击退一)
+item: "267:0"
+count: 1
+subTitle: (20个金锭 x1)
+pos: 9
+cost:
+  - "266:0x1"
+lore:
+  - "击退一附魔的铁剑！"
+enchantment:
+  - id: 12
+    level: 1
