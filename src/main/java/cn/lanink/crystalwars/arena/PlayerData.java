@@ -3,9 +3,12 @@ package cn.lanink.crystalwars.arena;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * @author lt_name
@@ -36,6 +39,8 @@ public class PlayerData {
     private Position beforePos;
     private int beforeGameMode;
     private int beforeFoodLevel;
+    //TODO 使用文件保存，防止因崩服导致的数据丢失
+    private Map<Integer, Item> enderChestContents;
 
     /**
      * 保存玩家加入房间前的一些数据
@@ -45,6 +50,8 @@ public class PlayerData {
         this.beforeGameMode = this.player.getGamemode();
         this.beforeFoodLevel = this.player.getFoodData().getLevel();
         SavePlayerInventory.save(CrystalWars.getInstance(), this.player);
+        this.enderChestContents = this.player.getEnderChestInventory().getContents();
+        this.player.getEnderChestInventory().clearAll();
     }
 
     /**
@@ -55,6 +62,8 @@ public class PlayerData {
         this.player.teleport(this.beforePos);
         this.player.setGamemode(this.beforeGameMode);
         this.player.getFoodData().setLevel(this.beforeFoodLevel);
+        this.player.getEnderChestInventory().clearAll();
+        this.player.getEnderChestInventory().setContents(this.enderChestContents);
     }
 
     public void addKillCount() {
