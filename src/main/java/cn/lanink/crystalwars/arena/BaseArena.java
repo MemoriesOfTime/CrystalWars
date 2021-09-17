@@ -4,6 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.EntityText;
+import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -158,6 +159,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
+        player.getInventory().setItem(8, ItemManager.get(player, 10000));
         //等待游戏开始时使用冒险模式
         player.setGamemode(Player.ADVENTURE);
 

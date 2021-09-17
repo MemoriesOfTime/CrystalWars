@@ -4,8 +4,10 @@ import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
+import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.block.BlockBreakEvent;
@@ -15,7 +17,9 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
+import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
@@ -26,6 +30,33 @@ import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
  */
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseArena> {
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null) {
+            return;
+        }
+
+        Item item = event.getItem();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
+            switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG)) {
+                case 10000:
+                    int nowTick = Server.getInstance().getTick();
+                    int lastTick = item.getNamedTag().getInt("lastTick");
+                    if (lastTick == 0 || nowTick - lastTick > 40) {
+                        player.sendTip("再次点击退出游戏房间！");
+                        item.getNamedTag().putInt("lastTick", nowTick);
+                        event.setCancelled(true);
+                    }else {
+                        arena.quitRoom(player);
+                    }
+                default:
+                    break;
+            }
+        }
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
