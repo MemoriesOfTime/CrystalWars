@@ -445,6 +445,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
+        for (Player player : this.getGameWorld().getPlayers().values()) {
+            //不要触发传送事件，防止某些弱智操作阻止我们！
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn(), null);
+        }
+        //因为某些原因无法正常传送走玩家，就全部踹出服务器！
+        for (Player player : this.getGameWorld().getPlayers().values()) {
+            player.kick("Teleport error!");
+        }
 
         for (CrystalWarsEntityEndCrystal crystal : this.teamEntityEndCrystalMap.values()) {
             crystal.close();
@@ -465,7 +473,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             if (CrystalWars.debug) {
                 this.crystalWars.getLogger().info("§a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
             }
-            Server.getInstance().unloadLevel(this.getGameWorld());
+            Server.getInstance().unloadLevel(this.getGameWorld(), true);
             File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
             File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
             if (!backup.exists()) {
