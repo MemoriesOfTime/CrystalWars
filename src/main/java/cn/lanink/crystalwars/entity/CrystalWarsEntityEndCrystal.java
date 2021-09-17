@@ -1,7 +1,9 @@
 package cn.lanink.crystalwars.entity;
 
 import cn.lanink.crystalwars.arena.BaseArena;
+import cn.lanink.crystalwars.arena.PlayerData;
 import cn.lanink.crystalwars.arena.Team;
+import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
@@ -154,6 +156,10 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
 
             for (Player player : this.getArena().getPlayers(this.getTeam())) {
                 player.sendTitle("§c§l✘", "§e你的水晶已被§c§l破坏§r§e将§c§l无法重生");
+                PlayerData playerData = this.getArena().getPlayerData(player);
+                if (playerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
+                    player.getInventory().setItem(8, ItemManager.get(player, 10000));
+                }
             }
         }
     }

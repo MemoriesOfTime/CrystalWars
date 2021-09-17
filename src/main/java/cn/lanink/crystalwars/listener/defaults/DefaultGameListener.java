@@ -49,6 +49,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                         player.sendTip("再次点击退出游戏房间！");
                         item.getNamedTag().putInt("lastTick", nowTick);
                         event.setCancelled(true);
+                        player.getInventory().setHeldItemIndex(7);
                     }else {
                         arena.quitRoom(player);
                     }
