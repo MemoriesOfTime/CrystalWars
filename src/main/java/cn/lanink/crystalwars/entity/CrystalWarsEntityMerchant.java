@@ -6,6 +6,7 @@ import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.EntityUtils;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.Inventory;
@@ -118,7 +119,8 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      * @param player 玩家
      */
     public void sendSupplyWindow(@NotNull Player player) {
-        if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
+        if (player.getLoginChainData().getDeviceOS() == 7 && //Win10
+                !"PowerNukkit".equalsIgnoreCase(Server.getInstance().getCodename())) { //在PN会黑屏
             int id = player.getWindowId(this.indexInventory);
             if (id == -1) {
                 player.addWindow(this.indexInventory);

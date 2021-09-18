@@ -3,13 +3,18 @@ package cn.lanink.crystalwars.form;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.gamecore.form.element.ResponseElementButton;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButtonImageData;
+import cn.nukkit.form.element.ElementDropdown;
+import cn.nukkit.form.element.ElementLabel;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -126,6 +131,23 @@ public class FormHelper {
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " reload")));
 
         player.showFormWindow(simple);
+    }
+
+    public static AdvancedFormWindowCustom getPlayerSetting(@NotNull Player player) {
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(
+                "CrystalWars - 个性化设置",
+                new ArrayList<>(),
+                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_URL, "https://z3.ax1x.com/2021/09/17/4M5vz8.gif")
+        );
+
+        custom.addElement(new ElementLabel("此功能仍在开发中...")); //0
+        custom.addElement(new ElementDropdown("商店界面类型", Arrays.asList("箱子商店", "GUI商店"))); //1
+
+        custom.onResponded((formResponseCustom, player1) -> {
+           Server.getInstance().getLogger().info(formResponseCustom.toString());
+        });
+
+        return custom;
     }
 
 }

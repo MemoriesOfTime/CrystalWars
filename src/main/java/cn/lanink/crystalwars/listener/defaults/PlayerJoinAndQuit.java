@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
+import cn.lanink.crystalwars.form.FormHelper;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -32,6 +33,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
+        player.addServerSettings(FormHelper.getPlayerSetting(player));
         if (this.crystalWars.getArenas().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
                 if (player.isOnline()) {
