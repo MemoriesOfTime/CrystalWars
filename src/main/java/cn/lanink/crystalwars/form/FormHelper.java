@@ -143,7 +143,7 @@ public class FormHelper {
         );
         PlayerSettingData oldData = PlayerSettingDataManager.getData(player);
 
-        custom.addElement(new ElementLabel("CrystalWars - 个性化设置\n此功能仍在开发中...\n")); //0
+        custom.addElement(new ElementLabel("CrystalWars - 个性化设置\n")); //0
 
         int defaultOptionIndex;
         switch (oldData.getShopType()) {
@@ -162,6 +162,7 @@ public class FormHelper {
 
         custom.onResponded((formResponseCustom, cp) -> {
             PlayerSettingData data = PlayerSettingDataManager.getData(cp);
+
             switch (formResponseCustom.getDropdownResponse(1).getElementID()) {
                 case 1:
                     data.setShopType(PlayerSettingData.ShopType.CHEST);
@@ -174,6 +175,8 @@ public class FormHelper {
                     data.setShopType(PlayerSettingData.ShopType.AUTO);
                     break;
             }
+
+            data.save();
         });
 
         return custom;
