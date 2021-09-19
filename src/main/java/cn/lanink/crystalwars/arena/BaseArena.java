@@ -19,6 +19,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,6 +64,9 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Getter
     private boolean isOvertime = false;
+
+    @Getter
+    private final HashSet<Vector3> playerPlaceBlocks = new HashSet<>();
 
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
@@ -130,6 +134,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         this.victoryTeam = Team.NULL;
         this.isOvertime = false;
+
+        this.playerPlaceBlocks.clear();
     }
 
     public boolean canJoin() {

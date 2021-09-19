@@ -154,7 +154,9 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
         if (baseArena.getArenaStatus() != BaseArena.ArenaStatus.GAME) {
             event.setCancelled(true);
+            return;
         }
+        baseArena.getPlayerPlaceBlocks().add(event.getBlock().clone());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -166,7 +168,12 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
         if (baseArena.getArenaStatus() != BaseArena.ArenaStatus.GAME) {
             event.setCancelled(true);
+            return;
         }
+        if (!baseArena.getPlayerPlaceBlocks().contains(event.getBlock())) {
+            event.setCancelled(true);
+        }
+        baseArena.getPlayerPlaceBlocks().remove(event.getBlock());
     }
 
     @EventHandler(priority = EventPriority.HIGH)

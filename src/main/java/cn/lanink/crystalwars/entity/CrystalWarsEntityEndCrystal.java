@@ -96,6 +96,10 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
 
     @Override
     public boolean onUpdate(int currentTick) {
+        if (this.isClosed()) {
+            return false;
+        }
+
         if (currentTick%5 == 0) {
             for (Player player : this.getLevel().getPlayers().values()) {
                 if (this.distance(player) <= 10) {
@@ -115,6 +119,7 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
                 }
             }
         }
+
         return super.onUpdate(currentTick);
     }
 
