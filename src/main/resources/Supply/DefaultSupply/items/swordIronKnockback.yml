@@ -4,7 +4,7 @@ count: 1
 subTitle: (20个金锭 x1)
 pos: 9
 cost:
-  - "266:0x1"
+  - "266:0x20"
 lore:
   - "击退一附魔的铁剑！"
 enchantment:
