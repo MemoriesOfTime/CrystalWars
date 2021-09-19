@@ -2,14 +2,21 @@ package cn.lanink.crystalwars.form;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
+import cn.lanink.crystalwars.player.PlayerSettingData;
+import cn.lanink.crystalwars.player.PlayerSettingDataManager;
 import cn.lanink.gamecore.form.element.ResponseElementButton;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButtonImageData;
+import cn.nukkit.form.element.ElementDropdown;
+import cn.nukkit.form.element.ElementLabel;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -126,6 +133,53 @@ public class FormHelper {
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " reload")));
 
         player.showFormWindow(simple);
+    }
+
+    public static AdvancedFormWindowCustom getPlayerSetting(@NotNull Player player) {
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(
+                "CrystalWars - 个性化设置",
+                new ArrayList<>(),
+                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_URL, "https://z3.ax1x.com/2021/09/17/4M5vz8.gif")
+        );
+        PlayerSettingData oldData = PlayerSettingDataManager.getData(player);
+
+        custom.addElement(new ElementLabel("CrystalWars - 个性化设置\n")); //0
+
+        int defaultOptionIndex;
+        switch (oldData.getShopType()) {
+            case CHEST:
+                defaultOptionIndex = 1;
+                break;
+            case GUI:
+                defaultOptionIndex = 2;
+                break;
+            case AUTO:
+            default:
+                defaultOptionIndex = 0;
+                break;
+        }
+        custom.addElement(new ElementDropdown("商店界面类型", Arrays.asList("自动", "箱子商店", "GUI商店"), defaultOptionIndex)); //1
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            PlayerSettingData data = PlayerSettingDataManager.getData(cp);
+
+            switch (formResponseCustom.getDropdownResponse(1).getElementID()) {
+                case 1:
+                    data.setShopType(PlayerSettingData.ShopType.CHEST);
+                    break;
+                case 2:
+                    data.setShopType(PlayerSettingData.ShopType.GUI);
+                    break;
+                case 0:
+                default:
+                    data.setShopType(PlayerSettingData.ShopType.AUTO);
+                    break;
+            }
+
+            data.save();
+        });
+
+        return custom;
     }
 
 }

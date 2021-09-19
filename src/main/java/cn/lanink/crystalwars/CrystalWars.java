@@ -8,6 +8,7 @@ import cn.lanink.crystalwars.command.user.UserCommand;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
+import cn.lanink.crystalwars.player.PlayerSettingDataManager;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.MetricsLite;
 import cn.lanink.crystalwars.utils.RsNpcVariable;
@@ -73,6 +74,8 @@ public class CrystalWars extends PluginBase {
     private String worldBackupPath;
     @Getter
     private String arenaConfigPath;
+    @Getter
+    private String playerSettingsPath;
 
     @Getter
     private String cmdUser;
@@ -95,8 +98,9 @@ public class CrystalWars extends PluginBase {
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/LevelBackup/";
         this.arenaConfigPath = this.getDataFolder() + "/Arena/";
+        this.playerSettingsPath = this.getDataFolder() + "/PlayerSettings/";
 
-        List<String> list = Arrays.asList("Arena", "LevelBackup");
+        List<String> list = Arrays.asList("Arena", "LevelBackup", "PlayerSettings");
         for (String fileName : list) {
             File file = new File(this.getDataFolder(), fileName);
             if (!file.exists() && !file.mkdirs()) {
@@ -135,6 +139,7 @@ public class CrystalWars extends PluginBase {
 
         }
 
+        PlayerSettingDataManager.load();
         SupplyConfigManager.loadAllSupplyConfig();
         ItemGenerationConfigManager.loadAllItemGeneration();
 
@@ -186,6 +191,8 @@ public class CrystalWars extends PluginBase {
         Watchdog.clearAll();
 
         EXECUTOR.shutdown();
+
+        PlayerSettingDataManager.save();
 
         this.getLogger().info("插件卸载完毕！");
     }

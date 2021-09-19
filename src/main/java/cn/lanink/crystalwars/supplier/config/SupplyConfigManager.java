@@ -40,6 +40,7 @@ public class SupplyConfigManager {
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordDiamond.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordIron.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordIronKnockback.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordStone.yml");
             CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/wool.yml");
 

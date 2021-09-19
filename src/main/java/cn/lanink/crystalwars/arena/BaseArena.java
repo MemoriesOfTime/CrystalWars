@@ -4,6 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.EntityText;
+import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -18,6 +19,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,6 +64,9 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Getter
     private boolean isOvertime = false;
+
+    @Getter
+    private final HashSet<Vector3> playerPlaceBlocks = new HashSet<>();
 
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
@@ -129,6 +134,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         this.victoryTeam = Team.NULL;
         this.isOvertime = false;
+
+        this.playerPlaceBlocks.clear();
     }
 
     public boolean canJoin() {
@@ -158,6 +165,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
+        player.getInventory().setItem(8, ItemManager.get(player, 10000));
         //等待游戏开始时使用冒险模式
         player.setGamemode(Player.ADVENTURE);
 
@@ -252,10 +261,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
                     entry.getValue().setWaitSpawnTime(waitSpawnTime);
                     if (waitSpawnTime <= 0) {
-                        entry.getKey().sendTitle("", ""); //清掉之前的内容
+                        //清掉之前的内容
+                        entry.getKey().sendTitle("§a已复活!", "", 5, 15, 10);
                         this.playerRespawn(entry.getKey());
                     }else {
-                        entry.getKey().sendTitle("", "§e" + waitSpawnTime + "§a秒后复活！");
+                        entry.getKey().sendTitle("§c死亡", "§a将在§e" + waitSpawnTime + "§a秒后复活!", 0, 30, 10);
                     }
                 }else {
                     entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
@@ -289,21 +299,23 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     item.setCount(resourceGeneration.getConfig().getSpawnCount());
                     this.getGameWorld().dropItem(resourceGeneration.getVector3(), item);
                 }
-                EntityText entityText = this.resourceGenerationText.get(resourceGeneration);
-                if (entityText == null) {
-                    entityText = new EntityText(
-                            Position.fromObject(resourceGeneration.getVector3(), this.getGameWorld()), "");
-                    entityText.spawnToAll();
-                    this.resourceGenerationText.put(resourceGeneration, entityText);
+                if (!"".equals(resourceGeneration.getConfig().getShowName().trim())) {
+                    EntityText entityText = this.resourceGenerationText.get(resourceGeneration);
+                    if (entityText == null) {
+                        entityText = new EntityText(
+                                Position.fromObject(resourceGeneration.getVector3(), this.getGameWorld()), "");
+                        entityText.spawnToAll();
+                        this.resourceGenerationText.put(resourceGeneration, entityText);
+                    }
+                    entityText.setNameTag(resourceGeneration.getConfig().getShowName()
+                            .replace("%progressBar%",
+                                    Utils.getProgressBar(
+                                            resourceGeneration.getConfig().getSpawnTime() - resourceGeneration.getCoolDownTime(),
+                                            resourceGeneration.getConfig().getSpawnTime()
+                                    )
+                            )
+                    );
                 }
-                entityText.setNameTag(resourceGeneration.getConfig().getShowName()
-                        .replace("%progressBar%",
-                                Utils.getProgressBar(
-                                        resourceGeneration.getConfig().getSpawnTime() - resourceGeneration.getCoolDownTime(),
-                                        resourceGeneration.getConfig().getSpawnTime()
-                                )
-                        )
-                );
             }
         }
 
@@ -311,6 +323,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         int count = 0;
         Team survivingTeam = Team.NULL;
         for (Team team : this.teamEntityEndCrystalMap.keySet()) {
+            //队伍中的玩家都离开游戏后炸掉水晶
+            if (this.getPlayers(team).isEmpty() && this.isTeamCrystalSurviving(team)) {
+                this.teamEntityEndCrystalMap.get(team).explode();
+                continue;
+            }
             if ((this.isTeamCrystalSurviving(team) && !this.getPlayers(team).isEmpty()) || !this.getSurvivingPlayers(team).isEmpty()) {
                 count++;
                 survivingTeam = team;
@@ -323,7 +340,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             //加时赛
             if (this.isOvertime()) {
                 this.setArenaStatus(ArenaStatus.VICTORY);
-                this.victoryTeam = survivingTeam;
+                this.victoryTeam = Team.NULL;
             }else {
                 this.isOvertime = true;
                 this.gameTime = this.getSetOvertime();
@@ -437,6 +454,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
+        for (Player player : this.getGameWorld().getPlayers().values()) {
+            //不要触发传送事件，防止某些弱智操作阻止我们！
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn(), null);
+        }
+        //因为某些原因无法正常传送走玩家，就全部踹出服务器！
+        for (Player player : this.getGameWorld().getPlayers().values()) {
+            player.kick("Teleport error!");
+        }
 
         for (CrystalWarsEntityEndCrystal crystal : this.teamEntityEndCrystalMap.values()) {
             crystal.close();
@@ -457,7 +482,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             if (CrystalWars.debug) {
                 this.crystalWars.getLogger().info("§a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
             }
-            Server.getInstance().unloadLevel(this.getGameWorld());
+            Server.getInstance().unloadLevel(this.getGameWorld(), true);
             File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
             File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
             if (!backup.exists()) {
@@ -563,11 +588,12 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         PlayerData playerData = this.getPlayerData(player);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
-        player.setGamemode(Player.VIEW);
+        player.setGamemode(Player.SPECTATOR);
         if (this.isTeamCrystalSurviving(playerData.getTeam())) {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
         }else {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.DEATH);
+            player.getInventory().setItem(8, ItemManager.get(player, 10000));
         }
         playerData.addDeathCount();
         playerData.setWaitSpawnTime(5);

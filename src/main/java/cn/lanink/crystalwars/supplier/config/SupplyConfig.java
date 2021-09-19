@@ -10,7 +10,9 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author iGxnon
@@ -87,12 +89,8 @@ public class SupplyConfig {
         Config config = new Config(file, Config.YAML);
         List<String> authorizedKey = Arrays.asList("title", "subTitle", "item", "pos", "cost", "count", "lore");
 
-        if(config.getAll().keySet().size() != authorizedKey.size()) {
-            return false;
-        }
-
-        for(Map.Entry<String, Object> entry : config.getAll().entrySet()) {
-            if(!authorizedKey.contains(entry.getKey())) {
+        for (String necessary : authorizedKey) {
+            if (!config.exists(necessary)) {
                 return false;
             }
         }
