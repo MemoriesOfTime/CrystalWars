@@ -2,6 +2,8 @@ package cn.lanink.crystalwars.form;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
+import cn.lanink.crystalwars.player.PlayerSettingData;
+import cn.lanink.crystalwars.player.PlayerSettingDataManager;
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
@@ -139,12 +141,39 @@ public class FormHelper {
                 new ArrayList<>(),
                 new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_URL, "https://z3.ax1x.com/2021/09/17/4M5vz8.gif")
         );
+        PlayerSettingData oldData = PlayerSettingDataManager.getData(player);
 
-        custom.addElement(new ElementLabel("此功能仍在开发中...")); //0
-        custom.addElement(new ElementDropdown("商店界面类型", Arrays.asList("箱子商店", "GUI商店"))); //1
+        custom.addElement(new ElementLabel("CrystalWars - 个性化设置\n此功能仍在开发中...\n")); //0
 
-        custom.onResponded((formResponseCustom, player1) -> {
-           Server.getInstance().getLogger().info(formResponseCustom.toString());
+        int defaultOptionIndex;
+        switch (oldData.getShopType()) {
+            case CHEST:
+                defaultOptionIndex = 1;
+                break;
+            case GUI:
+                defaultOptionIndex = 2;
+                break;
+            case AUTO:
+            default:
+                defaultOptionIndex = 0;
+                break;
+        }
+        custom.addElement(new ElementDropdown("商店界面类型", Arrays.asList("自动", "箱子商店", "GUI商店"), defaultOptionIndex)); //1
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            PlayerSettingData data = PlayerSettingDataManager.getData(cp);
+            switch (formResponseCustom.getDropdownResponse(1).getElementID()) {
+                case 1:
+                    data.setShopType(PlayerSettingData.ShopType.CHEST);
+                    break;
+                case 2:
+                    data.setShopType(PlayerSettingData.ShopType.GUI);
+                    break;
+                case 0:
+                default:
+                    data.setShopType(PlayerSettingData.ShopType.AUTO);
+                    break;
+            }
         });
 
         return custom;
