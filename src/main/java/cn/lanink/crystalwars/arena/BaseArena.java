@@ -16,6 +16,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
@@ -90,6 +91,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
             this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份完成！");
         }
+        this.initLevel();
 
         this.initData();
 
@@ -121,6 +123,9 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         return list;
     }
 
+    /**
+     * 初始化房间数据
+     */
     public void initData() {
         this.waitTime = this.getSetWaitTime();
         this.gameTime = this.getSetGameTime();
@@ -136,6 +141,15 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.isOvertime = false;
 
         this.playerPlaceBlocks.clear();
+    }
+
+    /**
+     * 初始化世界规则
+     */
+    private void initLevel() {
+        this.getGameWorld().setThundering(false);
+        this.getGameWorld().setRaining(false);
+        this.getGameWorld().getGameRules().setGameRule(GameRule.DO_WEATHER_CYCLE, false);
     }
 
     public boolean canJoin() {
@@ -493,6 +507,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
                     Server.getInstance().loadLevel(getGameWorldName());
                     this.gameWorld = Server.getInstance().getLevelByName(getGameWorldName());
+                    this.initLevel();
                     setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
                     if (CrystalWars.debug) {
                         this.crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
