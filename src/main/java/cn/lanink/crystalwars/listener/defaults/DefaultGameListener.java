@@ -145,7 +145,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         BaseArena baseArena = this.getListenerRoom(player.getLevel());
@@ -159,7 +159,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         baseArena.getPlayerPlaceBlocks().add(event.getBlock().clone());
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         BaseArena baseArena = this.getListenerRoom(player.getLevel());
@@ -176,7 +176,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         baseArena.getPlayerPlaceBlocks().remove(event.getBlock());
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onFoodLevelChange(PlayerFoodLevelChangeEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
@@ -190,11 +190,11 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onCraft(CraftItemEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
         if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
-            event.setCancelled();
+            event.setCancelled(true);
         }
     }
 
