@@ -80,6 +80,13 @@ public class AdvancedInventory extends ContainerInventory {
         return setItem(slotPos, new AdvancedClickItem(item.getId(), item.getDamage(), item.getCount(), item.getName()).onClick(clickConsumer).setCustomName(item.getCustomName()));
     }
 
+    public boolean clear(int index) {
+        if (this.clear(index, true)) {
+            this.advancedClickItemMap.remove(index);
+            return true;
+        }
+        return false;
+    }
 
     public AdvancedInventory onClose(@NotNull Consumer<Player> listener) {
         this.inventoryCloseConsumer = listener;

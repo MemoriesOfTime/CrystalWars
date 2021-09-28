@@ -120,6 +120,20 @@ public class SupplyPageConfig {
         return advancedInventory;
     }
 
+    public AdvancedInventory generateWindow(@NotNull AdvancedInventory advancedInventory) {
+        advancedInventory.clearAll();
+        if(this.linkItems != null) {
+            linkItems.forEach((slotPos, linkItem) -> {
+                final SupplyPageConfig supplyPageConfig = getParent().getPageConfigMap().get(linkItem.getPageFileName());
+                advancedInventory.setItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem().setCustomName(supplyPageConfig.getTitle()), supplyPageConfig));
+            });
+        }
+        this.items.forEach((slotPos, item) -> {
+            advancedInventory.setItem(slotPos, new AdvancedBuyItem(item.getItem().setCustomName(item.getTitle() + "§r\n" + item.getSubTitle()), item));
+        });
+        return advancedInventory;
+    }
+
     public AdvancedFormWindowSimple generateForm(@NotNull AdvancedFormWindowSimple parent) {
         AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.title);
         advancedFormWindowSimple.addButton("返回到主界面", player -> {
