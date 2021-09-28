@@ -601,9 +601,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     public void playerDeath(@NotNull Player player) {
         player.sendTitle("§c死亡");
         PlayerData playerData = this.getPlayerData(player);
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
         player.setGamemode(Player.SPECTATOR);
+        player.teleport(this.getTeamSpawn(playerData.getTeam()).add(0, 2, 0));
+
         if (this.isTeamCrystalSurviving(playerData.getTeam())) {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
         }else {
