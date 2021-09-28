@@ -3,13 +3,17 @@ package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.gamecore.GameCore;
 import cn.nukkit.Player;
+import cn.nukkit.event.Event;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryEvent;
+import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.InventoryType;
+import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,17 +96,31 @@ public class AdvancedInventory extends ContainerInventory {
         }
     }
 
-    public static void onEvent(@NotNull InventoryEvent event) {
-        Inventory inventory = event.getInventory();
-        if(!(inventory instanceof AdvancedInventory)) {
-            return;
-        }
-        if(event instanceof InventoryClickEvent) {
-            Player player = ((InventoryClickEvent) event).getPlayer();
-            ((AdvancedInventory) inventory).callClick((InventoryClickEvent) event, player);
-            event.setCancelled(true);
-        }else if(event instanceof InventoryCloseEvent) {
-            ((AdvancedInventory) inventory).callClose(((InventoryCloseEvent) event).getPlayer());
+    public static void onEvent(@NotNull Event event) {
+        if (event instanceof InventoryEvent) {
+            InventoryEvent inventoryEvent = (InventoryEvent) event;
+            Inventory inventory = inventoryEvent.getInventory();
+            if (!(inventory instanceof AdvancedInventory)) {
+                return;
+            }
+            if (inventoryEvent instanceof InventoryClickEvent) {
+                Player player = ((InventoryClickEvent) inventoryEvent).getPlayer();
+                ((AdvancedInventory) inventory).callClick((InventoryClickEvent) inventoryEvent, player);
+                inventoryEvent.setCancelled(true);
+            } else if (inventoryEvent instanceof InventoryCloseEvent) {
+                ((AdvancedInventory) inventory).callClose(((InventoryCloseEvent) inventoryEvent).getPlayer());
+            }
+        }else if (event instanceof InventoryTransactionEvent) {
+            InventoryTransactionEvent transactionEvent = (InventoryTransactionEvent) event;
+            for (InventoryAction action : transactionEvent.getTransaction().getActions()) {
+                if (action instanceof SlotChangeAction) {
+                    SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                    if (slotChangeAction.getInventory() instanceof AdvancedInventory &&
+                            slotChangeAction.getTargetItem().getId() == 0) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
         }
     }
 
