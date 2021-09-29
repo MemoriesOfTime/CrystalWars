@@ -18,6 +18,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.DyeColor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,10 +92,30 @@ public class Utils {
         return string.toString();
     }
 
+    public static double toDouble(Object object) {
+        return new BigDecimal(object.toString()).doubleValue();
+    }
+
+    public static int toInt(Object object) {
+        return new BigDecimal(object.toString()).intValue();
+    }
+
+    /**
+     * Vector3 转为 String
+     *
+     * @param vector3 Vector3
+     * @return String
+     */
     public static String vector3ToString(Vector3 vector3) {
         return vector3.x + ":" + vector3.y + ":" +vector3.z;
     }
 
+    /**
+     * Vector3 转为 Map
+     *
+     * @param vector3 Vector3
+     * @return Map
+     */
     public static LinkedHashMap<String, Double> vector3ToMap(Vector3 vector3) {
         LinkedHashMap<String, Double> map = new LinkedHashMap<>();
         map.put("x", vector3.getX());
@@ -103,24 +124,41 @@ public class Utils {
         return map;
     }
 
+    /**
+     * String 转为 Vector3
+     *
+     * @param string 字符串
+     * @return Vector3
+     */
     public static Vector3 stringToVector3(String string) {
         String[] split = string.split(":");
         return new Vector3(
-                Double.parseDouble(split[0]),
-                Double.parseDouble(split[1]),
-                Double.parseDouble(split[2])
+                toDouble(split[0]),
+                toDouble(split[1]),
+                toDouble(split[2])
         );
     }
 
+    /**
+     * Map 转为 Vector3
+     *
+     * @param map Map
+     * @return Vector3
+     */
     @SuppressWarnings("rawtypes")
     public static Vector3 mapToVector3(Map map) {
         return new Vector3(
-                (double) map.get("x"),
-                (double) map.get("y"),
-                (double) map.get("z")
+                toDouble(map.get("x")),
+                toDouble(map.get("y")),
+                toDouble(map.get("z"))
         );
     }
 
+    /**
+     * 格式化倒计时 0 -> 00:00
+     * @param time 时间
+     * @return 格式化后的时间
+     */
     public static String formatCountdown(int time) {
         DecimalFormat format = new DecimalFormat("00");
         return format.format(time/60) + ":" + format.format(time%60);
@@ -187,11 +225,13 @@ public class Utils {
     }
 
     public static Item getTeamColorItem(Item defaultItem, Team team) {
+        Item air = Item.get(Item.AIR);
+        air.setNamedTag(defaultItem.getNamedTag());
         if(!defaultItem.hasMeta()) {
-            return Item.get(Item.AIR);
+            return air;
         }
         if(!SupplyConfigManager.TEAM_CHANGE_ITEM_IDS.contains(defaultItem.getId())) {
-            return Item.get(Item.AIR);
+            return air;
         }
 
         //皮革护甲染色
@@ -251,9 +291,11 @@ public class Utils {
                 meta = 7;
                 break;
             default:
-                return Item.fromString("0:0");
+                return air;
         }
-        return Item.get(id, meta, defaultItem.getCount());
+        Item newItem = Item.get(id, meta, defaultItem.getCount());
+        newItem.setNamedTag(defaultItem.getNamedTag());
+        return newItem;
     }
 
 }

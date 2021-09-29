@@ -74,5 +74,4 @@ public class SupplyConfigManager {
         return SUPPLY_CONFIG_MAP.get(supply);
     }
 
-
 }
