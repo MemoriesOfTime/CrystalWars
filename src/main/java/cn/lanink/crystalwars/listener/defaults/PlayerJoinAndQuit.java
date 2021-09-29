@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.arena.ArenaSet;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.form.FormHelper;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
@@ -54,6 +55,10 @@ public class PlayerJoinAndQuit implements Listener {
             if (arena.isPlaying(player)) {
                 arena.quitRoom(player);
             }
+        }
+        ArenaSet arenaSet = this.crystalWars.getArenaSetMap().get(player);
+        if (arenaSet != null) {
+            arenaSet.exit();
         }
     }
 

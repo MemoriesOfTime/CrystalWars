@@ -1,11 +1,13 @@
 package cn.lanink.crystalwars;
 
+import cn.lanink.crystalwars.arena.ArenaSet;
 import cn.lanink.crystalwars.arena.ArenaTickTask;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.classic.ClassicArena;
 import cn.lanink.crystalwars.command.admin.AdminCommand;
 import cn.lanink.crystalwars.command.user.UserCommand;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
+import cn.lanink.crystalwars.listener.defaults.ArenaSetListener;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.player.PlayerSettingDataManager;
@@ -15,6 +17,7 @@ import cn.lanink.crystalwars.utils.RsNpcVariable;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.inventory.ui.listener.InventoryListener;
 import cn.lanink.gamecore.listener.BaseGameListener;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
@@ -57,6 +60,7 @@ public class CrystalWars extends PluginBase {
 
     private Config config;
 
+    @Getter
     private static final LinkedHashMap<String, Class<? extends BaseArena>> ARENA_CLASS = new LinkedHashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseGameListener<BaseArena>>> LISTENER_CLASS = new LinkedHashMap<>();
 
@@ -67,6 +71,9 @@ public class CrystalWars extends PluginBase {
     private final HashMap<String, Config> arenaConfigs = new HashMap<>();
     @Getter
     private final LinkedHashMap<String, BaseArena> arenas = new LinkedHashMap<>();
+
+    @Getter
+    private final HashMap<Player, ArenaSet> arenaSetMap = new HashMap<>();
 
     @Getter
     private String serverWorldPath;
@@ -145,6 +152,7 @@ public class CrystalWars extends PluginBase {
 
         this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
+        this.getServer().getPluginManager().registerEvents(new ArenaSetListener(this), this);
         this.loadAllListener();
 
         this.getServer().getScheduler().scheduleRepeatingTask(this, new ArenaTickTask(this), 1);
