@@ -33,7 +33,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author lt_name
+ * @author LT_Name
  */
 public class CrystalWars extends PluginBase {
 

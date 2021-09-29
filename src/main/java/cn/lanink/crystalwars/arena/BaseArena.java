@@ -4,6 +4,8 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.EntityText;
+import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerJoinEvent;
+import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerQuitEvent;
 import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
@@ -162,6 +164,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             return false;
         }
 
+        Server.getInstance().getPluginManager().callEvent(new CrystalWarsArenaPlayerJoinEvent(this, player));
+
         if (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED) {
             this.setArenaStatus(ArenaStatus.WAIT);
             ArenaTickTask.addArena(this);
@@ -189,6 +193,12 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public boolean quitRoom(@NotNull Player player) {
+        if (!this.getPlayerDataMap().containsKey(player)) {
+            return false;
+        }
+
+        Server.getInstance().getPluginManager().callEvent(new CrystalWarsArenaPlayerQuitEvent(this, player));
+
         if (this.crystalWars.isHasTips()) {
             Tips.removeTipsConfig(this.getGameWorldName(), player);
         }
@@ -464,7 +474,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     public void gameEnd() {
         ArenaStatus oldStatus = this.getArenaStatus();
+
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
+        ArenaTickTask.removeArena(this);
+
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
