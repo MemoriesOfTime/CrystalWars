@@ -29,6 +29,10 @@ public class CreateArena extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage("§c请输入世界名称！");
+            return false;
+        }
         Player player = (Player) sender;
         if (!this.crystalWars.getArenaConfigs().containsKey(args[1])) {
             if (Server.getInstance().loadLevel(args[1])) {
@@ -38,11 +42,11 @@ public class CreateArena extends BaseSubCommand {
                 if (player.getLevel() != level) {
                     player.teleport(level.getSafeSpawn());
                 }
-                //TODO 自动进入设置模式
-            }else {
+                Server.getInstance().dispatchCommand(sender, this.crystalWars.getCmdAdmin() + " SetArena");
+            } else {
                 sender.sendMessage("§c世界: §f" + args[1] + " §c不存在！请输入一个正确的世界名称！");
             }
-        }else {
+        } else {
             sender.sendMessage("§c已存在 §f" + args[1] + " §c游戏房间配置文件！");
         }
         return true;
