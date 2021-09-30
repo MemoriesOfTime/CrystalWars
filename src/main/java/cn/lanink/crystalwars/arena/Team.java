@@ -16,17 +16,17 @@ public enum Team {
     /**
      * 红队
      */
-    RED("§c", BlockColor.RED_BLOCK_COLOR),
+    RED("§4", BlockColor.RED_BLOCK_COLOR),
 
     /**
      * 黄队
      */
-    YELLOW("§e", BlockColor.YELLOW_BLOCK_COLOR),
+    YELLOW("§6", BlockColor.YELLOW_BLOCK_COLOR),
 
     /**
      * 蓝队
      */
-    BLUE("§9", BlockColor.BLUE_BLOCK_COLOR),
+    BLUE("§1", BlockColor.BLUE_BLOCK_COLOR),
 
     /**
      * 绿队
