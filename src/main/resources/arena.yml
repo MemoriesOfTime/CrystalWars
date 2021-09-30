@@ -77,8 +77,8 @@ shop:
     z: 0.0
 
 #资源生成点
-resourceGenerations:
-  - itemGenerationConfigName: "IronIngot"
-    x: 0.0
-    y: 0.0
-    z: 0.0
+resourceGenerations: []
+#  - itemGenerationConfigName: "IronIngot"
+#    x: 0.0
+#    y: 0.0
+#    z: 0.0

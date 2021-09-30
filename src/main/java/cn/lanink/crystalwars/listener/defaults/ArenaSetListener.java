@@ -2,8 +2,10 @@ package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.ArenaSet;
+import cn.lanink.crystalwars.arena.ResourceGeneration;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.items.ItemManager;
+import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
@@ -68,6 +70,8 @@ public class ArenaSetListener implements Listener {
             case 11004:
             case 11005:
             case 11006:
+            case 11007:
+            case 11008:
                 break;
             default:
                 event.setCancelled(true);
@@ -118,7 +122,24 @@ public class ArenaSetListener implements Listener {
                 arenaSet.setTeamShop(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), newVector3);
                 break;
             case 350: //设置资源点
-                //TODO
+                if (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG) == 11007) {
+                    AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("选择物品生成配置");
+                    custom.addElement(new ElementDropdown(
+                            "物品生成配置",
+                            new ArrayList<>(ItemGenerationConfigManager.getITEM_GENERATION_CONFIG_MAP().keySet())
+                    )); //0
+                    custom.onResponded((formResponseCustom, cp) -> {
+                        arenaSet.getResourceGenerations().add(
+                                new ResourceGeneration(
+                                        ItemGenerationConfigManager.getITEM_GENERATION_CONFIG_MAP()
+                                                .get(formResponseCustom.getDropdownResponse(0).getElementContent()),
+                                        newVector3)
+                        );
+                    });
+                    player.showFormWindow(custom);
+                }else {
+                    arenaSet.getResourceGenerations().removeIf(next -> newVector3.floor().equals(next.getVector3().floor()));
+                }
                 break;
             case 400: //设置其他参数
                 AdvancedFormWindowCustom custom2 = new AdvancedFormWindowCustom("设置其他参数");

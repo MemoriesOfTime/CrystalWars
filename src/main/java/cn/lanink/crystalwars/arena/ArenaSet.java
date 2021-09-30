@@ -19,6 +19,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -26,19 +27,19 @@ import java.util.Map;
  */
 public class ArenaSet extends ArenaConfig {
 
+    protected CrystalWars crystalWars = CrystalWars.getInstance();
+
     @Getter
     protected final String worldName;
     @Getter
     protected final Level world;
     @Getter
     protected final Player player;
+
     private final int beforeGameMode;
     private final Map<Integer, Item> playerInventory;
     private final Item offHandItem;
-    private final HashMap<Team, EntityText> spawnTextMap = new HashMap<>();
-    private final HashMap<Team, EntityText> crystalTextMap = new HashMap<>();
-    private final HashMap<Team, EntityText> shopTextMap = new HashMap<>();
-    protected CrystalWars crystalWars = CrystalWars.getInstance();
+
     @Getter
     private int setRoomSchedule = 100;
     @Getter
@@ -46,7 +47,14 @@ public class ArenaSet extends ArenaConfig {
     @Getter
     private int nextRoomSchedule = 150;
     private int particleEffectTick = 0;
+
+
     private EntityText waitSpawnText;
+    private final HashMap<Team, EntityText> spawnTextMap = new HashMap<>();
+    private final HashMap<Team, EntityText> crystalTextMap = new HashMap<>();
+    private final HashMap<Team, EntityText> shopTextMap = new HashMap<>();
+    private final HashMap<ResourceGeneration, EntityText> resourceGenerationTextMap = new HashMap<>();
+
     private boolean isExit = false;
 
     public ArenaSet(@NotNull String worldName, @NotNull Config config, @NotNull Player player) throws ArenaLoadException {
@@ -82,7 +90,7 @@ public class ArenaSet extends ArenaConfig {
             this.exit();
             return false;
         }
-        if (tick%20 == 0) {
+        if (tick%10 == 0) {
             if (this.setRoomSchedule > 100) {
                 this.player.getInventory().setItem(0, ItemManager.get(this.player, 11001));
             }else {
@@ -183,7 +191,7 @@ public class ArenaSet extends ArenaConfig {
                     break;
                 case 300: //设置各队商店位置
                     this.backRoomSchedule = 250;
-                    this.nextRoomSchedule = 400;
+                    this.nextRoomSchedule = 350;
 
                     this.player.sendTitle("", "设置各队商店位置", 0, 30, 10);
 
@@ -213,10 +221,20 @@ public class ArenaSet extends ArenaConfig {
                     }
                     break;
                 case 350: //设置资源点
-                    //TODO
+                    this.backRoomSchedule = 300;
+                    this.nextRoomSchedule = 400;
+
+                    this.player.sendTitle("", "设置资源生成点", 0, 30, 10);
+
+                    this.player.getInventory().setItem(3, ItemManager.get(this.player, 11007));
+                    this.player.getInventory().setItem(5, ItemManager.get(this.player, 11008));
+
+                    if (!this.getResourceGenerations().isEmpty()) {
+                        canNext = true;
+                    }
                     break;
                 case 400: //设置其他参数
-                    this.backRoomSchedule = 300;
+                    this.backRoomSchedule = 350;
                     this.nextRoomSchedule = 1000;
 
                     this.player.sendTitle("", "设置其他参数", 0, 30, 10);
@@ -245,10 +263,8 @@ public class ArenaSet extends ArenaConfig {
             }else {
                 this.player.getInventory().clear(8);
             }
-        }
 
-        //显示已设置的点
-        if (tick%10 == 0) {
+            //显示已设置的点
             this.particleEffectTick++;
             if (this.particleEffectTick >= 10) {
                 this.particleEffectTick = 0;
@@ -306,6 +322,25 @@ public class ArenaSet extends ArenaConfig {
                 text.setPosition(position);
                 text.setNameTag(Utils.getShowTeam(team) + "商店位置");
             }
+            Iterator<Map.Entry<ResourceGeneration, EntityText>> iterator = this.resourceGenerationTextMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<ResourceGeneration, EntityText> next = iterator.next();
+                if (!this.getResourceGenerations().contains(next.getKey())) {
+                    next.getValue().close();
+                    iterator.remove();
+                }
+            }
+            for (ResourceGeneration generation : this.getResourceGenerations()) {
+                Position position = Position.fromObject(generation.getVector3(), this.world);
+                EntityText entityText = this.resourceGenerationTextMap.get(generation);
+                if (entityText == null) {
+                    entityText = new EntityText(position, "");
+                    entityText.spawnToAll();
+                    this.resourceGenerationTextMap.put(generation, entityText);
+                }
+                entityText.setPosition(position);
+                entityText.setNameTag("资源生成点\n物品生成配置: " + generation.getConfig().getName());
+            }
         }
 
         return true;
@@ -354,6 +389,9 @@ public class ArenaSet extends ArenaConfig {
             entityText.close();
         }
         for (EntityText entityText : this.shopTextMap.values()) {
+            entityText.close();
+        }
+        for (EntityText entityText : this.resourceGenerationTextMap.values()) {
             entityText.close();
         }
     }

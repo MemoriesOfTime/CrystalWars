@@ -69,6 +69,20 @@ public class ItemManager {
                         .putBoolean(ItemManager.IS_CRYSTALWARS_TAG, true)
                         .putInt(ItemManager.INTERNAL_ID_TAG, internalID));
                 return item;
+            case 11007:
+                item = Item.get(138, 0, count); //信标
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG, internalID));
+                item.setCustomName("添加资源生成点");
+                return item;
+            case 11008:
+                item = Item.get(241, 14, count); //红色玻璃
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG, internalID));
+                item.setCustomName("删除资源生成点");
+                return item;
             default:
                 return Item.get(0);
         }
