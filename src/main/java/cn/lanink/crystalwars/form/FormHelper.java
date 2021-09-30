@@ -126,7 +126,8 @@ public class FormHelper {
     public static void sendAdminMainMenu(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
 
-        //TODO
+        simple.addButton(new ResponseElementButton("设置游戏房间")
+                .onClicked(FormHelper::sendAdminSetArena));
         simple.addButton(new ResponseElementButton("卸载所有游戏房间")
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " UnloadArena")));
         simple.addButton(new ResponseElementButton("重载配置")
@@ -135,6 +136,25 @@ public class FormHelper {
         player.showFormWindow(simple);
     }
 
+    public static void sendAdminSetArena(@NotNull Player player) {
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("请选择要设置的游戏房间");
+
+        custom.addElement(new ElementDropdown("\n\n请选择要设置的游戏房间", new ArrayList<>(CrystalWars.getInstance().getArenas().keySet()))); //0
+
+        custom.onResponded((formResponseCustom, cp) -> Server.getInstance().dispatchCommand(
+                cp,
+                CrystalWars.getInstance().getCmdAdmin() + " SetArena " + formResponseCustom.getDropdownResponse(0).getElementContent()
+        ));
+
+        player.showFormWindow(custom);
+    }
+
+    /**
+     * 获取玩家个性化设置界面
+     *
+     * @param player 玩家
+     * @return 个性化设置界面
+     */
     public static AdvancedFormWindowCustom getPlayerSetting(@NotNull Player player) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(
                 "CrystalWars - 个性化设置",

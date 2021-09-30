@@ -224,6 +224,16 @@ public class ArenaSet extends ArenaConfig {
                     item = ItemManager.get(this.player, 11004);
                     item.setCustomName("设置其他参数");
                     this.player.getInventory().setItem(4, item);
+
+                    if (this.getMinPlayers() >= 2 &&
+                            this.getMaxPlayers() >= this.getMinPlayers() &&
+                            this.getSetWaitTime() > 0 &&
+                            this.getSetGameTime() > 0 &&
+                            this.getSetOvertime() > 0 &&
+                            this.getSetVictoryTime() > 0 &&
+                            this.getSupply().getSupplyConfig() != null) {
+                        canNext = true;
+                    }
                     break;
             }
             if (canNext) {

@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.command.admin.sub;
 
 import cn.lanink.crystalwars.arena.ArenaSet;
 import cn.lanink.crystalwars.command.BaseSubCommand;
+import cn.lanink.crystalwars.form.FormHelper;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -38,8 +39,8 @@ public class SetArena extends BaseSubCommand {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage("§c请输入世界名称！");
-            return false;
+            FormHelper.sendAdminSetArena(player);
+            return true;
         }
         String worldName = args[1];
         if (this.crystalWars.getArenaConfigs().containsKey(worldName) && Server.getInstance().loadLevel(worldName)) {
