@@ -2,7 +2,7 @@ package cn.lanink.crystalwars.command.admin;
 
 import cn.lanink.crystalwars.command.BaseCommand;
 import cn.lanink.crystalwars.command.admin.sub.*;
-import cn.lanink.crystalwars.form.FormHelper;
+import cn.lanink.crystalwars.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -20,6 +20,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetArena("SetArena"));
 
         this.addSubCommand(new StartGame("StartGame"));
+        this.addSubCommand(new StopGame("StopGame"));
 
         this.addSubCommand(new UnloadArena("UnloadArena"));
         this.addSubCommand(new Reload("reload"));

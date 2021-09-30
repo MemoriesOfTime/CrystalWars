@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.command.admin.sub;
 
 import cn.lanink.crystalwars.command.BaseSubCommand;
+import cn.lanink.crystalwars.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -29,20 +30,20 @@ public class CreateArena extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (args.length < 2) {
-            sender.sendMessage("§c请输入世界名称！");
-            return false;
-        }
         Player player = (Player) sender;
+        if (args.length < 2) {
+            FormHelper.sendAdminCreateArena(player);
+            return true;
+        }
         if (!this.crystalWars.getArenaConfigs().containsKey(args[1])) {
             if (Server.getInstance().loadLevel(args[1])) {
                 Level level = Server.getInstance().getLevelByName(args[1]);
                 this.crystalWars.getOrCreateArenaConfig(level);
                 sender.sendMessage("§a游戏房间: §f" + args[1] + " §a创建成功！");
                 if (player.getLevel() != level) {
-                    player.teleport(level.getSafeSpawn());
+                    player.teleport(level.getSpawnLocation());
                 }
-                Server.getInstance().dispatchCommand(sender, this.crystalWars.getCmdAdmin() + " SetArena");
+                Server.getInstance().dispatchCommand(sender, this.crystalWars.getCmdAdmin() + " SetArena " + args[1]);
             } else {
                 sender.sendMessage("§c世界: §f" + args[1] + " §c不存在！请输入一个正确的世界名称！");
             }

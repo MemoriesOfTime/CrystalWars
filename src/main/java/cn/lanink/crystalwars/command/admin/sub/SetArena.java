@@ -2,7 +2,7 @@ package cn.lanink.crystalwars.command.admin.sub;
 
 import cn.lanink.crystalwars.arena.ArenaSet;
 import cn.lanink.crystalwars.command.BaseSubCommand;
-import cn.lanink.crystalwars.form.FormHelper;
+import cn.lanink.crystalwars.utils.FormHelper;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
