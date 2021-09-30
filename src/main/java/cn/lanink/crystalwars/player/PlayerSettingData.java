@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.player;
 
 import cn.nukkit.utils.Config;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 玩家个性化设置数据
@@ -16,7 +17,7 @@ public class PlayerSettingData {
     private final String name;
     private ShopType shopType;
 
-    public PlayerSettingData(Config config, String playerName) {
+    public PlayerSettingData(@NotNull Config config, @NotNull String playerName) {
         this.config = config;
 
         this.name = playerName;

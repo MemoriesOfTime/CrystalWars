@@ -3,7 +3,7 @@ package cn.lanink.crystalwars.command.user;
 import cn.lanink.crystalwars.command.BaseCommand;
 import cn.lanink.crystalwars.command.user.sub.JoinRoom;
 import cn.lanink.crystalwars.command.user.sub.QuitRoom;
-import cn.lanink.crystalwars.form.FormHelper;
+import cn.lanink.crystalwars.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 

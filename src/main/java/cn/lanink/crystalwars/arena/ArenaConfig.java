@@ -27,21 +27,19 @@ import java.util.Map;
 public class ArenaConfig implements ISaveConfig {
 
     private Config config;
-
-    private final int setWaitTime;
-    private final int setGameTime;
-    private final int setOvertime;
-    private final int setVictoryTime;
-
-    private final int minPlayers;
-    private final int maxPlayers;
-
-    private final Vector3 waitSpawn;
-    private final Map<Team, Vector3> teamSpawn = new HashMap<>();
-    private final Map<Team, Vector3> teamCrystal = new HashMap<>();
-    private final Map<Team, Vector3> teamShop = new HashMap<>();
+    protected final Map<Team, Vector3> teamSpawn = new HashMap<>();
+    protected final Map<Team, Vector3> teamCrystal = new HashMap<>();
+    protected final Map<Team, Vector3> teamShop = new HashMap<>();
+    private boolean isSet;
+    private int setWaitTime;
+    private int setGameTime;
+    private int setOvertime;
+    private int setVictoryTime;
+    private int minPlayers;
+    private int maxPlayers;
+    private Vector3 waitSpawn;
     private final ArrayList<ResourceGeneration> resourceGenerations = new ArrayList<>();
-    private final Supply supply;
+    private Supply supply;
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
         this(config, false);
@@ -50,16 +48,17 @@ public class ArenaConfig implements ISaveConfig {
     public ArenaConfig(@NotNull Config config, boolean isSet) throws ArenaLoadException {
         try {
             this.config = config;
+            this.isSet = isSet;
 
-            this.setWaitTime = config.getInt("waitTime", 60);
-            this.setGameTime = config.getInt("gameTime", 600);
-            this.setOvertime = config.getInt("overtime", 180);
-            this.setVictoryTime = config.getInt("victoryTime", 10);
+            this.setWaitTime = config.getInt("waitTime", this.isSet ? 0 : 60);
+            this.setGameTime = config.getInt("gameTime", this.isSet ? 0 : 600);
+            this.setOvertime = config.getInt("overtime", this.isSet ? 0 : 180);
+            this.setVictoryTime = config.getInt("victoryTime", this.isSet ? 0 : 10);
 
-            this.minPlayers = config.getInt("minPlayers", 2);
-            this.maxPlayers = config.getInt("maxPlayers", 16);
+            this.minPlayers = config.getInt("minPlayers", this.isSet ? 0 : 2);
+            this.maxPlayers = config.getInt("maxPlayers", this.isSet ? 0 : 16);
 
-            this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn", "0:0:0"));
+            this.waitSpawn = Utils.stringToVector3(config.getString("waitSpawn", "0:-100:0"));
 
             Map<String, Map<String, Double>> spawn = config.get("spawn", new HashMap<>());
             for (Map.Entry<String, Map<String, Double>> entry : spawn.entrySet()) {
@@ -121,6 +120,62 @@ public class ArenaConfig implements ISaveConfig {
         return this.teamShop.get(team);
     }
 
+    public void setWaitTime(int newTime) {
+        if (!this.isSet) {
+            return;
+        }
+        this.setWaitTime = newTime;
+    }
+
+    public void setGameTime(int newTime) {
+        if (!this.isSet) {
+            return;
+        }
+        this.setGameTime = newTime;
+    }
+
+    public void setOvertime(int newTime) {
+        if (!this.isSet) {
+            return;
+        }
+        this.setOvertime = newTime;
+    }
+
+    public void setVictoryTime(int newTime) {
+        if (!this.isSet) {
+            return;
+        }
+        this.setVictoryTime = newTime;
+    }
+
+    public void setMinPlayers(int newCount) {
+        if (!this.isSet) {
+            return;
+        }
+        this.minPlayers = Math.min(2, newCount);
+    }
+
+    public void setMaxPlayers(int newCount) {
+        if (!this.isSet) {
+            return;
+        }
+        this.maxPlayers = Math.max(2, newCount);
+    }
+
+    public void setWaitSpawn(Vector3 newPos) {
+        if (!this.isSet) {
+            return;
+        }
+        this.waitSpawn = newPos.clone();
+    }
+
+    public void setSupply(Supply newSupply) {
+        if (!this.isSet) {
+            return;
+        }
+        this.supply = newSupply;
+    }
+
     @Override
     public void save() {
         this.saveConfig(this.config);
@@ -136,6 +191,8 @@ public class ArenaConfig implements ISaveConfig {
 
         map.put("minPlayers", this.getMinPlayers());
         map.put("maxPlayers", this.getMaxPlayers());
+
+        map.put("supply", this.supply.getSupplyConfig().getDirName());
 
         map.put("waitSpawn", Utils.vector3ToString(this.getWaitSpawn()));
 

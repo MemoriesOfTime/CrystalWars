@@ -4,6 +4,8 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.entity.EntityText;
+import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerJoinEvent;
+import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerQuitEvent;
 import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
@@ -16,6 +18,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
@@ -90,6 +93,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
             this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份完成！");
         }
+        this.initLevel();
 
         this.initData();
 
@@ -121,6 +125,9 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         return list;
     }
 
+    /**
+     * 初始化房间数据
+     */
     public void initData() {
         this.waitTime = this.getSetWaitTime();
         this.gameTime = this.getSetGameTime();
@@ -138,6 +145,15 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.playerPlaceBlocks.clear();
     }
 
+    /**
+     * 初始化世界规则
+     */
+    private void initLevel() {
+        this.getGameWorld().setThundering(false);
+        this.getGameWorld().setRaining(false);
+        this.getGameWorld().getGameRules().setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+    }
+
     public boolean canJoin() {
         return (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED || this.getArenaStatus() == ArenaStatus.WAIT) &&
                 this.getPlayerCount() < this.getMaxPlayers();
@@ -147,6 +163,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (!this.canJoin() || this.getPlayerDataMap().containsKey(player)) {
             return false;
         }
+
+        Server.getInstance().getPluginManager().callEvent(new CrystalWarsArenaPlayerJoinEvent(this, player));
 
         if (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED) {
             this.setArenaStatus(ArenaStatus.WAIT);
@@ -175,6 +193,12 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public boolean quitRoom(@NotNull Player player) {
+        if (!this.getPlayerDataMap().containsKey(player)) {
+            return false;
+        }
+
+        Server.getInstance().getPluginManager().callEvent(new CrystalWarsArenaPlayerQuitEvent(this, player));
+
         if (this.crystalWars.isHasTips()) {
             Tips.removeTipsConfig(this.getGameWorldName(), player);
         }
@@ -450,7 +474,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     public void gameEnd() {
         ArenaStatus oldStatus = this.getArenaStatus();
+
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
+        ArenaTickTask.removeArena(this);
+
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
@@ -493,6 +520,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
                     Server.getInstance().loadLevel(getGameWorldName());
                     this.gameWorld = Server.getInstance().getLevelByName(getGameWorldName());
+                    this.initLevel();
                     setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
                     if (CrystalWars.debug) {
                         this.crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
@@ -586,9 +614,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     public void playerDeath(@NotNull Player player) {
         player.sendTitle("§c死亡");
         PlayerData playerData = this.getPlayerData(player);
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
         player.setGamemode(Player.SPECTATOR);
+        player.teleport(this.getTeamSpawn(playerData.getTeam()).add(0, 2, 0));
+
         if (this.isTeamCrystalSurviving(playerData.getTeam())) {
             playerData.setPlayerStatus(PlayerData.PlayerStatus.WAIT_SPAWN);
         }else {
