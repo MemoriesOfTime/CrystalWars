@@ -8,13 +8,13 @@ import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 
@@ -65,6 +65,9 @@ public class ArenaSetListener implements Listener {
                         event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
                     return;
                 }
+                Vector3 newVector3 = event.getBlock().clone();
+                newVector3.x = newVector3.getFloorX() + 0.5;
+                newVector3.z = newVector3.getFloorZ() + 0.5;
                 switch (arenaSet.getSetRoomSchedule()) {
                     case 100: //设置游戏模式
                         AdvancedFormWindowCustom custom1 = new AdvancedFormWindowCustom("设置游戏模式");
@@ -76,17 +79,16 @@ public class ArenaSetListener implements Listener {
                         player.showFormWindow(custom1);
                         break;
                     case 150: //设置等待出生点
-                        Block block = event.getBlock();
-                        arenaSet.setWaitSpawn(block);
+                        arenaSet.setWaitSpawn(newVector3);
                         break;
                     case 200: //设置各队出生点
-                        arenaSet.setTeamSpawn(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), event.getBlock());
+                        arenaSet.setTeamSpawn(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), newVector3);
                         break;
                     case 250: //设置各队水晶位置
-                        arenaSet.setTeamCrystal(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), event.getBlock());
+                        arenaSet.setTeamCrystal(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), newVector3);
                         break;
                     case 300: //设置各队商店位置
-                        arenaSet.setTeamShop(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), event.getBlock());
+                        arenaSet.setTeamShop(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), newVector3);
                         break;
                     case 350: //设置资源点
                         //TODO

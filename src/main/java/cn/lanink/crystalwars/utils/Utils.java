@@ -226,7 +226,9 @@ public class Utils {
 
     public static Item getTeamColorItem(Item defaultItem, Team team) {
         Item air = Item.get(Item.AIR);
-        air.setNamedTag(defaultItem.getNamedTag());
+        if (defaultItem.hasCompoundTag()) {
+            air.setNamedTag(defaultItem.getNamedTag());
+        }
         if(!defaultItem.hasMeta()) {
             return air;
         }
@@ -294,7 +296,9 @@ public class Utils {
                 return air;
         }
         Item newItem = Item.get(id, meta, defaultItem.getCount());
-        newItem.setNamedTag(defaultItem.getNamedTag());
+        if (defaultItem.hasCompoundTag()) {
+            newItem.setNamedTag(defaultItem.getNamedTag());
+        }
         return newItem;
     }
 
