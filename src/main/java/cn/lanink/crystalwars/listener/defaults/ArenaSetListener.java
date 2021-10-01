@@ -8,6 +8,7 @@ import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
@@ -22,7 +23,6 @@ import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 
