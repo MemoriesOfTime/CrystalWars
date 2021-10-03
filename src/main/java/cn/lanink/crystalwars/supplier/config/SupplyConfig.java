@@ -32,7 +32,7 @@ public class SupplyConfig {
 
     private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
 
-    public SupplyConfig(@NotNull String dirName, File path) {
+    public SupplyConfig(@NotNull String dirName, @NotNull File path) {
         this.dirName = dirName;
         File[] childDir = path.listFiles();
         if(childDir == null) {

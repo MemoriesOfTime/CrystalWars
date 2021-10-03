@@ -17,6 +17,8 @@ public class PlayerSettingData {
     private final String name;
     private ShopType shopType;
 
+    private String theme;
+
     public PlayerSettingData(@NotNull Config config, @NotNull String playerName) {
         this.config = config;
 
@@ -26,6 +28,7 @@ public class PlayerSettingData {
         } catch (Exception e) {
             this.shopType = ShopType.AUTO;
         }
+        this.theme = this.config.getString("theme", "DefaultTheme");
     }
 
     public void save() {
