@@ -222,7 +222,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 event.getPacket() instanceof LevelSoundEventPacketV1 ||
                 event.getPacket() instanceof LevelSoundEventPacketV2) {
             Player player = event.getPlayer();
-            BaseArena arena = this.getListenerRooms().get(player.getLevel().getFolderName());
+            BaseArena arena = this.getListenerRoom(player.getLevel());
             if (arena == null || !arena.isPlaying(player)) {
                 return;
             }
