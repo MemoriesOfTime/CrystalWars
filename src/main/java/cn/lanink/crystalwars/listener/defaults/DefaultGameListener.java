@@ -14,6 +14,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
@@ -174,6 +175,15 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             event.setCancelled(true);
         }
         baseArena.getPlayerPlaceBlocks().remove(event.getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        BaseArena arena = this.getListenerRoom(event.getEntity().getLevel());
+        if (arena == null) {
+            return;
+        }
+        event.getBlockList().removeIf(block -> !arena.getPlayerPlaceBlocks().contains(block));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
