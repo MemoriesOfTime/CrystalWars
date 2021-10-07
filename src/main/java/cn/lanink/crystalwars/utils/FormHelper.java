@@ -4,6 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.player.PlayerSettingData;
 import cn.lanink.crystalwars.player.PlayerSettingDataManager;
+import cn.lanink.crystalwars.theme.ThemeManager;
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
@@ -203,6 +204,16 @@ public class FormHelper {
         }
         custom.addElement(new ElementDropdown("商店界面类型", Arrays.asList("自动", "箱子商店", "GUI商店"), defaultOptionIndex)); //1
 
+        ArrayList<String> themes = new ArrayList<>(ThemeManager.getTHEME_MAP().keySet());
+        defaultOptionIndex = 0;
+        for (String theme : themes) {
+            if (oldData.getTheme().equals(theme)) {
+                break;
+            }
+            defaultOptionIndex++;
+        }
+        custom.addElement(new ElementDropdown("显示主题", themes, defaultOptionIndex)); //2
+
         custom.onResponded((formResponseCustom, cp) -> {
             PlayerSettingData data = PlayerSettingDataManager.getData(cp);
 
@@ -218,6 +229,8 @@ public class FormHelper {
                     data.setShopType(PlayerSettingData.ShopType.AUTO);
                     break;
             }
+
+            data.setTheme(formResponseCustom.getDropdownResponse(2).getElementContent());
 
             data.save();
         });

@@ -1,0 +1,27 @@
+# {PluginName} 彩色插件名称
+# {AutoSpace} 自动填充的空格（用于空出一行）
+#
+# [IF:条件]{内容} 如果条件为真则输出内容
+# [IF_NOT:条件]{内容} 如果条件为假则输出内容
+# 支持的条件：
+# isOvertime 是加时赛
+# TeamSurviving_RED 红队存活
+# TeamSurviving_YELLOW 黄队存活
+# TeamSurviving_BLUE 蓝队存活
+# TeamSurviving_GREEN 绿队存活
+
+scoreboard_game:
+  title: "{PluginName}"
+  line:
+    - "{AutoSpace}"
+    - "§f◎ §f倒计时:  §a{time} [IF:isOvertime]{§f(加时赛)}"
+    - "{AutoSpace}"
+    - "[IF:TeamSurviving_RED]{§f◎ -{TeamName_RED}§f- §e水晶:§a{TeamCrystalHealth_RED} §8(§a{TeamSurvivingPlayers_RED}§8)}"
+    - "[IF_NOT:TeamSurviving_RED]{§f◎ -{TeamName_RED}§f- §c(oT-T)尸}"
+    - "[IF:TeamSurviving_YELLOW]{§f◎ -{TeamName_YELLOW}§f- §e水晶:§a{TeamCrystalHealth_YELLOW} §8(§a{TeamSurvivingPlayers_YELLOW}§8)}"
+    - "[IF_NOT:TeamSurviving_YELLOW]{§f◎ -{TeamName_YELLOW}§f- §c(oT-T)尸}"
+    - "[IF:TeamSurviving_BLUE]{§f◎ -{TeamName_BLUE}§f- §e水晶:§a{TeamCrystalHealth_BLUE} §8(§a{TeamSurvivingPlayers_BLUE}§8)}"
+    - "[IF_NOT:TeamSurviving_BLUE]{§f◎ -{TeamName_BLUE}§f- §c(oT-T)尸}"
+    - "[IF:TeamSurviving_GREEN]{§f◎ -{TeamName_GREEN}§f- §e水晶:§a{TeamCrystalHealth_GREEN} §8(§a{TeamSurvivingPlayers_GREEN}§8)}"
+    - "[IF_NOT:TeamSurviving_GREEN]{§f◎ -{TeamName_GREEN}§f- §c(oT-T)尸}"
+    - "{AutoSpace}"

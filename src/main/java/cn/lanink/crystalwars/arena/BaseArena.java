@@ -7,6 +7,9 @@ import cn.lanink.crystalwars.entity.EntityText;
 import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerJoinEvent;
 import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerQuitEvent;
 import cn.lanink.crystalwars.items.ItemManager;
+import cn.lanink.crystalwars.player.PlayerSettingDataManager;
+import cn.lanink.crystalwars.theme.Theme;
+import cn.lanink.crystalwars.theme.ThemeManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -297,7 +300,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
 
             //计分板
-            LinkedList<String> list = new LinkedList<>();
+            /*LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
             list.add("§f◎ §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
             list.add(Utils.getSpace(list));
@@ -310,7 +313,18 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 }
             }
             list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
+            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);*/
+
+            Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
+            ArrayList<String> list = new ArrayList<>();
+            for (String string : theme.getScoreboardLineGame(this, entry.getKey())) {
+                list.add(string.replace("{time}", Utils.formatCountdown(this.gameTime)));
+            }
+            ScoreboardUtil.getScoreboard().showScoreboard(
+                    entry.getKey(),
+                    theme.getScoreboardTitleGame(this, entry.getKey()),
+                    list
+            );
         }
 
         //资源生成
@@ -712,6 +726,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             return !this.teamEntityEndCrystalMap.get(team).isClosed();
         }
         return false;
+    }
+
+    public CrystalWarsEntityEndCrystal getTeamEntityEndCrystal(Team team) {
+        return this.teamEntityEndCrystalMap.get(team);
     }
 
     @Override

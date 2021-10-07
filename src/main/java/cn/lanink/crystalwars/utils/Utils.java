@@ -56,7 +56,7 @@ public class Utils {
      * @return 百分比显示的血量
      */
     public static String getShowHealth(CrystalWarsEntityEndCrystal crystal) {
-        if (crystal.isClosed() || crystal.getHealth() < 1) {
+        if (crystal == null || crystal.isClosed() || crystal.getHealth() < 1) {
             return "§c§l✘";
         }
         return NukkitMath.round((crystal.getHealth()/crystal.getMaxHealth()) * 100, 1) + "% ";
