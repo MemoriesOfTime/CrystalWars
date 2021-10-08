@@ -37,6 +37,7 @@ public class PlayerSettingData {
 
     public void save(boolean async) {
         this.config.set("shopType", this.shopType.name());
+        this.config.set("theme", this.theme);
 
         this.config.save(async);
     }
