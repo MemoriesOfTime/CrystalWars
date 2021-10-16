@@ -25,12 +25,18 @@ public class Theme {
     private String scoreboardTitleGame;
     private List<String> scoreboardLineGame;
 
+    private String scoreboardTitleWait;
+    private List<String> scoreboardLineWait;
+
     public Theme(@NotNull String fileName, @NotNull File file) {
         this.name = fileName;
         this.config = new Config(file, Config.YAML);
 
         this.scoreboardTitleGame = this.config.getString("scoreboard_game.title");
         this.scoreboardLineGame = this.config.getStringList("scoreboard_game.line");
+
+        this.scoreboardTitleWait = this.config.getString("scoreboard_wait.title");
+        this.scoreboardLineWait = this.config.getStringList("scoreboard_wait.line");
     }
 
     public String getScoreboardTitleGame(BaseArena arena, Player player) {
@@ -38,8 +44,58 @@ public class Theme {
     }
 
     public List<String> getScoreboardLineGame(BaseArena arena, Player player) {
+        return this.listReplace(arena, player, this.scoreboardLineGame);
+    }
+
+    public String getScoreboardTitleWait(BaseArena arena, Player player) {
+        return this.stringReplace(arena, player, this.scoreboardTitleWait);
+    }
+
+    public List<String> getScoreboardLineWait(BaseArena arena, Player player) {
+        return this.listReplace(arena, player, this.scoreboardLineWait);
+    }
+
+    public String stringReplace(BaseArena arena, Player player, String string) {
+        return this.stringReplace(arena, player, string, new ArrayList<>());
+    }
+
+    public String stringReplace(BaseArena arena, Player player, String string, List<?> list) {
+        String newValue = "{time}";
+        if (arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
+            newValue = String.valueOf(arena.getWaitTime());
+        }else if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME) {
+            newValue = String.valueOf(arena.getGameTime());
+        }else if (arena.getArenaStatus() == BaseArena.ArenaStatus.VICTORY) {
+            newValue = String.valueOf(arena.getVictoryTime());
+        }
+        string = string.replace("{time}", newValue);
+
+        return string
+                .replace("{PluginName}", CrystalWars.PLUGIN_NAME)
+                .replace("{AutoSpace}", Utils.getSpace(list))
+                .replace("{PlayerCount}", String.valueOf(arena.getPlayerCount()))
+                .replace("{MinPlayer}", String.valueOf(arena.getMinPlayers()))
+                .replace("{MaxPlayer}", String.valueOf(arena.getMaxPlayers()))
+                //队伍名称
+                .replace("{TeamName_RED}", Utils.getShowTeam(Team.RED))
+                .replace("{TeamName_YELLOW}", Utils.getShowTeam(Team.YELLOW))
+                .replace("{TeamName_BLUE}", Utils.getShowTeam(Team.BLUE))
+                .replace("{TeamName_GREEN}", Utils.getShowTeam(Team.GREEN))
+                //队伍水晶血量
+                .replace("{TeamCrystalHealth_RED}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.RED)))
+                .replace("{TeamCrystalHealth_YELLOW}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.YELLOW)))
+                .replace("{TeamCrystalHealth_BLUE}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.BLUE)))
+                .replace("{TeamCrystalHealth_GREEN}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.GREEN)))
+                //队伍存活人数
+                .replace("{TeamSurvivingPlayers_RED}", String.valueOf(arena.getSurvivingPlayers(Team.RED).size()))
+                .replace("{TeamSurvivingPlayers_YELLOW}", String.valueOf(arena.getSurvivingPlayers(Team.YELLOW).size()))
+                .replace("{TeamSurvivingPlayers_BLUE}", String.valueOf(arena.getSurvivingPlayers(Team.BLUE).size()))
+                .replace("{TeamSurvivingPlayers_GREEN}", String.valueOf(arena.getSurvivingPlayers(Team.GREEN).size()));
+    }
+
+    public List<String> listReplace(BaseArena arena, Player player, List<String> oldList) {
         ArrayList<String> list = new ArrayList<>();
-        for (String string : this.scoreboardLineGame) {
+        for (String string : oldList) {
             String stringReplace = this.stringReplace(arena, player, string, list);
 
             if (stringReplace.contains("[IF:")) {
@@ -74,6 +130,12 @@ public class Theme {
                         }
                     } else if ("TeamSurviving_GREEN".equalsIgnoreCase(split2[0])) {
                         if (arena.isTeamCrystalSurviving(Team.GREEN) || !arena.getSurvivingPlayers(Team.GREEN).isEmpty()) {
+                            stringReplace = stringReplace.replace(fullContent, content);
+                        } else {
+                            stringReplace = stringReplace.replace(fullContent, "");
+                        }
+                    }else if ("PlayerCount>=MinPlayer".equalsIgnoreCase(split2[0])) {
+                        if (arena.getPlayerCount() >= arena.getMinPlayers()) {
                             stringReplace = stringReplace.replace(fullContent, content);
                         } else {
                             stringReplace = stringReplace.replace(fullContent, "");
@@ -118,6 +180,12 @@ public class Theme {
                         } else {
                             stringReplace = stringReplace.replace(fullContent, content);
                         }
+                    } else if ("PlayerCount>=MinPlayer".equalsIgnoreCase(split2[0])) {
+                        if (arena.getPlayerCount() >= arena.getMinPlayers()) {
+                            stringReplace = stringReplace.replace(fullContent, "");
+                        } else {
+                            stringReplace = stringReplace.replace(fullContent, content);
+                        }
                     }
                 }
             }
@@ -129,31 +197,6 @@ public class Theme {
             list.add(stringReplace);
         }
         return list;
-    }
-
-    public String stringReplace(BaseArena arena, Player player, String string) {
-        return this.stringReplace(arena, player, string, new ArrayList<>());
-    }
-
-    public String stringReplace(BaseArena arena, Player player, String string, List<?> list) {
-        return string
-                .replace("{PluginName}", CrystalWars.PLUGIN_NAME)
-                .replace("{AutoSpace}", Utils.getSpace(list))
-                //队伍名称
-                .replace("{TeamName_RED}", Utils.getShowTeam(Team.RED))
-                .replace("{TeamName_YELLOW}", Utils.getShowTeam(Team.YELLOW))
-                .replace("{TeamName_BLUE}", Utils.getShowTeam(Team.BLUE))
-                .replace("{TeamName_GREEN}", Utils.getShowTeam(Team.GREEN))
-                //队伍水晶血量
-                .replace("{TeamCrystalHealth_RED}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.RED)))
-                .replace("{TeamCrystalHealth_YELLOW}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.YELLOW)))
-                .replace("{TeamCrystalHealth_BLUE}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.BLUE)))
-                .replace("{TeamCrystalHealth_GREEN}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.GREEN)))
-                //队伍存活人数
-                .replace("{TeamSurvivingPlayers_RED}", String.valueOf(arena.getSurvivingPlayers(Team.RED).size()))
-                .replace("{TeamSurvivingPlayers_YELLOW}", String.valueOf(arena.getSurvivingPlayers(Team.YELLOW).size()))
-                .replace("{TeamSurvivingPlayers_BLUE}", String.valueOf(arena.getSurvivingPlayers(Team.BLUE).size()))
-                .replace("{TeamSurvivingPlayers_GREEN}", String.valueOf(arena.getSurvivingPlayers(Team.GREEN).size()));
     }
 
 }

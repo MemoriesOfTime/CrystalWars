@@ -1,5 +1,9 @@
 # {PluginName} 彩色插件名称
 # {AutoSpace} 自动填充的空格（用于空出一行）
+# {time} 倒计时
+# {PlayerCount} 房间中玩家数量
+# {MinPlayer} 房间开始游戏需要的最少玩家数量
+# {MaxPlayer} 房间最多游戏人数
 #
 # [IF:条件]{内容} 如果条件为真则输出内容
 # [IF_NOT:条件]{内容} 如果条件为假则输出内容
@@ -9,6 +13,16 @@
 # TeamSurviving_YELLOW 黄队存活
 # TeamSurviving_BLUE 蓝队存活
 # TeamSurviving_GREEN 绿队存活
+# PlayerCount>=MinPlayer 房间中玩家数量大于等于最少玩家数量
+
+scoreboard_wait:
+  title: "{PluginName}"
+  line:
+    - "{AutoSpace}"
+    - "[IF:PlayerCount>=MinPlayer]{§f◎ §f开始倒计时: §a{time}}[IF_NOT:PlayerCount>=MinPlayer]{§f◎ §c等待玩家加入中...}"
+    - "{AutoSpace}"
+    - "§f◎  §a{PlayerCount}§e/§a{MinPlayer} §8(§6Max:§a{MaxPlayer}§8)"
+    - "{AutoSpace}"
 
 scoreboard_game:
   title: "{PluginName}"

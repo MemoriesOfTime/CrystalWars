@@ -55,8 +55,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     @Getter
     private Level gameWorld;
 
+    @Getter
     private int waitTime;
+    @Getter
     private int gameTime;
+    @Getter
     private int victoryTime;
 
     @Getter
@@ -259,7 +262,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         for (Map.Entry<Player, PlayerData> entry : this.playerDataMap.entrySet()) {
             //计分板
-            LinkedList<String> list = new LinkedList<>();
+            /*LinkedList<String> list = new LinkedList<>();
             list.add(Utils.getSpace(list));
             if (this.getPlayerCount() >= this.getMinPlayers()) {
                 list.add("§f◎ §f开始倒计时:  §a" + Utils.formatCountdown(this.waitTime));
@@ -269,7 +272,18 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             list.add(Utils.getSpace(list));
             list.add("§f◎  §a" + this.getPlayerCount() + "§e/§a" + this.getMinPlayers() + " §8(§6Max:§a" + this.getMaxPlayers() + "§8)");
             list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
+            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);*/
+
+            Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
+            ArrayList<String> list = new ArrayList<>();
+            for (String string : theme.getScoreboardLineWait(this, entry.getKey())) {
+                list.add(string.replace("{time}", Utils.formatCountdown(this.waitTime)));
+            }
+            ScoreboardUtil.getScoreboard().showScoreboard(
+                    entry.getKey(),
+                    theme.getScoreboardTitleWait(this, entry.getKey()),
+                    list
+            );
         }
         Watchdog.resetTime(this);
     }
