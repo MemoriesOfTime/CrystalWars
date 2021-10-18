@@ -28,6 +28,9 @@ public class Theme {
     private String scoreboardTitleWait;
     private List<String> scoreboardLineWait;
 
+    private String scoreboardTitleVictory;
+    private List<String> scoreboardLineVictory;
+
     public Theme(@NotNull String fileName, @NotNull File file) {
         this.name = fileName;
         this.config = new Config(file, Config.YAML);
@@ -37,6 +40,9 @@ public class Theme {
 
         this.scoreboardTitleWait = this.config.getString("scoreboard_wait.title");
         this.scoreboardLineWait = this.config.getStringList("scoreboard_wait.line");
+
+        this.scoreboardTitleVictory = this.config.getString("scoreboard_victory.title");
+        this.scoreboardLineVictory = this.config.getStringList("scoreboard_victory.line");
     }
 
     public String getScoreboardTitleGame(BaseArena arena, Player player) {
@@ -53,6 +59,14 @@ public class Theme {
 
     public List<String> getScoreboardLineWait(BaseArena arena, Player player) {
         return this.listReplace(arena, player, this.scoreboardLineWait);
+    }
+
+    public String getScoreboardTitleVictory(BaseArena arena, Player player) {
+        return this.stringReplace(arena, player, this.scoreboardTitleVictory);
+    }
+
+    public List<String> getScoreboardLineVictory(BaseArena arena, Player player) {
+        return this.listReplace(arena, player, this.scoreboardLineVictory);
     }
 
     public String stringReplace(BaseArena arena, Player player, String string) {
@@ -76,6 +90,7 @@ public class Theme {
                 .replace("{PlayerCount}", String.valueOf(arena.getPlayerCount()))
                 .replace("{MinPlayer}", String.valueOf(arena.getMinPlayers()))
                 .replace("{MaxPlayer}", String.valueOf(arena.getMaxPlayers()))
+                .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(arena.getVictoryTeam()) : "§f平局")
                 //队伍名称
                 .replace("{TeamName_RED}", Utils.getShowTeam(Team.RED))
                 .replace("{TeamName_YELLOW}", Utils.getShowTeam(Team.YELLOW))
