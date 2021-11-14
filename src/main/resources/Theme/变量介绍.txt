@@ -1,0 +1,17 @@
+{PluginName} 彩色插件名称
+{AutoSpace} 自动填充的空格（用于空出一行）
+{time} 倒计时
+{PlayerCount} 房间中玩家数量
+{MinPlayer} 房间开始游戏需要的最少玩家数量
+{MaxPlayer} 房间最多游戏人数
+{VictoryTeam} 胜利队伍（仅胜利结算阶段有效）
+
+[IF:条件]{内容} 如果条件为真则输出内容
+[IF_NOT:条件]{内容} 如果条件为假则输出内容
+支持的条件：
+isOvertime 是加时赛
+TeamSurviving_RED 红队存活
+TeamSurviving_YELLOW 黄队存活
+TeamSurviving_BLUE 蓝队存活
+TeamSurviving_GREEN 绿队存活
+PlayerCount>=MinPlayer 房间中玩家数量大于等于最少玩家数量

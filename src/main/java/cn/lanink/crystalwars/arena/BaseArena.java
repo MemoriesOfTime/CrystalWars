@@ -7,6 +7,9 @@ import cn.lanink.crystalwars.entity.EntityText;
 import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerJoinEvent;
 import cn.lanink.crystalwars.event.CrystalWarsArenaPlayerQuitEvent;
 import cn.lanink.crystalwars.items.ItemManager;
+import cn.lanink.crystalwars.player.PlayerSettingDataManager;
+import cn.lanink.crystalwars.theme.Theme;
+import cn.lanink.crystalwars.theme.ThemeManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -52,8 +55,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     @Getter
     private Level gameWorld;
 
+    @Getter
     private int waitTime;
+    @Getter
     private int gameTime;
+    @Getter
     private int victoryTime;
 
     @Getter
@@ -63,6 +69,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     private final HashMap<Team, CrystalWarsEntityMerchant> teamEntityMerchantMap = new HashMap<>();
     private final HashMap<ResourceGeneration, EntityText> resourceGenerationText = new HashMap<>();
 
+    @Getter
     private Team victoryTeam = Team.NULL;
 
     @Getter
@@ -256,17 +263,16 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         for (Map.Entry<Player, PlayerData> entry : this.playerDataMap.entrySet()) {
             //计分板
-            LinkedList<String> list = new LinkedList<>();
-            list.add(Utils.getSpace(list));
-            if (this.getPlayerCount() >= this.getMinPlayers()) {
-                list.add("§f◎ §f开始倒计时:  §a" + Utils.formatCountdown(this.waitTime));
-            }else {
-                list.add("§f◎ §c等待玩家加入中...");
+            Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
+            ArrayList<String> list = new ArrayList<>();
+            for (String string : theme.getScoreboardLineWait(this, entry.getKey())) {
+                list.add(string.replace("{time}", Utils.formatCountdown(this.waitTime)));
             }
-            list.add(Utils.getSpace(list));
-            list.add("§f◎  §a" + this.getPlayerCount() + "§e/§a" + this.getMinPlayers() + " §8(§6Max:§a" + this.getMaxPlayers() + "§8)");
-            list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
+            ScoreboardUtil.getScoreboard().showScoreboard(
+                    entry.getKey(),
+                    theme.getScoreboardTitleWait(this, entry.getKey()),
+                    list
+            );
         }
         Watchdog.resetTime(this);
     }
@@ -297,20 +303,16 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
 
             //计分板
-            LinkedList<String> list = new LinkedList<>();
-            list.add(Utils.getSpace(list));
-            list.add("§f◎ §f倒计时:  §a" + Utils.formatCountdown(this.gameTime) + (this.isOvertime() ? " §f(加时赛)" : ""));
-            list.add(Utils.getSpace(list));
-            for (Map.Entry<Team, CrystalWarsEntityEndCrystal> e1 : this.teamEntityEndCrystalMap.entrySet()) {
-                List<Player> survivingPlayers = this.getSurvivingPlayers(e1.getKey());
-                if (this.isTeamCrystalSurviving(e1.getKey()) || !survivingPlayers.isEmpty()) {
-                    list.add("§f◎ -" + Utils.getShowTeam(e1.getKey()) + "§f- §e水晶:§a" + Utils.getShowHealth(e1.getValue()) + " §8(§a" + survivingPlayers.size() + "§8)");
-                }else {
-                    list.add("§f◎ -" + Utils.getShowTeam(e1.getKey()) + "§f- §c(oT-T)尸");
-                }
+            Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
+            ArrayList<String> list = new ArrayList<>();
+            for (String string : theme.getScoreboardLineGame(this, entry.getKey())) {
+                list.add(string.replace("{time}", Utils.formatCountdown(this.gameTime)));
             }
-            list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
+            ScoreboardUtil.getScoreboard().showScoreboard(
+                    entry.getKey(),
+                    theme.getScoreboardTitleGame(this, entry.getKey()),
+                    list
+            );
         }
 
         //资源生成
@@ -397,21 +399,12 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 }
             }
 
-            if (this.victoryTeam == Team.NULL) {
-                entry.getKey().sendTip("§e胜利队伍: §f平局§e！");
-            }else {
-                entry.getKey().sendTip("§e胜利队伍: " + Utils.getShowTeam(this.victoryTeam) + "§e！");
-            }
-
-            LinkedList<String> list = new LinkedList<>();
-            list.add(Utils.getSpace(list));
-            if (this.victoryTeam == Team.NULL) {
-                list.add("§f◎ §e胜利队伍: §f平局§e！");
-            }else {
-                list.add("§f◎ §e胜利队伍: " + Utils.getShowTeam(this.victoryTeam) + "§e！");
-            }
-            list.add(Utils.getSpace(list));
-            ScoreboardUtil.getScoreboard().showScoreboard(entry.getKey(), CrystalWars.PLUGIN_NAME, list);
+            Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
+            ScoreboardUtil.getScoreboard().showScoreboard(
+                    entry.getKey(),
+                    theme.getScoreboardTitleVictory(this, entry.getKey()),
+                    theme.getScoreboardLineVictory(this, entry.getKey())
+            );
         }
 
         this.victoryTime--;
@@ -712,6 +705,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             return !this.teamEntityEndCrystalMap.get(team).isClosed();
         }
         return false;
+    }
+
+    public CrystalWarsEntityEndCrystal getTeamEntityEndCrystal(Team team) {
+        return this.teamEntityEndCrystalMap.get(team);
     }
 
     @Override

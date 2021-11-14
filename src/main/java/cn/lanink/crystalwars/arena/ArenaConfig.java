@@ -200,6 +200,17 @@ public class ArenaConfig implements ISaveConfig {
         map.put("crystal", this.getSavePosMap(this.getTeamCrystal()));
         map.put("shop", this.getSavePosMap(this.getTeamShop()));
 
+        ArrayList<Map<String, Object>> maps = new ArrayList<>();
+        for (ResourceGeneration resourceGeneration : this.resourceGenerations) {
+            LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+            linkedHashMap.put("itemGenerationConfigName", resourceGeneration.getConfig().getName());
+            linkedHashMap.put("x", resourceGeneration.getVector3().getX());
+            linkedHashMap.put("y", resourceGeneration.getVector3().getY());
+            linkedHashMap.put("z", resourceGeneration.getVector3().getZ());
+            maps.add(linkedHashMap);
+        }
+        map.put("resourceGenerations", maps);
+
         return map;
     }
 

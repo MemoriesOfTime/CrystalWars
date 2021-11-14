@@ -2,6 +2,7 @@ package cn.lanink.crystalwars.supplier.config.items;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.utils.Utils;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Config;
@@ -46,12 +47,15 @@ public class SupplyItemConfig {
         this.lore = config.getStringList("lore");
 
         this.cost = config.getStringList("cost").stream()
-                .filter(rawStr -> rawStr.matches("\\d{1,3}:\\d{1,4}x\\d{1,2}"))
+                .filter(rawStr -> rawStr.matches("\\d{1,3}:\\d{1,4}x\\d{1,3}"))
                 .map(rawStr -> {
                     Item item = Item.fromString(rawStr.split("x")[0]);
-                    item.setCount(Integer.parseInt(rawStr.split("x")[1]));
+                    item.setCount(Utils.toInt(rawStr.split("x")[1]));
                     return item;
                 }).toArray(Item[]::new);
+        if (this.cost.length == 0) {
+            CrystalWars.getInstance().getLogger().warning("物品：" + this.fileName + " 未设置成本！玩家可以免费获取！");
+        }
 
         this.item = Item.fromString(config.getString("item"));
         this.item.setCount(config.getInt("count"));

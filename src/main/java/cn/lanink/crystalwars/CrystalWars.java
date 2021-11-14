@@ -12,6 +12,7 @@ import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.player.PlayerSettingDataManager;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.theme.ThemeManager;
 import cn.lanink.crystalwars.utils.MetricsLite;
 import cn.lanink.crystalwars.utils.RsNpcVariable;
 import cn.lanink.crystalwars.utils.Watchdog;
@@ -83,6 +84,8 @@ public class CrystalWars extends PluginBase {
     private String arenaConfigPath;
     @Getter
     private String playerSettingsPath;
+    @Getter
+    private String themePath;
 
     @Getter
     private String cmdUser;
@@ -106,6 +109,7 @@ public class CrystalWars extends PluginBase {
         this.worldBackupPath = this.getDataFolder() + "/LevelBackup/";
         this.arenaConfigPath = this.getDataFolder() + "/Arena/";
         this.playerSettingsPath = this.getDataFolder() + "/PlayerSettings/";
+        this.themePath = this.getDataFolder() + "/Theme/";
 
         List<String> list = Arrays.asList("Arena", "LevelBackup", "PlayerSettings");
         for (String fileName : list) {
@@ -146,6 +150,7 @@ public class CrystalWars extends PluginBase {
 
         }
 
+        ThemeManager.load();
         PlayerSettingDataManager.load();
         SupplyConfigManager.loadAllSupplyConfig();
         ItemGenerationConfigManager.loadAllItemGeneration();

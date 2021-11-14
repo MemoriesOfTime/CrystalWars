@@ -14,6 +14,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
@@ -177,6 +178,15 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        BaseArena arena = this.getListenerRoom(event.getEntity().getLevel());
+        if (arena == null) {
+            return;
+        }
+        event.getBlockList().removeIf(block -> !arena.getPlayerPlaceBlocks().contains(block));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onFoodLevelChange(PlayerFoodLevelChangeEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
@@ -212,7 +222,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 event.getPacket() instanceof LevelSoundEventPacketV1 ||
                 event.getPacket() instanceof LevelSoundEventPacketV2) {
             Player player = event.getPlayer();
-            BaseArena arena = this.getListenerRooms().get(player.getLevel().getFolderName());
+            BaseArena arena = this.getListenerRoom(player.getLevel());
             if (arena == null || !arena.isPlaying(player)) {
                 return;
             }
