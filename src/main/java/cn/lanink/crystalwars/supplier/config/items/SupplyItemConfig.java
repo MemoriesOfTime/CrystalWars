@@ -47,7 +47,7 @@ public class SupplyItemConfig {
         this.lore = config.getStringList("lore");
 
         this.cost = config.getStringList("cost").stream()
-                .filter(rawStr -> rawStr.matches("\\d{1,3}:\\d{1,4}x\\d{1,3}"))
+                .filter(rawStr -> rawStr.matches("\\d{1,5}:\\d{1,4}x\\d{1,3}"))
                 .map(rawStr -> {
                     Item item = Item.fromString(rawStr.split("x")[0]);
                     item.setCount(Utils.toInt(rawStr.split("x")[1]));
