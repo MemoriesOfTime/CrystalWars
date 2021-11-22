@@ -94,15 +94,17 @@ public class SupplyPageConfig {
         }
 
         ArrayList<Integer> list = new ArrayList<>();
-        config.getStringList("items").forEach(item -> {
-            final SupplyItemConfig supplyItemConfig = this.parent.getItemConfigMap().get(item);
-            int slotPos = supplyItemConfig.getSlotPos();
-            while (list.contains(slotPos)) {
-                slotPos++;
-            }
-            itemBuilder.put(slotPos, supplyItemConfig);
-            list.add(slotPos);
-        });
+        config.getStringList("items").stream()
+                .filter(item -> this.parent.getItemConfigMap().containsKey(item))
+                .forEach(item -> {
+                    final SupplyItemConfig supplyItemConfig = this.parent.getItemConfigMap().get(item);
+                    int slotPos = supplyItemConfig.getSlotPos();
+                    while (list.contains(slotPos)) {
+                        slotPos++;
+                    }
+                    itemBuilder.put(slotPos, supplyItemConfig);
+                    list.add(slotPos);
+                });
         this.items = itemBuilder.build();
     }
 
