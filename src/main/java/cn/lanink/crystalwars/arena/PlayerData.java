@@ -1,14 +1,13 @@
 package cn.lanink.crystalwars.arena;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.nukkit.Player;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.io.File;
 
 /**
  * @author lt_name
@@ -38,9 +37,7 @@ public class PlayerData {
 
     private Position beforePos;
     private int beforeGameMode;
-    private int beforeFoodLevel;
-    //TODO 使用文件保存，防止因崩服导致的数据丢失
-    private Map<Integer, Item> enderChestContents;
+    private PlayerDataUtils.PlayerData playerData;
 
     /**
      * 保存玩家加入房间前的一些数据
@@ -48,9 +45,13 @@ public class PlayerData {
     public void saveBeforePlayerData() {
         this.beforePos = this.player.clone();
         this.beforeGameMode = this.player.getGamemode();
-        this.beforeFoodLevel = this.player.getFoodData().getLevel();
-        SavePlayerInventory.save(CrystalWars.getInstance(), this.player);
-        this.enderChestContents = this.player.getEnderChestInventory().getContents();
+
+        File file = new File(CrystalWars.getInstance().getDataFolder() + "/" + this.player.getName() + ".json");
+        this.playerData = PlayerDataUtils.create(this.player, file);
+        this.playerData.saveAll();
+
+        this.player.getInventory().clearAll();
+        this.player.getUIInventory().clearAll();
         this.player.getEnderChestInventory().clearAll();
     }
 
@@ -58,12 +59,14 @@ public class PlayerData {
      * 还原玩家加入房间前的一些数据
      */
     public void restoreBeforePlayerData() {
-        SavePlayerInventory.restore(CrystalWars.getInstance(), this.player);
+        this.player.getInventory().clearAll();
+        this.player.getUIInventory().clearAll();
+        this.player.getEnderChestInventory().clearAll();
+
+        this.playerData.restoreAll();
+
         this.player.teleport(this.beforePos);
         this.player.setGamemode(this.beforeGameMode);
-        this.player.getFoodData().setLevel(this.beforeFoodLevel);
-        this.player.getEnderChestInventory().clearAll();
-        this.player.getEnderChestInventory().setContents(this.enderChestContents);
     }
 
     public void addKillCount() {

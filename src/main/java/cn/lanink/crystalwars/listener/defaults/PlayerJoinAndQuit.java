@@ -4,7 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.ArenaSet;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.utils.FormHelper;
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
@@ -14,6 +14,7 @@ import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 /**
@@ -38,7 +39,13 @@ public class PlayerJoinAndQuit implements Listener {
         if (this.crystalWars.getArenas().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
                 if (player.isOnline()) {
-                    SavePlayerInventory.restore(this.crystalWars, player);
+                    File file = new File(crystalWars.getDataFolder() + "/" + player.getName() + ".json");
+                    if (file.exists()) {
+                        PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+                        if (file.delete()) {
+                            playerData.restoreAll();
+                        }
+                    }
                     player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                 }
             }, 1);
