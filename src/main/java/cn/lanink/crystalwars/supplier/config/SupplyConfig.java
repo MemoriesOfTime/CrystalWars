@@ -59,7 +59,11 @@ public class SupplyConfig {
                 .filter(this::checkItemFileCorrect)
                 .forEach(itemFile -> {
                     String fileName = itemFile.getName().split("\\.")[0];
-                    itemConfigMapBuilder.put(fileName, new SupplyItemConfig(fileName, itemFile));
+                    try {
+                        itemConfigMapBuilder.put(fileName, new SupplyItemConfig(fileName, itemFile));
+                    } catch (Exception e) {
+                        CRYSTAL_WARS.getLogger().error("物品：" + fileName + " 加载失败，请检查配置文件！", e);
+                    }
                 });
         itemConfigMap = itemConfigMapBuilder.build();
 
