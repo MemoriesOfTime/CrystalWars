@@ -31,14 +31,25 @@ public class ArenaConfig implements ISaveConfig {
     protected final Map<Team, Vector3> teamCrystal = new HashMap<>();
     protected final Map<Team, Vector3> teamShop = new HashMap<>();
     private boolean isSet;
+
     private int setWaitTime;
     private int setGameTime;
     private int setOvertime;
     private int setVictoryTime;
+
+    /**
+     * 最大团队数量
+     * 最小不能小于2 最大受限于Team类
+     */
+    private int maxTeamCount;
+
     private int minPlayers;
     private int maxPlayers;
+
     private Vector3 waitSpawn;
+
     private final ArrayList<ResourceGeneration> resourceGenerations = new ArrayList<>();
+
     private Supply supply;
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
@@ -54,6 +65,8 @@ public class ArenaConfig implements ISaveConfig {
             this.setGameTime = config.getInt("gameTime", this.isSet ? 0 : 600);
             this.setOvertime = config.getInt("overtime", this.isSet ? 0 : 180);
             this.setVictoryTime = config.getInt("victoryTime", this.isSet ? 0 : 10);
+
+            this.maxTeamCount = Math.min(Team.values().length - 1, Math.max(2, config.getInt("maxTeamCount", Team.values().length - 1)));
 
             this.minPlayers = config.getInt("minPlayers", this.isSet ? 0 : 2);
             this.maxPlayers = config.getInt("maxPlayers", this.isSet ? 0 : 16);
@@ -148,6 +161,13 @@ public class ArenaConfig implements ISaveConfig {
         this.setVictoryTime = newTime;
     }
 
+    public void setMaxTeamCount(int newCount) {
+        if (!this.isSet) {
+            return;
+        }
+        this.maxTeamCount = newCount;
+    }
+
     public void setMinPlayers(int newCount) {
         if (!this.isSet) {
             return;
@@ -188,6 +208,8 @@ public class ArenaConfig implements ISaveConfig {
         map.put("gameTime", this.getSetGameTime());
         map.put("overtime", this.getSetOvertime());
         map.put("victoryTime", this.getSetVictoryTime());
+
+        map.put("maxTeamCount", this.getMaxTeamCount());
 
         map.put("minPlayers", this.getMinPlayers());
         map.put("maxPlayers", this.getMaxPlayers());

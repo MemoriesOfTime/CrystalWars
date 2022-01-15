@@ -29,6 +29,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -535,25 +536,31 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
      * 分配玩家队伍
      */
     public void assignTeam() {
-        ArrayList<Team> teams = new ArrayList<>(Arrays.asList(Team.values()));
-        teams.remove(Team.NULL);
+        ArrayList<Team> canUseTeams = this.getCanUseTeams();
 
-        int baseCount = Math.max(1, this.getPlayerCount() / teams.size());
+        int baseCount = Math.max(1, this.getPlayerCount() / canUseTeams.size());
 
         HashMap<Team, LinkedList<Player>> teamPlayers = new HashMap<>();
-        for (Team team : Team.values()) {
+        teamPlayers.put(Team.NULL, new LinkedList<>());
+        for (Team team : canUseTeams) {
             teamPlayers.put(team, new LinkedList<>());
         }
 
         for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
-            teamPlayers.get(entry.getValue().getTeam()).add(entry.getKey());
+            Team team = entry.getValue().getTeam();
+            //如果玩家在未启用的队伍，则以无队伍来处理
+            if (!teamPlayers.containsKey(team)) {
+                team = Team.NULL;
+            }
+            teamPlayers.get(team).add(entry.getKey());
         }
 
-        //打乱顺序
+        //打乱顺序 让队伍分配更随机一些
         for (LinkedList<Player> list : teamPlayers.values()) {
             Collections.shuffle(list, CrystalWars.RANDOM);
         }
 
+        //队伍人数均衡
         while (true) {
             Player cache = null;
 
@@ -587,7 +594,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
 
             if (cache != null) {
-                teamPlayers.get(teams.get(CrystalWars.RANDOM.nextInt(teams.size()))).add(cache);
+                teamPlayers.get(canUseTeams.get(CrystalWars.RANDOM.nextInt(canUseTeams.size()))).add(cache);
             }
         }
 
@@ -599,6 +606,19 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 this.getPlayerData(player).setTeam(entry.getKey());
             }
         }
+    }
+
+    /**
+     * @return 可以使用的队伍
+     */
+    private ArrayList<Team> getCanUseTeams() {
+        ArrayList<Team> canUseTeams = new ArrayList<>(Arrays.asList(Team.values()));
+        canUseTeams.remove(Team.NULL);
+        while (canUseTeams.size() > this.getMaxTeamCount()) {
+            //如果限制数量，就只用前面的队伍，方便服主配置
+            canUseTeams.remove(canUseTeams.get(canUseTeams.size() - 1));
+        }
+        return canUseTeams;
     }
 
     /**

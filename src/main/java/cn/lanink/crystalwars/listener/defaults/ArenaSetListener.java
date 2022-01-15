@@ -144,22 +144,25 @@ public class ArenaSetListener implements Listener {
             case 400: //设置其他参数
                 AdvancedFormWindowCustom custom2 = new AdvancedFormWindowCustom("设置其他参数");
 
-                custom2.addElement(new ElementInput("房间开始游戏最小人数", "2", "2")); //0
-                custom2.addElement(new ElementInput("房间最大人数", "16", "16")); //1
-                custom2.addElement(new ElementInput("游戏开始等待时间", "60", "60")); //2
-                custom2.addElement(new ElementInput("游戏时间（超出将进入加时赛，水晶会直接爆炸）", "300", "300")); //3
-                custom2.addElement(new ElementInput("加时赛时间", "180", "180")); //4
-                custom2.addElement(new ElementInput("胜利结算时间", "10", "10")); //5
-                custom2.addElement(new ElementDropdown("供给物品配置(商店)", new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()))); //6
+                String canUseTeamCount = "2-" + (Team.values().length - 1);
+                custom2.addElement(new ElementInput("可用队伍数量", canUseTeamCount, canUseTeamCount)); //0
+                custom2.addElement(new ElementInput("房间开始游戏最小人数", "2", "2")); //1
+                custom2.addElement(new ElementInput("房间最大人数", "16", "16")); //2
+                custom2.addElement(new ElementInput("游戏开始等待时间", "60", "60")); //3
+                custom2.addElement(new ElementInput("游戏时间（超出将进入加时赛，水晶会直接爆炸）", "300", "300")); //4
+                custom2.addElement(new ElementInput("加时赛时间", "180", "180")); //5
+                custom2.addElement(new ElementInput("胜利结算时间", "10", "10")); //6
+                custom2.addElement(new ElementDropdown("供给物品配置(商店)", new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()))); //7
 
                 custom2.onResponded((formResponseCustom, cp) -> {
-                    arenaSet.setMinPlayers(Utils.toInt(formResponseCustom.getInputResponse(0)));
-                    arenaSet.setMaxPlayers(Utils.toInt(formResponseCustom.getInputResponse(1)));
-                    arenaSet.setWaitTime(Utils.toInt(formResponseCustom.getInputResponse(2)));
-                    arenaSet.setGameTime(Utils.toInt(formResponseCustom.getInputResponse(3)));
-                    arenaSet.setOvertime(Utils.toInt(formResponseCustom.getInputResponse(4)));
-                    arenaSet.setVictoryTime(Utils.toInt(formResponseCustom.getInputResponse(5)));
-                    arenaSet.setSupply(new Supply(SupplyConfigManager.getSupplyConfig(formResponseCustom.getDropdownResponse(6).getElementContent())));
+                    arenaSet.setMaxTeamCount(Utils.toInt(formResponseCustom.getInputResponse(0)));
+                    arenaSet.setMinPlayers(Utils.toInt(formResponseCustom.getInputResponse(1)));
+                    arenaSet.setMaxPlayers(Utils.toInt(formResponseCustom.getInputResponse(2)));
+                    arenaSet.setWaitTime(Utils.toInt(formResponseCustom.getInputResponse(3)));
+                    arenaSet.setGameTime(Utils.toInt(formResponseCustom.getInputResponse(4)));
+                    arenaSet.setOvertime(Utils.toInt(formResponseCustom.getInputResponse(5)));
+                    arenaSet.setVictoryTime(Utils.toInt(formResponseCustom.getInputResponse(6)));
+                    arenaSet.setSupply(new Supply(SupplyConfigManager.getSupplyConfig(formResponseCustom.getDropdownResponse(7).getElementContent())));
                 });
 
                 player.showFormWindow(custom2);
