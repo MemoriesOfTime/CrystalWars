@@ -29,7 +29,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
