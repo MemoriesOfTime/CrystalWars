@@ -2,6 +2,8 @@
 ---
 #游戏模式
 gameMode: "classic"
+#启用的队伍数量 目前可以设置为2-4
+maxTeamCount: 4
 #房间开始游戏最小人数
 minPlayers: 2
 #房间最大人数
