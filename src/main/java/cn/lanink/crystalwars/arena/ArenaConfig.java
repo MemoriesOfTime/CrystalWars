@@ -27,11 +27,16 @@ import java.util.Map;
 public class ArenaConfig implements ISaveConfig {
 
     private Config config;
-    protected final Map<Team, Vector3> teamSpawn = new HashMap<>();
-    protected final Map<Team, Vector3> teamCrystal = new HashMap<>();
-    protected final Map<Team, Vector3> teamShop = new HashMap<>();
+
     private boolean isSet;
 
+    //游戏规则
+    /**
+     * 是否允许队友伤害
+     */
+    private boolean allowTeammateDamage;
+
+    //时间参数
     private int setWaitTime;
     private int setGameTime;
     private int setOvertime;
@@ -48,6 +53,10 @@ public class ArenaConfig implements ISaveConfig {
 
     private Vector3 waitSpawn;
 
+    protected final Map<Team, Vector3> teamSpawn = new HashMap<>();
+    protected final Map<Team, Vector3> teamCrystal = new HashMap<>();
+    protected final Map<Team, Vector3> teamShop = new HashMap<>();
+
     private final ArrayList<ResourceGeneration> resourceGenerations = new ArrayList<>();
 
     private Supply supply;
@@ -60,6 +69,8 @@ public class ArenaConfig implements ISaveConfig {
         try {
             this.config = config;
             this.isSet = isSet;
+
+            this.allowTeammateDamage = config.getBoolean("allowTeammateDamage", true);
 
             this.setWaitTime = config.getInt("waitTime", this.isSet ? 0 : 60);
             this.setGameTime = config.getInt("gameTime", this.isSet ? 0 : 600);
@@ -204,6 +215,8 @@ public class ArenaConfig implements ISaveConfig {
     @Override
     public Map<String, Object> toSaveMap() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("allowTeammateDamage", this.isAllowTeammateDamage());
+
         map.put("waitTime", this.getSetWaitTime());
         map.put("gameTime", this.getSetGameTime());
         map.put("overtime", this.getSetOvertime());

@@ -2,12 +2,10 @@
 ---
 #游戏模式
 gameMode: "classic"
-#启用的队伍数量 目前可以设置为2-4
-maxTeamCount: 4
-#房间开始游戏最小人数
-minPlayers: 2
-#房间最大人数
-maxPlayers: 16
+
+#是否允许队友伤害
+allowTeammateDamage: true
+
 #游戏开始等待时间
 waitTime: 60
 #游戏时间（超出将进入加时赛，水晶会直接爆炸）
@@ -16,9 +14,18 @@ gameTime: 600
 overtime: 180
 #胜利结算时间
 victoryTime: 10
+
+#启用的队伍数量 目前可以设置为2-4
+maxTeamCount: 4
+#房间开始游戏最小人数
+minPlayers: 2
+#房间最大人数
+maxPlayers: 16
+
 #供给物品配置(商店)
 supply: DefaultSupply
 
+#等待出生点
 waitSpawn: "0:0:0"
 
 #玩家出生点
