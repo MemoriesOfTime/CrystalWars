@@ -53,8 +53,8 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
         this.arena = arena;
         this.team = team;
         this.setShowBase(true);
-        this.setMaxHealth(100);
-        this.setHealth(100);
+        this.setMaxHealth(arena.getDefaultEndCrystalHealth());
+        this.setHealth(this.getMaxHealth());
         this.setNameTag(Utils.getShowTeam(this.getTeam()) + "§e水晶\n" + Utils.getEntityShowHealth(this));
     }
 

@@ -20,6 +20,7 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
+import cn.nukkit.form.element.ElementToggle;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
@@ -153,6 +154,8 @@ public class ArenaSetListener implements Listener {
                 custom2.addElement(new ElementInput("加时赛时间", "180", "180")); //5
                 custom2.addElement(new ElementInput("胜利结算时间", "10", "10")); //6
                 custom2.addElement(new ElementDropdown("供给物品配置(商店)", new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()))); //7
+                custom2.addElement(new ElementToggle("启用队友伤害", true)); //8
+                custom2.addElement(new ElementInput("水晶默认血量", "100", "100")); //9
 
                 custom2.onResponded((formResponseCustom, cp) -> {
                     arenaSet.setMaxTeamCount(Utils.toInt(formResponseCustom.getInputResponse(0)));
@@ -163,6 +166,8 @@ public class ArenaSetListener implements Listener {
                     arenaSet.setOvertime(Utils.toInt(formResponseCustom.getInputResponse(5)));
                     arenaSet.setVictoryTime(Utils.toInt(formResponseCustom.getInputResponse(6)));
                     arenaSet.setSupply(new Supply(SupplyConfigManager.getSupplyConfig(formResponseCustom.getDropdownResponse(7).getElementContent())));
+                    arenaSet.setAllowTeammateDamage(formResponseCustom.getToggleResponse(8));
+                    arenaSet.setDefaultEndCrystalHealth(Utils.toInt(formResponseCustom.getInputResponse(9)));
                 });
 
                 player.showFormWindow(custom2);

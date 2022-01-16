@@ -35,6 +35,10 @@ public class ArenaConfig implements ISaveConfig {
      * 是否允许队友伤害
      */
     private boolean allowTeammateDamage;
+    /**
+     * 水晶默认血量
+     */
+    private int defaultEndCrystalHealth;
 
     //时间参数
     private int setWaitTime;
@@ -71,6 +75,7 @@ public class ArenaConfig implements ISaveConfig {
             this.isSet = isSet;
 
             this.allowTeammateDamage = config.getBoolean("allowTeammateDamage", true);
+            this.defaultEndCrystalHealth = config.getInt("defaultEndCrystalHealth", 100);
 
             this.setWaitTime = config.getInt("waitTime", this.isSet ? 0 : 60);
             this.setGameTime = config.getInt("gameTime", this.isSet ? 0 : 600);
@@ -142,6 +147,20 @@ public class ArenaConfig implements ISaveConfig {
 
     public Vector3 getTeamShop(@NotNull Team team) {
         return this.teamShop.get(team);
+    }
+
+    public void setAllowTeammateDamage(boolean allowTeammateDamage) {
+        if (!this.isSet) {
+            return;
+        }
+        this.allowTeammateDamage = allowTeammateDamage;
+    }
+
+    public void setDefaultEndCrystalHealth(int defaultEndCrystalHealth) {
+        if (!this.isSet) {
+            return;
+        }
+        this.defaultEndCrystalHealth = defaultEndCrystalHealth;
     }
 
     public void setWaitTime(int newTime) {
@@ -216,6 +235,7 @@ public class ArenaConfig implements ISaveConfig {
     public Map<String, Object> toSaveMap() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("allowTeammateDamage", this.isAllowTeammateDamage());
+        map.put("defaultEndCrystalHealth", this.getDefaultEndCrystalHealth());
 
         map.put("waitTime", this.getSetWaitTime());
         map.put("gameTime", this.getSetGameTime());

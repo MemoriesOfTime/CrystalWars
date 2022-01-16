@@ -5,6 +5,8 @@ gameMode: "classic"
 
 #是否允许队友伤害
 allowTeammateDamage: true
+#水晶默认血量
+defaultEndCrystalHealth: 100.0
 
 #游戏开始等待时间
 waitTime: 60
