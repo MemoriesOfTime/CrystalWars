@@ -100,7 +100,7 @@ public class FormHelper {
                         "返回");
             }else {
                 modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
-                        "确定要加入游戏房价: " + world + " ?",
+                        "确定要加入游戏房间: " + world + " ?",
                         "确认",
                         "返回");
                 modal.onClickedTrue((p) ->
