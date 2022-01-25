@@ -211,8 +211,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         PlayerData playerData = this.getPlayerDataMap().remove(player);
-        player.getInventory().clearAll();
-        player.getUIInventory().clearAll();
         playerData.restoreBeforePlayerData();
 
         ScoreboardUtil.getScoreboard().closeScoreboard(player);
