@@ -508,7 +508,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
             File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
             if (!backup.exists()) {
-                this.crystalWars.getLogger().error("§c游戏房间: " + this.getGameWorldName() + " 地图备份不存在！还原失败！");
+                this.crystalWars.getLogger().error(this.crystalWars.getLanguage().translateString("plugin_arena_WorldRestoreFailure_BackupNotExist", this.getGameWorldName()));
                 this.crystalWars.unloadArena(this.getGameWorldName());
             }
             CompletableFuture.runAsync(() -> {
@@ -521,7 +521,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                         this.crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
                     }
                 }else {
-                    this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
+                    this.crystalWars.getLogger().error(this.crystalWars.getLanguage().translateString("plugin_arena_WorldRestoreFailure_FilePermissions", this.getGameWorldName()));
                     Server.getInstance().getScheduler().scheduleTask(
                             this.crystalWars,
                             () -> this.crystalWars.unloadArena(getGameWorldName())
