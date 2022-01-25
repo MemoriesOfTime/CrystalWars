@@ -1,3 +1,6 @@
+pluginLanguage: "zh_CN"
+
+#Plugin Command
 cmdUser: CrystalWars
 cmdUserAliases:
   - cw
