@@ -46,7 +46,7 @@ public class PlayerData {
         this.beforePos = this.player.clone();
         this.beforeGameMode = this.player.getGamemode();
 
-        File file = new File(CrystalWars.getInstance().getDataFolder() + "/" + this.player.getName() + ".json");
+        File file = new File(CrystalWars.getInstance().getDataFolder() + "/PlayerInventory/" + this.player.getName() + ".json");
         this.playerData = PlayerDataUtils.create(this.player, file);
         this.playerData.saveAll();
 
