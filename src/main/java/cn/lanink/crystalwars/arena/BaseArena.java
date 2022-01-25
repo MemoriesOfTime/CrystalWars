@@ -83,22 +83,22 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.gameWorldName = gameWorldName;
 
         if (!Server.getInstance().loadLevel(this.getGameWorldName())) {
-            throw new ArenaLoadException("世界: " + this.getGameWorldName() + " 加载失败！");
+            throw new ArenaLoadException(this.crystalWars.getLanguage().translateString("plugin_loadArena_WorldLoadError", this.getGameWorldName()));
         }
         this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
 
         //备份游戏世界
         File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
         if (!backup.exists()) {
-            this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份不存在，正在备份...");
+            this.crystalWars.getLogger().info(this.crystalWars.getLanguage().translateString("plugin_loadArena_WorldBackupNotExist", this.getGameWorldName()));
             Server.getInstance().unloadLevel(this.gameWorld);
             if (FileUtil.copyDir(this.crystalWars.getServerWorldPath() + this.getGameWorldName(), backup)) {
                 Server.getInstance().loadLevel(this.getGameWorldName());
                 this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
             }else {
-                throw new ArenaLoadException("地图: " + this.getGameWorldName() + " 备份失败！");
+                throw new ArenaLoadException(this.crystalWars.getLanguage().translateString("plugin_loadArena_WorldBackupFailure", this.getGameWorldName()));
             }
-            this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份完成！");
+            this.crystalWars.getLogger().info(this.crystalWars.getLanguage().translateString("plugin_loadArena_WorldBackupSuccess", this.getGameWorldName()));
         }
         this.initLevel();
 

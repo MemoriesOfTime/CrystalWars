@@ -97,6 +97,7 @@ public class CrystalWars extends PluginBase {
     @Getter
     private List<String> cmdAdminAliases;
 
+    @Getter
     private Language language;
 
     public static CrystalWars getInstance() {

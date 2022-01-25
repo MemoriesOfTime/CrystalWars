@@ -31,12 +31,12 @@ public class Watchdog extends PluginTask<CrystalWars> {
                 case VICTORY:
                     if (runTime > this.outTime) {
                         try {
-                            this.owner.getLogger().warning("[Watchdog] Room[" + entry.getKey().getGameWorldName() + "] stuck error! Try to close...");
+                            this.owner.getLogger().warning("[Watchdog] Arena[" + entry.getKey().getGameWorldName() + "] stuck error! Try to close...");
                             entry.setValue(0);
                             entry.getKey().gameEnd();
                         } catch (Exception e) {
                             this.owner.unloadArena(entry.getKey().getGameWorldName());
-                            this.owner.getLogger().error("[Watchdog] The room[" + entry.getKey().getGameWorldName() + "] cannot end the game error", e);
+                            this.owner.getLogger().error("[Watchdog] The Arena[" + entry.getKey().getGameWorldName() + "] cannot end the game error", e);
                         }
                     }
                     break;
