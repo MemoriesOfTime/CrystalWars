@@ -500,7 +500,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
             this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
             if (CrystalWars.debug) {
-                this.crystalWars.getLogger().info("§a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
+                this.crystalWars.getLogger().info("[debug] §a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
             }
             Server.getInstance().unloadLevel(this.getGameWorld(), true);
             File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
@@ -516,7 +516,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     this.initLevel();
                     setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
                     if (CrystalWars.debug) {
-                        this.crystalWars.getLogger().info("§a游戏房间: " + getGameWorldName() + " 地图还原完成！");
+                        this.crystalWars.getLogger().info("[debug] §a游戏房间: " + getGameWorldName() + " 地图还原完成！");
                     }
                 }else {
                     this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
