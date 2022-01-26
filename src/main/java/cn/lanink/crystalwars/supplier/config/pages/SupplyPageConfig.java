@@ -143,6 +143,11 @@ public class SupplyPageConfig {
         });
         this.items.forEach((slotPos, itemConfig) -> {
             advancedFormWindowSimple.addButton(itemConfig.getTitle() + "§r\n" + itemConfig.getSubTitle(), player -> {
+                BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
+                if(arena == null) {
+                    player.sendMessage("§c[错误] 你没有加入任何游戏房间！");
+                    return;
+                }
                 if(!player.getInventory().canAddItem(itemConfig.getItem())) {
                     player.sendTip("你的背包满了！");
                     return;
@@ -153,16 +158,16 @@ public class SupplyPageConfig {
                         return;
                     }
                 }
+                if (!itemConfig.isOvertimeCanBuy() && arena.isOvertime()) {
+                    player.sendTip("此物品不能在加时赛时购买！");
+                    return;
+                }
+
                 for (Item cost : itemConfig.getCost()) {
                     player.getInventory().removeItem(cost);
                 }
                 Item item = itemConfig.getItem();
                 if(itemConfig.isTeamChangeItem()) {
-                    BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
-                    if(arena == null) {
-                        player.sendMessage("§c[警告] 你没有加入任何游戏！");
-                        return;
-                    }
                     item = Utils.getTeamColorItem(item, arena.getPlayerData(player).getTeam());
                 }
                 player.getInventory().addItem(item);

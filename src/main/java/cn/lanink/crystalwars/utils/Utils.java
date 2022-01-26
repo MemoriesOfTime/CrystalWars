@@ -33,6 +33,12 @@ public class Utils {
         throw new RuntimeException("哎呀！你不能实例化这个类！");
     }
 
+    /**
+     * 获取队伍显示名称
+     *
+     * @param team 队伍
+     * @return 显示名称
+     */
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:
@@ -156,6 +162,7 @@ public class Utils {
 
     /**
      * 格式化倒计时 0 -> 00:00
+     *
      * @param time 时间
      * @return 格式化后的时间
      */
@@ -224,6 +231,13 @@ public class Utils {
         entity.spawnToAll();
     }
 
+    /**
+     * 根据队伍获取对应颜色的物品
+     *
+     * @param defaultItem 默认物品
+     * @param team 队伍
+     * @return 对应颜色的物品
+     */
     public static Item getTeamColorItem(Item defaultItem, Team team) {
         Item air = Item.get(Item.AIR);
         if (defaultItem.hasCompoundTag()) {

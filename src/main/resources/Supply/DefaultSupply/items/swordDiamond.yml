@@ -6,3 +6,4 @@ pos: 9
 cost:
   - "264:0x4"
 lore: []
+overtimeCanBuy: true

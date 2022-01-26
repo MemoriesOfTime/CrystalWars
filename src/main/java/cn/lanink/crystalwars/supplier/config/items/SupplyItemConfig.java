@@ -38,15 +38,17 @@ public class SupplyItemConfig {
 
     private final Item[] cost;
 
+    private final boolean overtimeCanBuy;
+
     public SupplyItemConfig(@NotNull String fileName, @NotNull File fileConfig) {
         this.fileName = fileName;
         this.config = new Config(fileConfig, Config.YAML);
-        this.title = config.getString("title");
-        this.subTitle = config.getString("subTitle");
-        this.slotPos = config.getInt("pos");
-        this.lore = config.getStringList("lore");
+        this.title = this.config.getString("title");
+        this.subTitle = this.config.getString("subTitle");
+        this.slotPos = this.config.getInt("pos");
+        this.lore = this.config.getStringList("lore");
 
-        this.cost = config.getStringList("cost").stream()
+        this.cost = this.config.getStringList("cost").stream()
                 .filter(rawStr -> rawStr.matches("\\d{1,5}:\\d{1,4}x\\d{1,3}"))
                 .map(rawStr -> {
                     Item item = Item.fromString(rawStr.split("x")[0]);
@@ -56,13 +58,14 @@ public class SupplyItemConfig {
         if (this.cost.length == 0) {
             CrystalWars.getInstance().getLogger().warning("物品：" + this.fileName + " 未设置成本！玩家可以免费获取！");
         }
+        this.overtimeCanBuy = this.config.get("overtimeCanBuy", true);
 
-        this.item = Item.fromString(config.getString("item"));
-        this.item.setCount(config.getInt("count"));
+        this.item = Item.fromString(this.config.getString("item"));
+        this.item.setCount(this.config.getInt("count"));
         this.item.setLore(this.lore.toArray(new String[0]));
         this.item.setCustomName(this.title);
 
-        for (Map map : config.getMapList("enchantment")) {
+        for (Map map : this.config.getMapList("enchantment")) {
             try {
                 int id = (int) map.getOrDefault("id", 17);
                 int level = (int) map.getOrDefault("level", 1);
