@@ -106,7 +106,7 @@ public class ArenaSet extends ArenaConfig {
                     this.player.sendTitle("", "设置游戏模式", 0, 30, 10);
 
                     item = ItemManager.get(this.player, 11004);
-                    item.setCustomName("设置游戏模式");
+                    item.setCustomName(this.crystalWars.getLanguage().translateString("plugin_arenaSet_item_SetGameMode"));
                     this.player.getInventory().setItem(4, item);
 
                     if (CrystalWars.getARENA_CLASS().containsKey(this.getConfig().getString("gameMode"))) {
@@ -120,7 +120,7 @@ public class ArenaSet extends ArenaConfig {
                     this.player.sendTitle("", "设置等待出生点", 0, 30, 10);
 
                     item = ItemManager.get(this.player, 11005);
-                    item.setCustomName("设置等待出生点");
+                    item.setCustomName(this.crystalWars.getLanguage().translateString("plugin_arenaSet_item_SetWaitPosition"));
                     this.player.getInventory().setItem(4, item);
 
                     if (this.isSet(this.getWaitSpawn())) {
@@ -140,7 +140,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName("设置" + Utils.getShowTeam(team) + "出生点");
+                        item.setCustomName(this.crystalWars.getLanguage().translateString("plugin_arenaSet_item_SetTeamSpawnPosition", Utils.getShowTeam(team)));
                         this.player.getInventory().setItem(indexSpawn, item);
                         indexSpawn++;
                     }
@@ -171,7 +171,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName("设置" + Utils.getShowTeam(team) + "水晶位置");
+                        item.setCustomName(this.crystalWars.getLanguage().translateString("plugin_arenaSet_item_SetCrystalPosition", Utils.getShowTeam(team)));
                         this.player.getInventory().setItem(indexCrystal, item);
                         indexCrystal++;
                     }
