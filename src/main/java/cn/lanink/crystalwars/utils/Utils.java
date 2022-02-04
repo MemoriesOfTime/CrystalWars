@@ -254,6 +254,9 @@ public class Utils {
         Item item = Item.get(defaultItem.getId(), defaultItem.getDamage(), defaultItem.getCount());
         if (item instanceof ItemColorArmor) {
             ItemColorArmor colorArmor = (ItemColorArmor) item;
+            if (defaultItem.hasCompoundTag()) {
+                colorArmor.setNamedTag(defaultItem.getNamedTag());
+            }
             colorArmor.setColor(team.getBlockColor());
             return colorArmor;
         }
