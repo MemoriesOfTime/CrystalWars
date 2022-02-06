@@ -26,6 +26,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -657,9 +658,25 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
-        player.getInventory().setHelmet(Utils.getTeamColorItem(Item.get(Item.LEATHER_CAP), playerData.getTeam()));
-        player.getInventory().setChestplate(Utils.getTeamColorItem(Item.get(Item.LEATHER_TUNIC), playerData.getTeam()));
-        player.getInventory().addItem(Item.get(Item.WOODEN_SWORD));
+        CompoundTag tag;
+
+        Item cap = Item.get(Item.LEATHER_CAP);
+        tag = cap.hasCompoundTag() ? cap.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        cap.setNamedTag(tag);
+        player.getInventory().setHelmet(Utils.getTeamColorItem(cap, playerData.getTeam()));
+
+        Item tunic = Item.get(Item.LEATHER_TUNIC);
+        tag = tunic.hasCompoundTag() ? tunic.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        tunic.setNamedTag(tag);
+        player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
+
+        Item sword = Item.get(Item.WOODEN_SWORD);
+        tag = sword.hasCompoundTag() ? sword.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        sword.setNamedTag(tag);
+        player.getInventory().addItem(sword);
 
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);
