@@ -25,6 +25,7 @@ public class AdvancedBuyItem extends AdvancedClickItem{
 
     @Override
     public void callClick(InventoryClickEvent clickEvent, Player player) {
+        clickEvent.setCancelled(true);
         BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
         if(arena == null) {
             player.sendMessage("§c[错误] 你没有加入任何游戏房间！");

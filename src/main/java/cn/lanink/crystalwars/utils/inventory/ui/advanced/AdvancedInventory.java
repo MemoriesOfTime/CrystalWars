@@ -122,8 +122,8 @@ public class AdvancedInventory extends ContainerInventory {
             for (InventoryAction action : transactionEvent.getTransaction().getActions()) {
                 if (action instanceof SlotChangeAction) {
                     SlotChangeAction slotChangeAction = (SlotChangeAction) action;
-                    if (slotChangeAction.getInventory() instanceof AdvancedInventory &&
-                            slotChangeAction.getTargetItem().getId() == 0) {
+                    if (slotChangeAction.getInventory() instanceof AdvancedInventory/* &&
+                            slotChangeAction.getTargetItem().getId() == 0*/) {
                         event.setCancelled(true);
                     }
                 }
