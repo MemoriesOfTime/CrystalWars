@@ -663,12 +663,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         Item cap = Item.get(Item.LEATHER_CAP);
         tag = cap.hasCompoundTag() ? cap.getNamedTag() : new CompoundTag();
         tag.putByte("Unbreakable", 1);
+        tag.putBoolean("cannotTakeItOff", true);
         cap.setNamedTag(tag);
         player.getInventory().setHelmet(Utils.getTeamColorItem(cap, playerData.getTeam()));
 
         Item tunic = Item.get(Item.LEATHER_TUNIC);
         tag = tunic.hasCompoundTag() ? tunic.getNamedTag() : new CompoundTag();
         tag.putByte("Unbreakable", 1);
+        tag.putBoolean("cannotTakeItOff", true);
         tunic.setNamedTag(tag);
         player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
 
