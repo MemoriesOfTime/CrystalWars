@@ -15,7 +15,7 @@ import cn.nukkit.command.CommandSender;
 public class UserCommand extends BaseCommand {
 
     public UserCommand(String name, String[] aliases) {
-        super(name, "CrystalWars 命令");
+        super(name, "CrystalWars command");
         this.setAliases(aliases);
         this.setPermission("crystalwars.command.user");
 

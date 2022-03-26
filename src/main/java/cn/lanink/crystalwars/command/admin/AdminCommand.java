@@ -12,7 +12,7 @@ import cn.nukkit.command.CommandSender;
 public class AdminCommand extends BaseCommand {
 
     public AdminCommand(String name, String[] aliases) {
-        super(name, "CrystalWars 管理命令");
+        super(name, "CrystalWars management commands");
         this.setAliases(aliases);
         this.setPermission("crystalwars.command.admin");
 

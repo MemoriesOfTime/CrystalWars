@@ -35,7 +35,7 @@ public class Reload extends BaseSubCommand {
 
         this.crystalWars.loadAllListener();
         this.crystalWars.loadAllArena();
-        sender.sendMessage("已重载配置！");
+        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_Reload_success"));
         return true;
     }
 

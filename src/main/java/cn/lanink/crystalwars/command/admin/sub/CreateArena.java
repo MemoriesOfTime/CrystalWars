@@ -39,16 +39,16 @@ public class CreateArena extends BaseSubCommand {
             if (Server.getInstance().loadLevel(args[1])) {
                 Level level = Server.getInstance().getLevelByName(args[1]);
                 this.crystalWars.getOrCreateArenaConfig(level);
-                sender.sendMessage("§a游戏房间: §f" + args[1] + " §a创建成功！");
+                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_CreateArena_success", args[1]));
                 if (player.getLevel() != level) {
                     player.teleport(level.getSpawnLocation());
                 }
                 Server.getInstance().dispatchCommand(sender, this.crystalWars.getCmdAdmin() + " SetArena " + args[1]);
             } else {
-                sender.sendMessage("§c世界: §f" + args[1] + " §c不存在！请输入一个正确的世界名称！");
+                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_CreateArena_worldNotExist", args[1]));
             }
         } else {
-            sender.sendMessage("§c已存在 §f" + args[1] + " §c游戏房间配置文件！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_CreateArena_repeatedExistence", args[1]));
         }
         return true;
     }

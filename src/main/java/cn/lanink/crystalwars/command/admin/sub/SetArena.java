@@ -35,7 +35,7 @@ public class SetArena extends BaseSubCommand {
         Player player = (Player) sender;
         if (this.crystalWars.getArenaSetMap().containsKey(player)) {
             this.crystalWars.getArenaSetMap().get(player).exit();
-            sender.sendMessage("你已退出设置！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_SetArena_exitSettings"));
             return true;
         }
         if (args.length < 2) {
@@ -56,7 +56,7 @@ public class SetArena extends BaseSubCommand {
                 player.teleport(level.getSafeSpawn());
             }
         }else {
-            sender.sendMessage("§c游戏房间: §f" + args[1] + " §c不存在，请先创建！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_SetArena_NotExist", args[1]));
         }
         return true;
     }

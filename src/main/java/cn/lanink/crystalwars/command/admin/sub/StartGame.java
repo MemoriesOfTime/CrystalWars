@@ -35,27 +35,27 @@ public class StartGame extends BaseSubCommand {
             if (sender instanceof Player) {
                 name = ((Player) sender).getLevel().getFolderName();
             }else {
-                sender.sendMessage("请输入游戏房间名称，或在游戏中使用此命令！");
+                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StartGame_needArenaName"));
                 return true;
             }
         }
         BaseArena arena = this.crystalWars.getArenas().get(name);
 
         if (arena == null) {
-            sender.sendMessage("游戏房间: " + name + " 不存在或未加载！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StartGame_ArenaNotLoaded", name));
             return true;
         }
         if (arena.getArenaStatus() != BaseArena.ArenaStatus.WAIT) {
-            sender.sendMessage("游戏房间: " + name + " 不满足要求，无法开始游戏！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StartGame_statusNotMeetTheCondition", name));
             return true;
         }
         if (arena.getPlayerCount() < 2) {
-            sender.sendMessage("游戏房间: " + name + " 玩家少于两人，无法开始游戏！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StartGame_notEnoughPlayers", name));
             return true;
         }
 
         arena.gameStart();
-        sender.sendMessage("游戏房间: " + name + " 已开始游戏！");
+        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StartGame_start", name));
         return true;
     }
 
