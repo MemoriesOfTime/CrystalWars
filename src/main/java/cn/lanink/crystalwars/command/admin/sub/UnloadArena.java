@@ -29,14 +29,14 @@ public class UnloadArena extends BaseSubCommand {
         if (args.length >= 2) {
             String name = args[1];
             if (!this.crystalWars.getArenas().containsKey(name)) {
-                sender.sendMessage("游戏房间: " + name + " 还未加载！无法卸载！");
+                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_UnloadArena_ArenaNotLoaded"));
                 return true;
             }
             this.crystalWars.unloadArena(name);
-            sender.sendMessage("游戏房间: " + name + " 卸载完成！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_UnloadArena_unload", name));
         }else {
             this.crystalWars.unloadAllArena();
-            sender.sendMessage("已卸载所有游戏房间！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_UnloadArena_unloadAll"));
         }
         return true;
     }

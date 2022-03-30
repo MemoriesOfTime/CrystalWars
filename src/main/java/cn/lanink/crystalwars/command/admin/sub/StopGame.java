@@ -35,24 +35,24 @@ public class StopGame extends BaseSubCommand {
             if (sender instanceof Player) {
                 name = ((Player) sender).getLevel().getFolderName();
             }else {
-                sender.sendMessage("请输入游戏房间名称，或在游戏中使用此命令！");
+                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StopGame_needArenaName"));
                 return true;
             }
         }
         BaseArena arena = this.crystalWars.getArenas().get(name);
 
         if (arena == null) {
-            sender.sendMessage("游戏房间: " + name + " 不存在或未加载！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StopGame_NotExist", name));
             return true;
         }
         if (arena.getArenaStatus() != BaseArena.ArenaStatus.GAME &&
                 arena.getArenaStatus() != BaseArena.ArenaStatus.VICTORY) {
-            sender.sendMessage("游戏房间: " + name + " 没有开始游戏，无需停止！");
+            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StopGame_statusNotMeetTheCondition", name));
             return true;
         }
 
         arena.gameEnd();
-        sender.sendMessage("游戏房间: " + name + " 已停止！");
+        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_admin_StopGame_stop", name));
         return true;
     }
 
