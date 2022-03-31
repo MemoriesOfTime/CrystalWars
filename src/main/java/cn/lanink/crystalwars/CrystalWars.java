@@ -20,6 +20,7 @@ import cn.lanink.crystalwars.utils.inventory.ui.listener.InventoryListener;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -29,6 +30,8 @@ import com.smallaswater.npc.variable.VariableManage;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -60,6 +63,9 @@ public class CrystalWars extends PluginBase {
     private static CrystalWars crystalWars;
 
     private Config config;
+
+    @Getter
+    private final LinkedHashMap<Integer, Skin> skins = new LinkedHashMap<>();
 
     @Getter
     private static final LinkedHashMap<String, Class<? extends BaseArena>> ARENA_CLASS = new LinkedHashMap<>();
@@ -150,6 +156,7 @@ public class CrystalWars extends PluginBase {
 
         }
 
+        this.loadSkins();
         ThemeManager.load();
         PlayerSettingDataManager.load();
         SupplyConfigManager.loadAllSupplyConfig();
@@ -221,6 +228,41 @@ public class CrystalWars extends PluginBase {
 
     public static void registerListener(@NotNull String name, @NotNull Class<? extends BaseGameListener<BaseArena>> listerClass) {
         LISTENER_CLASS.put(name, listerClass);
+    }
+
+    public void loadSkins() {
+        File[] files = (new File(this.getDataFolder() + "/Skins")).listFiles();
+        if (files != null && files.length > 0) {
+            int x = 0;
+            for (File file : files) {
+                if (!file.isDirectory()) {
+                    continue;
+                }
+                String skinName = file.getName();
+                File skinFile = new File(this.getDataFolder() + "/Skins/" + skinName + "/skin.png");
+                if (skinFile.exists()) {
+                    Skin skin = new Skin();
+                    skin.setTrusted(true);
+                    BufferedImage skinData = null;
+                    try {
+                        skinData = ImageIO.read(skinFile);
+                    } catch (Exception ignored) {
+                        this.getLogger().warning("§c" + skinName + " 加载失败，错误的图片格式！");
+                    }
+                    if (skinData != null) {
+                        skin.setSkinData(skinData);
+                        skin.setSkinId(skinName);
+
+                        this.skins.put(x, skin);
+                        x++;
+                    } else {
+                        this.getLogger().warning("§c" + skinName + " 加载失败，错误的图片格式！");
+                    }
+                } else {
+                    this.getLogger().warning("§c" + skinName + " 加载失败，请将皮肤文件命名为 skin.png");
+                }
+            }
+        }
     }
 
     public void loadAllListener() {
