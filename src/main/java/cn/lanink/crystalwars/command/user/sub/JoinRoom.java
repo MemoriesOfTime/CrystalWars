@@ -34,12 +34,12 @@ public class JoinRoom extends BaseSubCommand {
         if (!this.crystalWars.getArenas().isEmpty()) {
             Player player = (Player) sender;
             if (player.riding != null) {
-                sender.sendMessage("你不能在骑乘状态下加入房间！");
+                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_NoRiding"));
                 return true;
             }
             for (BaseArena arena : this.crystalWars.getArenas().values()) {
                 if (arena.isPlaying(player)) {
-                    sender.sendMessage("你已经加入一个游戏房间了！");
+                    sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_AlreadyInTheRoom"));
                     return true;
                 }
             }
@@ -49,7 +49,7 @@ public class JoinRoom extends BaseSubCommand {
                     if (arena.canJoin()) {
                         if (arena.getPlayerCount() > 0) {
                             arena.joinRoom(player);
-                            sender.sendMessage("§a已为你随机分配房间！");
+                            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RandomJoin"));
                             return true;
                         }
                         arenas.add(arena);
@@ -59,7 +59,7 @@ public class JoinRoom extends BaseSubCommand {
                     int index = CrystalWars.RANDOM.nextInt(arenas.size());
                     BaseArena arena = arenas.get(index);
                     arena.joinRoom(player);
-                    sender.sendMessage("§a已为你随机分配房间！");
+                    sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RandomJoin"));
                     return true;
                 }
             }else {
@@ -71,7 +71,7 @@ public class JoinRoom extends BaseSubCommand {
                         if (room.canJoin() && room.getGameMode().equals(modeName)) {
                             if (room.getPlayerCount() > 0) {
                                 room.joinRoom(player);
-                                sender.sendMessage("§a已为你随机分配房间！");
+                                sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RandomJoin"));
                                 return true;
                             }
                             arenas.add(room);
@@ -80,33 +80,33 @@ public class JoinRoom extends BaseSubCommand {
                     if (arenas.size() > 0) {
                         BaseArena room = arenas.get(CrystalWars.RANDOM.nextInt(arenas.size()));
                         room.joinRoom(player);
-                        sender.sendMessage("§a已为你随机分配房间！");
+                        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RandomJoin"));
                         return true;
                     }
-                    sender.sendMessage("§a暂无符合条件的房间！");
+                    sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_NoRoomAvailable"));
                     return true;
                 }else {
                     String world = args[1];
                     BaseArena arena = this.crystalWars.getArenas().get(world);
                     if (arena != null) {
                         if (arena.getArenaStatus() == BaseArena.ArenaStatus.LEVEL_NOT_LOADED) {
-                            sender.sendMessage("§a房间初始化中，请稍后...");
+                            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RoomIsInitializing"));
                         }else if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME ||
                                 arena.getArenaStatus() == BaseArena.ArenaStatus.VICTORY) {
-                            sender.sendMessage("§a该房间正在游戏中，请稍后...");
+                            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RoomIsInGame"));
                         }else if (arena.getPlayerCount() >= arena.getMaxPlayers()) {
-                            sender.sendMessage("§a该房间已满人，请稍后...");
+                            sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_RoomIsFull"));
                         }else {
                             arena.joinRoom(player);
                         }
                     }else {
-                        sender.sendMessage("§a暂无符合条件的房间！");
+                        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_NoRoomAvailable"));
                     }
                     return true;
                 }
             }
         }
-        sender.sendMessage("§a暂无可用的房间！");
+        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_JoinRoom_NoRoomAvailable"));
         return true;
     }
 
