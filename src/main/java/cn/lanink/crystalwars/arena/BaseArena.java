@@ -20,6 +20,7 @@ import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
@@ -65,6 +66,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Getter
     private final Map<Player, PlayerData> playerDataMap = new ConcurrentHashMap<>();
+    private final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
+    private final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
     private final HashMap<Team, CrystalWarsEntityMerchant> teamEntityMerchantMap = new HashMap<>();
@@ -187,6 +190,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         playerData.saveBeforePlayerData();
         this.getPlayerDataMap().put(player, playerData);
 
+        this.setRandomSkin(player);
+
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getInventory().clearAll();
@@ -214,8 +219,39 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         PlayerData playerData = this.getPlayerDataMap().remove(player);
         playerData.restoreBeforePlayerData();
 
+        this.restorePlayerSkin(player);
+
         ScoreboardUtil.getScoreboard().closeScoreboard(player);
         return true;
+    }
+
+    /**
+     * 设置玩家随机皮肤
+     *
+     * @param player 玩家
+     */
+    private void setRandomSkin(@NotNull Player player) {
+        for (Map.Entry<Integer, Skin> entry : this.crystalWars.getSkins().entrySet()) {
+            if (!this.skinNumber.containsValue(entry.getKey())) {
+                this.skinCache.put(player, player.getSkin());
+                this.skinNumber.put(player, entry.getKey());
+                Utils.setHumanSkin(player, entry.getValue());
+                return;
+            }
+        }
+    }
+
+    /**
+     * 还原玩家皮肤
+     *
+     * @param player 玩家
+     */
+    private void restorePlayerSkin(@NotNull Player player) {
+        if (this.skinCache.containsKey(player)) {
+            Utils.setHumanSkin(player, this.skinCache.get(player));
+            this.skinCache.remove(player);
+        }
+        this.skinNumber.remove(player);
     }
 
     /**
