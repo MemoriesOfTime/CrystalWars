@@ -23,6 +23,7 @@ public class ThemeManager {
     public static void load() {
         CRYSTAL_WARS.saveResource("Theme/变量介绍.txt", true);
         CRYSTAL_WARS.saveResource("Theme/DefaultTheme.yml");
+        CRYSTAL_WARS.saveResource("Theme/DefaultThemeEng.yml");
 
         File[] files = new File(CRYSTAL_WARS.getThemePath()).listFiles();
         if(files == null || files.length == 0) {

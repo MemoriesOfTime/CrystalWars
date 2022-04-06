@@ -31,7 +31,7 @@ public class QuitRoom extends BaseSubCommand {
                 return true;
             }
         }
-        sender.sendMessage("§a你还没有加入任何游戏房间！");
+        sender.sendMessage(this.crystalWars.getLanguage().translateString("plugin_command_user_QuitRoom_NotJoinTheRoom"));
         return true;
     }
 

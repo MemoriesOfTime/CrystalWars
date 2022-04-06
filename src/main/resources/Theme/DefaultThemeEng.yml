@@ -1,0 +1,31 @@
+scoreboard_wait:
+  title: "{PluginName}"
+  line:
+    - "{AutoSpace}"
+    - "[IF:PlayerCount>=MinPlayer]{§f◎ §fStart the countdown: §a{time}}[IF_NOT:PlayerCount>=MinPlayer]{§f◎ §cWaiting for player to join...}"
+    - "{AutoSpace}"
+    - "§f◎  §a{PlayerCount}§e/§a{MinPlayer} §8(§6Max:§a{MaxPlayer}§8)"
+    - "{AutoSpace}"
+
+scoreboard_game:
+  title: "{PluginName}"
+  line:
+    - "{AutoSpace}"
+    - "§f◎ §fCountdown:  §a{time} [IF:isOvertime]{§f(overtime)}"
+    - "{AutoSpace}"
+    - "[IF:TeamSurviving_RED]{§f◎ -{TeamName_RED}§f- §eCrystal:§a{TeamCrystalHealth_RED} §8(§a{TeamSurvivingPlayers_RED}§8)}"
+    - "[IF_NOT:TeamSurviving_RED]{§f◎ -{TeamName_RED}§f- §c(oT-T)尸}"
+    - "[IF:TeamSurviving_YELLOW]{§f◎ -{TeamName_YELLOW}§f- §eCrystal:§a{TeamCrystalHealth_YELLOW} §8(§a{TeamSurvivingPlayers_YELLOW}§8)}"
+    - "[IF_NOT:TeamSurviving_YELLOW]{§f◎ -{TeamName_YELLOW}§f- §c(oT-T)尸}"
+    - "[IF:TeamSurviving_BLUE]{§f◎ -{TeamName_BLUE}§f- §eCrystal:§a{TeamCrystalHealth_BLUE} §8(§a{TeamSurvivingPlayers_BLUE}§8)}"
+    - "[IF_NOT:TeamSurviving_BLUE]{§f◎ -{TeamName_BLUE}§f- §c(oT-T)尸}"
+    - "[IF:TeamSurviving_GREEN]{§f◎ -{TeamName_GREEN}§f- §eCrystal:§a{TeamCrystalHealth_GREEN} §8(§a{TeamSurvivingPlayers_GREEN}§8)}"
+    - "[IF_NOT:TeamSurviving_GREEN]{§f◎ -{TeamName_GREEN}§f- §c(oT-T)尸}"
+    - "{AutoSpace}"
+
+scoreboard_victory:
+  title: "{PluginName}"
+  line:
+    - "{AutoSpace}"
+    - "§f◎ §eWinningTeam: {VictoryTeam}§e！"
+    - "{AutoSpace}"
