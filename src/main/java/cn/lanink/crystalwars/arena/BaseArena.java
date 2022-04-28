@@ -322,6 +322,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.gameTime--;
 
         for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
+            //无敌时间计算
+            if (entry.getValue().getPlayerInvincibleTime() > 0) {
+                entry.getValue().setPlayerInvincibleTime(entry.getValue().getPlayerInvincibleTime() - 1);
+            }
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
@@ -721,6 +725,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         playerData.setPlayerStatus(PlayerData.PlayerStatus.SURVIVE);
+        playerData.setPlayerInvincibleTime(5); //复活5秒无敌
     }
 
     public boolean isPlaying(@NotNull Player player) {

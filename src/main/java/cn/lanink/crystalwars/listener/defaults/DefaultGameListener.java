@@ -70,8 +70,13 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 return;
             }
             PlayerData playerData = arena.getPlayerData(player);
-            if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME &&
-                    playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
+            if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME && playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
+                if (playerData.getPlayerInvincibleTime() > 0) {
+                    event.setDamage(0);
+                    event.setCancelled(true);
+                    return;
+                }
+
                 if (event instanceof EntityDamageByEntityEvent) {
                     EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                     if (entityDamageByEntityEvent.getDamager() instanceof Player) {
