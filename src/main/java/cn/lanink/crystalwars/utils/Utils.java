@@ -22,6 +22,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -37,6 +38,37 @@ public class Utils {
 
     private Utils() {
         throw new RuntimeException("哎呀！你不能实例化这个类！");
+    }
+
+    public static void executeCommand(@NotNull Player player, List<String> cmds) {
+        for (String cmd : cmds) {
+            String[] c = cmd.split("&");
+            String command = c[0];
+            if (command.startsWith("/")) {
+                command = command.replaceFirst("/", "");
+            }
+            command = command.replace("{player}", player.getName())
+                    .replace("@p", player.getName());
+            if (c.length > 1 && "con".equals(c[1])) {
+                try {
+                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command);
+                } catch (Exception e) {
+                    CrystalWars.getInstance().getLogger().error(
+                            "控制台权限执行命令时出现错误！" +
+                                    " 玩家:" + player.getName() +
+                                    " 错误:", e);
+                }
+                continue;
+            }
+            try {
+                Server.getInstance().dispatchCommand(player, command);
+            } catch (Exception e) {
+                CrystalWars.getInstance().getLogger().error(
+                        "玩家权限执行命令时出现错误！" +
+                                " 玩家:" + player.getName() +
+                                " 错误:", e);
+            }
+        }
     }
 
     /**

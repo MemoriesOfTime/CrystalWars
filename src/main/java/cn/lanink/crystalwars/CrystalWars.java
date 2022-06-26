@@ -101,6 +101,10 @@ public class CrystalWars extends PluginBase {
     private List<String> cmdUserAliases;
     @Getter
     private List<String> cmdAdminAliases;
+    @Getter
+    private List<String> victoryCmd;
+    @Getter
+    private List<String> defeatCmd;
 
     public static CrystalWars getInstance() {
         return crystalWars;
@@ -176,6 +180,8 @@ public class CrystalWars extends PluginBase {
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "CrystalWarsAdmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+        this.victoryCmd = this.config.getStringList("VictoryExecuteCommand");
+        this.defeatCmd = this.config.getStringList("DefeatExecuteCommand");
 
         this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));

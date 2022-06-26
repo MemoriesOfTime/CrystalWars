@@ -512,6 +512,28 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
         ArenaTickTask.removeArena(this);
 
+        LinkedList<Player> victoryPlayers = new LinkedList<>();
+        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
+            if (entry.getValue().getTeam() == this.victoryTeam) {
+                victoryPlayers.add(entry.getKey());
+            }else if (entry.getValue().getTeam() != Team.NULL) {
+                defeatPlayers.add(entry.getKey());
+            }
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
+            if (!victoryPlayers.isEmpty() && !this.crystalWars.getVictoryCmd().isEmpty()) {
+                for (Player player : victoryPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getVictoryCmd());
+                }
+            }
+            if (!defeatPlayers.isEmpty() && !this.crystalWars.getDefeatCmd().isEmpty()) {
+                for (Player player : defeatPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getDefeatCmd());
+                }
+            }
+        }, 10);
+
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
