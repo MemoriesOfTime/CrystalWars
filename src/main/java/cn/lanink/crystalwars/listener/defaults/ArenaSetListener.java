@@ -99,6 +99,9 @@ public class ArenaSetListener implements Listener {
         event.setCancelled(true);
 
         Vector3 newVector3 = new Vector3(block.getX(), block.getY(), block.getZ());
+        if (player.getLevel().getBlockIdAt(block.getFloorX(), block.getFloorY(), block.getFloorZ()) != Block.AIR) {
+            newVector3.y = newVector3.getFloorY() + 1;
+        }
         newVector3.x = newVector3.getFloorX() + 0.5;
         newVector3.z = newVector3.getFloorZ() + 0.5;
         switch (arenaSet.getSetRoomSchedule()) {

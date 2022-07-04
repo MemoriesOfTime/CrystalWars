@@ -17,6 +17,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
@@ -70,6 +71,15 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 return;
             }
             PlayerData playerData = arena.getPlayerData(player);
+
+            if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME && playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
+                if (playerData.getPlayerInvincibleTime() > 0) {
+                    event.setDamage(0);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME &&
                     playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
                 if (event instanceof EntityDamageByEntityEvent) {
@@ -246,4 +256,30 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
+    /**
+     * 玩家点击背包栏格子事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getInventory() == null) {
+            return;
+        }
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null || !arena.isPlaying(player)) {
+            return;
+        }
+        Item sourceItem = event.getSourceItem();
+        //TODO 全使用NBT判断
+        if (sourceItem.isArmor() || (sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean("cannotTakeItOff")) &&
+                event.getHeldItem().getId() == 0) {
+            event.setCancelled(true);
+            return;
+        }
+        if ((sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean("cannotClickOnInventory")) ||
+                (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean("cannotClickOnInventory"))) {
+            event.setCancelled(true);
+        }
+    }
 }

@@ -4,6 +4,10 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
@@ -16,10 +20,13 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -302,4 +309,56 @@ public class Utils {
         return newItem;
     }
 
+    public static void executeCommand(@NotNull Player player, List<String> cmds) {
+        for (String cmd : cmds) {
+            String[] c = cmd.split("&");
+            String command = c[0];
+            if (command.startsWith("/")) {
+                command = command.replaceFirst("/", "");
+            }
+            command = command.replace("{player}", player.getName())
+                    .replace("@p", player.getName());
+            if (c.length > 1 && "con".equals(c[1])) {
+                try {
+                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command);
+                } catch (Exception e) {
+                    CrystalWars.getInstance().getLogger().error(
+                            "控制台权限执行命令时出现错误！" +
+                                    " 玩家:" + player.getName() +
+                                    " 错误:", e);
+                }
+                continue;
+            }
+            try {
+                Server.getInstance().dispatchCommand(player, command);
+            } catch (Exception e) {
+                CrystalWars.getInstance().getLogger().error(
+                        "玩家权限执行命令时出现错误！" +
+                                " 玩家:" + player.getName() +
+                                " 错误:", e);
+            }
+        }
+    }
+
+    /**
+     * 设置Human实体皮肤
+     *
+     * @param human 实体
+     * @param skin 皮肤
+     */
+    public static void setHumanSkin(EntityHuman human, Skin skin) {
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        HashSet<Player> players = new HashSet<>(human.getViewers().values());
+        if (human instanceof Player) {
+            players.add((Player) human);
+        }
+        if (!players.isEmpty()) {
+            Server.broadcastPacket(players, packet);
+        }
+        human.setSkin(skin);
+    }
 }

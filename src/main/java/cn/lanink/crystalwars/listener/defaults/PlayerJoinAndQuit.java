@@ -39,7 +39,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (this.crystalWars.getArenas().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
                 if (player.isOnline()) {
-                    File file = new File(crystalWars.getDataFolder() + "/" + player.getName() + ".json");
+                    File file = new File(crystalWars.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
                     if (file.exists()) {
                         PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
                         if (file.delete()) {

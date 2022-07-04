@@ -39,6 +39,8 @@ public class SupplyItemConfig {
 
     private final Item[] cost;
 
+    private final boolean overtimeCanBuy;
+
     public SupplyItemConfig(@NotNull String fileName, @NotNull File fileConfig) {
         Language language = CrystalWars.getInstance().getLang();
         this.fileName = fileName;
@@ -47,6 +49,7 @@ public class SupplyItemConfig {
         this.subTitle = config.getString("subTitle");
         this.slotPos = config.getInt("pos");
         this.lore = config.getStringList("lore");
+        this.overtimeCanBuy = this.config.get("overtimeCanBuy", true);
 
         this.cost = config.getStringList("cost").stream()
                 .filter(rawStr -> rawStr.matches("\\d{1,5}:\\d{1,4}x\\d{1,3}"))

@@ -10,3 +10,4 @@ lore:
 enchantment:
   - id: 12
     level: 1
+overtimeCanBuy: true

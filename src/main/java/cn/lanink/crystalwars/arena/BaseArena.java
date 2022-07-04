@@ -21,12 +21,14 @@ import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -78,6 +80,11 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Getter
     private final HashSet<Vector3> playerPlaceBlocks = new HashSet<>();
+
+    private final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
+
+    private final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
+
 
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
@@ -186,6 +193,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         PlayerData playerData = this.getOrCreatePlayerData(player);
         playerData.saveBeforePlayerData();
         this.getPlayerDataMap().put(player, playerData);
+        this.setRandomSkin(player);
 
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
@@ -215,7 +223,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         playerData.restoreBeforePlayerData();
-
+        this.restorePlayerSkin(player);
         ScoreboardUtil.getScoreboard().closeScoreboard(player);
         return true;
     }
@@ -288,6 +296,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.gameTime--;
 
         for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
+            //无敌时间计算
+            if (entry.getValue().getPlayerInvincibleTime() > 0) {
+                entry.getValue().setPlayerInvincibleTime(entry.getValue().getPlayerInvincibleTime() - 1);
+            }
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
@@ -474,6 +486,41 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
         ArenaTickTask.removeArena(this);
+
+        LinkedList<Player> victoryPlayers = new LinkedList<>();
+        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
+            if (entry.getValue().getTeam() == this.victoryTeam) {
+                victoryPlayers.add(entry.getKey());
+            }else if (entry.getValue().getTeam() != Team.NULL) {
+                defeatPlayers.add(entry.getKey());
+            }
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
+            if (!victoryPlayers.isEmpty() && !this.crystalWars.getVictoryCmd().isEmpty()) {
+                for (Player player : victoryPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getVictoryCmd());
+                }
+            }
+            if (!defeatPlayers.isEmpty() && !this.crystalWars.getDefeatCmd().isEmpty()) {
+                for (Player player : defeatPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getDefeatCmd());
+                }
+            }
+        }, 10);
+
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
+            if (!victoryPlayers.isEmpty() && !this.crystalWars.getVictoryCmd().isEmpty()) {
+                for (Player player : victoryPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getVictoryCmd());
+                }
+            }
+            if (!defeatPlayers.isEmpty() && !this.crystalWars.getDefeatCmd().isEmpty()) {
+                for (Player player : defeatPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getDefeatCmd());
+                }
+            }
+        }, 10);
 
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
@@ -662,15 +709,34 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
-        player.getInventory().setHelmet(Utils.getTeamColorItem(Item.get(Item.LEATHER_CAP), playerData.getTeam()));
-        player.getInventory().setChestplate(Utils.getTeamColorItem(Item.get(Item.LEATHER_TUNIC), playerData.getTeam()));
-        player.getInventory().addItem(Item.get(Item.WOODEN_SWORD));
+        CompoundTag tag;
+
+        Item cap = Item.get(Item.LEATHER_CAP);
+        tag = cap.hasCompoundTag() ? cap.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        tag.putBoolean("cannotTakeItOff", true);
+        cap.setNamedTag(tag);
+        player.getInventory().setHelmet(Utils.getTeamColorItem(cap, playerData.getTeam()));
+
+        Item tunic = Item.get(Item.LEATHER_TUNIC);
+        tag = tunic.hasCompoundTag() ? tunic.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        tag.putBoolean("cannotTakeItOff", true);
+        tunic.setNamedTag(tag);
+        player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
+
+        Item sword = Item.get(Item.WOODEN_SWORD);
+        tag = sword.hasCompoundTag() ? sword.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        sword.setNamedTag(tag);
+        player.getInventory().addItem(sword);
 
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         playerData.setPlayerStatus(PlayerData.PlayerStatus.SURVIVE);
+        playerData.setPlayerInvincibleTime(5); //复活5秒无敌
     }
 
     public boolean isPlaying(@NotNull Player player) {
@@ -790,5 +856,34 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     @Override
     public int hashCode() {
         return Objects.hash(this.getGameWorldName());
+    }
+
+    /**
+     * 设置玩家随机皮肤
+     *
+     * @param player 玩家
+     */
+    private void setRandomSkin(@NotNull Player player) {
+        for (Map.Entry<Integer, Skin> entry : this.crystalWars.getSkins().entrySet()) {
+            if (!this.skinNumber.containsValue(entry.getKey())) {
+                this.skinCache.put(player, player.getSkin());
+                this.skinNumber.put(player, entry.getKey());
+                Utils.setHumanSkin(player, entry.getValue());
+                return;
+            }
+        }
+    }
+
+    /**
+     * 还原玩家皮肤
+     *
+     * @param player 玩家
+     */
+    private void restorePlayerSkin(@NotNull Player player) {
+        if (this.skinCache.containsKey(player)) {
+            Utils.setHumanSkin(player, this.skinCache.get(player));
+            this.skinCache.remove(player);
+        }
+        this.skinNumber.remove(player);
     }
 }
