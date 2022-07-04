@@ -26,8 +26,6 @@ public class PlayerData {
 
     private int waitSpawnTime;
 
-    private int playerInvincibleTime; //玩家无敌时间
-
     public PlayerData(@NotNull Player player) {
         this.player = player;
         this.playerStatus = PlayerStatus.WAIT_SPAWN;
@@ -48,7 +46,7 @@ public class PlayerData {
         this.beforePos = this.player.clone();
         this.beforeGameMode = this.player.getGamemode();
 
-        File file = new File(CrystalWars.getInstance().getDataFolder() + "/PlayerInventory/" + this.player.getName() + ".json");
+        File file = new File(CrystalWars.getInstance().getDataFolder() + "/" + this.player.getName() + ".json");
         this.playerData = PlayerDataUtils.create(this.player, file);
         this.playerData.saveAll();
 

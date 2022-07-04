@@ -10,6 +10,7 @@ import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedBuyItem;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedPageLinkItem;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;
@@ -137,41 +138,37 @@ public class SupplyPageConfig {
     }
 
     public AdvancedFormWindowSimple generateForm(@NotNull AdvancedFormWindowSimple parent) {
+        Language language = CrystalWars.getInstance().getLang();
         AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.title);
-        advancedFormWindowSimple.addButton("返回到主界面", player -> {
+        advancedFormWindowSimple.addButton(language.translateString("buyItem_ReturnToMainPage"), player -> {
             player.showFormWindow(parent);
         });
         this.items.forEach((slotPos, itemConfig) -> {
             advancedFormWindowSimple.addButton(itemConfig.getTitle() + "§r\n" + itemConfig.getSubTitle(), player -> {
-                BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
-                if(arena == null) {
-                    player.sendMessage("§c[错误] 你没有加入任何游戏房间！");
-                    return;
-                }
                 if(!player.getInventory().canAddItem(itemConfig.getItem())) {
-                    player.sendTip("你的背包满了！");
+                    player.sendTip(language.translateString("buyItem_inventoryFull"));
                     return;
                 }
                 for (Item cost : itemConfig.getCost()) {
                     if(!player.getInventory().contains(cost)) {
-                        player.sendTip("你还没有足够的物品来兑换");
+                        player.sendTip(language.translateString("buyItem_lackOfNeededItems"));
                         return;
                     }
                 }
-                if (!itemConfig.isOvertimeCanBuy() && arena.isOvertime()) {
-                    player.sendTip("此物品不能在加时赛时购买！");
-                    return;
-                }
-
                 for (Item cost : itemConfig.getCost()) {
                     player.getInventory().removeItem(cost);
                 }
                 Item item = itemConfig.getItem();
                 if(itemConfig.isTeamChangeItem()) {
+                    BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
+                    if(arena == null) {
+                        player.sendMessage(language.translateString("buyItem_notInRoom"));
+                        return;
+                    }
                     item = Utils.getTeamColorItem(item, arena.getPlayerData(player).getTeam());
                 }
                 player.getInventory().addItem(item);
-                player.sendTip("购买成功！");
+                player.sendTip(language.translateString("buyItem_success"));
             });
         });
         return advancedFormWindowSimple;

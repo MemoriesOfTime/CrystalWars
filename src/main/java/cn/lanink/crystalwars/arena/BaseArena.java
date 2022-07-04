@@ -16,18 +16,17 @@ import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -66,8 +65,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Getter
     private final Map<Player, PlayerData> playerDataMap = new ConcurrentHashMap<>();
-    private final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
-    private final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
     private final HashMap<Team, CrystalWarsEntityMerchant> teamEntityMerchantMap = new HashMap<>();
@@ -85,24 +82,24 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
         this.gameWorldName = gameWorldName;
-
+        Language language = CrystalWars.getInstance().getLang();
         if (!Server.getInstance().loadLevel(this.getGameWorldName())) {
-            throw new ArenaLoadException("世界: " + this.getGameWorldName() + " 加载失败！");
+            throw new ArenaLoadException(language.translateString("arena_loadFailed",this.getGameWorldName()));
         }
         this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
 
         //备份游戏世界
         File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
         if (!backup.exists()) {
-            this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份不存在，正在备份...");
+            this.crystalWars.getLogger().info(language.translateString("arena_backUpNotFound",this.getGameWorldName()));
             Server.getInstance().unloadLevel(this.gameWorld);
             if (FileUtil.copyDir(this.crystalWars.getServerWorldPath() + this.getGameWorldName(), backup)) {
                 Server.getInstance().loadLevel(this.getGameWorldName());
                 this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
             }else {
-                throw new ArenaLoadException("地图: " + this.getGameWorldName() + " 备份失败！");
+                throw new ArenaLoadException(language.translateString("arena_backupFailed",this.getGameWorldName()));
             }
-            this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份完成！");
+            this.crystalWars.getLogger().info(language.translateString("arena_backupSucceeded",this.getGameWorldName()));
         }
         this.initLevel();
 
@@ -124,7 +121,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
         }else {
-            throw new RuntimeException("重复设置房间游戏模式！");
+            throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("arena_setGamemodeRepeatedly"));
         }
     }
 
@@ -190,8 +187,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         playerData.saveBeforePlayerData();
         this.getPlayerDataMap().put(player, playerData);
 
-        this.setRandomSkin(player);
-
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getInventory().clearAll();
@@ -217,41 +212,12 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         PlayerData playerData = this.getPlayerDataMap().remove(player);
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
         playerData.restoreBeforePlayerData();
-
-        this.restorePlayerSkin(player);
 
         ScoreboardUtil.getScoreboard().closeScoreboard(player);
         return true;
-    }
-
-    /**
-     * 设置玩家随机皮肤
-     *
-     * @param player 玩家
-     */
-    private void setRandomSkin(@NotNull Player player) {
-        for (Map.Entry<Integer, Skin> entry : this.crystalWars.getSkins().entrySet()) {
-            if (!this.skinNumber.containsValue(entry.getKey())) {
-                this.skinCache.put(player, player.getSkin());
-                this.skinNumber.put(player, entry.getKey());
-                Utils.setHumanSkin(player, entry.getValue());
-                return;
-            }
-        }
-    }
-
-    /**
-     * 还原玩家皮肤
-     *
-     * @param player 玩家
-     */
-    private void restorePlayerSkin(@NotNull Player player) {
-        if (this.skinCache.containsKey(player)) {
-            Utils.setHumanSkin(player, this.skinCache.get(player));
-            this.skinCache.remove(player);
-        }
-        this.skinNumber.remove(player);
     }
 
     /**
@@ -322,21 +288,18 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.gameTime--;
 
         for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
-            //无敌时间计算
-            if (entry.getValue().getPlayerInvincibleTime() > 0) {
-                entry.getValue().setPlayerInvincibleTime(entry.getValue().getPlayerInvincibleTime() - 1);
-            }
             //玩家复活
             if (entry.getValue().getPlayerStatus() == PlayerData.PlayerStatus.WAIT_SPAWN) {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
                     int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
                     entry.getValue().setWaitSpawnTime(waitSpawnTime);
+                    Language language = CrystalWars.getInstance().getLang();
                     if (waitSpawnTime <= 0) {
                         //清掉之前的内容
-                        entry.getKey().sendTitle("§a已复活!", "", 5, 15, 10);
+                        entry.getKey().sendTitle(language.translateString("title_respawn"), "", 5, 15, 10);
                         this.playerRespawn(entry.getKey());
                     }else {
-                        entry.getKey().sendTitle("§c死亡", "§a将在§e" + waitSpawnTime + "§a秒后复活!", 0, 30, 10);
+                        entry.getKey().sendTitle(language.translateString("title_wasted"), language.translateString("title_wasted_sub", waitSpawnTime), 0, 30, 10);
                     }
                 }else {
                     entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
@@ -512,28 +475,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
         ArenaTickTask.removeArena(this);
 
-        LinkedList<Player> victoryPlayers = new LinkedList<>();
-        LinkedList<Player> defeatPlayers = new LinkedList<>();
-        for (Map.Entry<Player, PlayerData> entry : this.getPlayerDataMap().entrySet()) {
-            if (entry.getValue().getTeam() == this.victoryTeam) {
-                victoryPlayers.add(entry.getKey());
-            }else if (entry.getValue().getTeam() != Team.NULL) {
-                defeatPlayers.add(entry.getKey());
-            }
-        }
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
-            if (!victoryPlayers.isEmpty() && !this.crystalWars.getVictoryCmd().isEmpty()) {
-                for (Player player : victoryPlayers) {
-                    Utils.executeCommand(player, this.crystalWars.getVictoryCmd());
-                }
-            }
-            if (!defeatPlayers.isEmpty() && !this.crystalWars.getDefeatCmd().isEmpty()) {
-                for (Player player : defeatPlayers) {
-                    Utils.executeCommand(player, this.crystalWars.getDefeatCmd());
-                }
-            }
-        }, 10);
-
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
@@ -561,15 +502,16 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.initData();
 
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
+            Language language = CrystalWars.getInstance().getLang();
             this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
             if (CrystalWars.debug) {
-                this.crystalWars.getLogger().info("[debug] §a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
+                this.crystalWars.getLogger().info(language.translateString("tips_levelRecovery_start", this.getGameWorldName()));
             }
             Server.getInstance().unloadLevel(this.getGameWorld(), true);
             File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
             File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
             if (!backup.exists()) {
-                this.crystalWars.getLogger().error("§c游戏房间: " + this.getGameWorldName() + " 地图备份不存在！还原失败！");
+                this.crystalWars.getLogger().error(language.translateString("tips_levelRecovery_backupNotFound", this.getGameWorldName()));
                 this.crystalWars.unloadArena(this.getGameWorldName());
             }
             CompletableFuture.runAsync(() -> {
@@ -579,10 +521,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     this.initLevel();
                     setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
                     if (CrystalWars.debug) {
-                        this.crystalWars.getLogger().info("[debug] §a游戏房间: " + getGameWorldName() + " 地图还原完成！");
+                        this.crystalWars.getLogger().info(language.translateString("tips_levelRecovery_backupSuccess", this.getGameWorldName()));
                     }
                 }else {
-                    this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
+                    this.crystalWars.getLogger().error(language.translateString("tips_levelRecovery_backupFailed", this.getGameWorldName()));
                     Server.getInstance().getScheduler().scheduleTask(
                             this.crystalWars,
                             () -> this.crystalWars.unloadArena(getGameWorldName())
@@ -720,34 +662,15 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
-        CompoundTag tag;
-
-        Item cap = Item.get(Item.LEATHER_CAP);
-        tag = cap.hasCompoundTag() ? cap.getNamedTag() : new CompoundTag();
-        tag.putByte("Unbreakable", 1);
-        tag.putBoolean("cannotTakeItOff", true);
-        cap.setNamedTag(tag);
-        player.getInventory().setHelmet(Utils.getTeamColorItem(cap, playerData.getTeam()));
-
-        Item tunic = Item.get(Item.LEATHER_TUNIC);
-        tag = tunic.hasCompoundTag() ? tunic.getNamedTag() : new CompoundTag();
-        tag.putByte("Unbreakable", 1);
-        tag.putBoolean("cannotTakeItOff", true);
-        tunic.setNamedTag(tag);
-        player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
-
-        Item sword = Item.get(Item.WOODEN_SWORD);
-        tag = sword.hasCompoundTag() ? sword.getNamedTag() : new CompoundTag();
-        tag.putByte("Unbreakable", 1);
-        sword.setNamedTag(tag);
-        player.getInventory().addItem(sword);
+        player.getInventory().setHelmet(Utils.getTeamColorItem(Item.get(Item.LEATHER_CAP), playerData.getTeam()));
+        player.getInventory().setChestplate(Utils.getTeamColorItem(Item.get(Item.LEATHER_TUNIC), playerData.getTeam()));
+        player.getInventory().addItem(Item.get(Item.WOODEN_SWORD));
 
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         playerData.setPlayerStatus(PlayerData.PlayerStatus.SURVIVE);
-        playerData.setPlayerInvincibleTime(5); //复活5秒无敌
     }
 
     public boolean isPlaying(@NotNull Player player) {

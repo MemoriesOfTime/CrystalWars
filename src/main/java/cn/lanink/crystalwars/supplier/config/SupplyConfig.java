@@ -3,6 +3,7 @@ package cn.lanink.crystalwars.supplier.config;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
 import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
@@ -33,10 +34,11 @@ public class SupplyConfig {
     private static final CrystalWars CRYSTAL_WARS = CrystalWars.getInstance();
 
     public SupplyConfig(@NotNull String dirName, @NotNull File path) {
+        Language language = CrystalWars.getInstance().getLang();
         this.dirName = dirName;
         File[] childDir = path.listFiles();
         if(childDir == null) {
-            throw new RuntimeException("加载" + dirName + "失败!");
+            throw new RuntimeException(language.translateString("supply_loadSupplyFailed",dirName));
         }
 
         childDir = Arrays.stream(childDir).filter(File::isDirectory).toArray(File[]::new);
@@ -44,14 +46,14 @@ public class SupplyConfig {
         if(childDir.length != 2 ||
                 !Arrays.asList("items", "pages").contains(childDir[0].getName()) ||
                 !Arrays.asList("items", "pages").contains(childDir[1].getName())) {
-            throw new RuntimeException("加载" + dirName + "失败!");
+            throw new RuntimeException(language.translateString("supply_loadSupplyFailed",dirName));
         }
         File itemsPath = new File(path, "items");
         File[] itemsFiles = itemsPath.listFiles();
         File pagesPath = new File(path, "pages");
         File[] pagesFiles = pagesPath.listFiles();
         if(itemsFiles == null || pagesFiles == null) {
-            throw new RuntimeException("加载" + dirName + "失败!");
+            throw new RuntimeException(language.translateString("supply_loadShopFailed",dirName));
         }
 
         ImmutableMap.Builder<String, SupplyItemConfig> itemConfigMapBuilder = ImmutableMap.builder();
@@ -62,7 +64,7 @@ public class SupplyConfig {
                     try {
                         itemConfigMapBuilder.put(fileName, new SupplyItemConfig(fileName, itemFile));
                     } catch (Exception e) {
-                        CRYSTAL_WARS.getLogger().error("物品：" + fileName + " 加载失败，请检查配置文件！", e);
+                        CRYSTAL_WARS.getLogger().error(language.translateString("supply_loadItemsFailed", fileName), e);
                     }
                 });
         itemConfigMap = itemConfigMapBuilder.build();
@@ -81,7 +83,7 @@ public class SupplyConfig {
                 });
         pageConfigMap = supplyPageConfigBuilder.build();
         if(this.defaultPageConfig == null) {
-            throw new RuntimeException("商店供给:" + dirName + " 无默认界面!");
+            throw new RuntimeException(language.translateString("supply_loadShop_noDefaultPage", dirName));
         }
     }
 

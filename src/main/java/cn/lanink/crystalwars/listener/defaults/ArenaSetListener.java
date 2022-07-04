@@ -10,6 +10,7 @@ import cn.lanink.crystalwars.supplier.Supply;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.Event;
@@ -66,7 +67,7 @@ public class ArenaSetListener implements Listener {
                 arenaSet.save();
                 arenaSet.exit();
                 this.crystalWars.loadArena(arenaSet.getWorldName());
-                player.sendTitle("", "配置已保存！", 10, 40, 10);
+                player.sendTitle("", CrystalWars.getInstance().getLang().translateString("arenaSet_configSaved"), 10, 40, 10);
                 break;
             case 11004:
             case 11005:
@@ -98,9 +99,6 @@ public class ArenaSetListener implements Listener {
         event.setCancelled(true);
 
         Vector3 newVector3 = new Vector3(block.getX(), block.getY(), block.getZ());
-        if (player.getLevel().getBlockIdAt(block.getFloorX(), block.getFloorY(), block.getFloorZ()) != Block.AIR) {
-            newVector3.y = newVector3.getFloorY() + 1;
-        }
         newVector3.x = newVector3.getFloorX() + 0.5;
         newVector3.z = newVector3.getFloorZ() + 0.5;
         switch (arenaSet.getSetRoomSchedule()) {
@@ -127,9 +125,9 @@ public class ArenaSetListener implements Listener {
                 break;
             case 350: //设置资源点
                 if (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG) == 11007) {
-                    AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("选择物品生成配置");
+                    AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(CrystalWars.getInstance().getLang().translateString("arenaSet_selectItemSpawnInit"));
                     custom.addElement(new ElementDropdown(
-                            "物品生成配置",
+                            CrystalWars.getInstance().getLang().translateString("arenaSet_ItemSpawnInit"),
                             new ArrayList<>(ItemGenerationConfigManager.getITEM_GENERATION_CONFIG_MAP().keySet())
                     )); //0
                     custom.onResponded((formResponseCustom, cp) -> {
@@ -146,19 +144,20 @@ public class ArenaSetListener implements Listener {
                 }
                 break;
             case 400: //设置其他参数
-                AdvancedFormWindowCustom custom2 = new AdvancedFormWindowCustom("设置其他参数");
+                Language language = CrystalWars.getInstance().getLang();
+                AdvancedFormWindowCustom custom2 = new AdvancedFormWindowCustom(language.translateString("arenaSet_setOtherParameters"));
 
                 String canUseTeamCount = "2-" + (Team.values().length - 1);
-                custom2.addElement(new ElementInput("可用队伍数量", canUseTeamCount, canUseTeamCount)); //0
-                custom2.addElement(new ElementInput("房间开始游戏最小人数", "2", "2")); //1
-                custom2.addElement(new ElementInput("房间最大人数", "16", "16")); //2
-                custom2.addElement(new ElementInput("游戏开始等待时间", "60", "60")); //3
-                custom2.addElement(new ElementInput("游戏时间（超出将进入加时赛，水晶会直接爆炸）", "300", "300")); //4
-                custom2.addElement(new ElementInput("加时赛时间", "180", "180")); //5
-                custom2.addElement(new ElementInput("胜利结算时间", "10", "10")); //6
-                custom2.addElement(new ElementDropdown("供给物品配置(商店)", new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()))); //7
-                custom2.addElement(new ElementToggle("启用队友伤害", true)); //8
-                custom2.addElement(new ElementInput("水晶默认血量", "100", "100")); //9
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_availableTeamCount"), canUseTeamCount, canUseTeamCount)); //0
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_minPlayers"), "2", "2")); //1
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_maxPlayers"), "16", "16")); //2
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_waitTime"), "60", "60")); //3
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_gameTime"), "300", "300")); //4
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_overTime"), "180", "180")); //5
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_ceremonyTime"), "10", "10")); //6
+                custom2.addElement(new ElementDropdown(language.translateString("arenaSet_shopSupplyConfig"), new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()))); //7
+                custom2.addElement(new ElementToggle(language.translateString("arenaSet_isAllowedToDamageTeammates"), true)); //8
+                custom2.addElement(new ElementInput(language.translateString("arenaSet_defaultCrystalHealth"), "100", "100")); //9
 
                 custom2.onResponded((formResponseCustom, cp) -> {
                     arenaSet.setMaxTeamCount(Utils.toInt(formResponseCustom.getInputResponse(0)));

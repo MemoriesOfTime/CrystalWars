@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.command.user.sub;
 
+import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.command.BaseSubCommand;
 import cn.nukkit.Player;
@@ -19,7 +20,7 @@ public class QuitRoom extends BaseSubCommand {
 
     @Override
     public String[] getAliases() {
-        return new String[] { "退出" };
+        return new String[] { "退出", "quit" };
     }
 
     @Override
@@ -31,7 +32,7 @@ public class QuitRoom extends BaseSubCommand {
                 return true;
             }
         }
-        sender.sendMessage("§a你还没有加入任何游戏房间！");
+        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_notInRoom"));
         return true;
     }
 
