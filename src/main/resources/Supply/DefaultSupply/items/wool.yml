@@ -7,3 +7,4 @@ cost:
   - "265:0x5"
 lore:
   - "想变成你的形状~"
+overtimeCanBuy: true
