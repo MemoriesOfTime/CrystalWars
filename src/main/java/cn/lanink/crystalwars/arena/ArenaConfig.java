@@ -11,7 +11,6 @@ import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -130,8 +129,8 @@ public class ArenaConfig implements ISaveConfig {
             this.supply = new Supply(SupplyConfigManager.getSupplyConfig(supplyName));
 
             if (CrystalWars.debug) {
-                CrystalWars.getInstance().getLogger().info(CrystalWars.getInstance().getLang().translateString("arenaConfig_loadResourceSpawn_debug") + this.resourceGenerations);
-                CrystalWars.getInstance().getLogger().info(CrystalWars.getInstance().getLang().translateString("arenaConfig_loadSupply_debug") + this.supply);
+                CrystalWars.getInstance().getLogger().info("[debug] Resources Spawn: " + this.resourceGenerations);
+                CrystalWars.getInstance().getLogger().info("[debug] Shop Supply: " + this.supply);
             }
         }catch (Exception e) {
             throw new ArenaLoadException(CrystalWars.getInstance().getLang().translateString("arenaConfig_arenaLoadException_tip"), e);

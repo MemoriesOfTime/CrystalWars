@@ -41,7 +41,7 @@ public class ThemeManager {
                 });
         CRYSTAL_WARS.getLogger().info(language.translateString("themeManager_loadTemplate", count));
         if(CrystalWars.debug) {
-            CRYSTAL_WARS.getLogger().info(language.translateString("themeManager_loadTemplate_debug", THEME_MAP));
+            CRYSTAL_WARS.getLogger().info("[debug] " + THEME_MAP);
         }
     }
 
