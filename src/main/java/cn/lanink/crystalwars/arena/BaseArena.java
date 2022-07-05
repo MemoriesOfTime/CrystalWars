@@ -228,6 +228,36 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         return true;
     }
 
+
+    /**
+     * 设置玩家随机皮肤
+     *
+     * @param player 玩家
+     */
+    private void setRandomSkin(@NotNull Player player) {
+        for (Map.Entry<Integer, Skin> entry : this.crystalWars.getSkins().entrySet()) {
+            if (!this.skinNumber.containsValue(entry.getKey())) {
+                this.skinCache.put(player, player.getSkin());
+                this.skinNumber.put(player, entry.getKey());
+                Utils.setHumanSkin(player, entry.getValue());
+                return;
+            }
+        }
+    }
+
+    /**
+     * 还原玩家皮肤
+     *
+     * @param player 玩家
+     */
+    private void restorePlayerSkin(@NotNull Player player) {
+        if (this.skinCache.containsKey(player)) {
+            Utils.setHumanSkin(player, this.skinCache.get(player));
+            this.skinCache.remove(player);
+        }
+        this.skinNumber.remove(player);
+    }
+
     /**
      * 房间Tick
      *
@@ -856,34 +886,5 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     @Override
     public int hashCode() {
         return Objects.hash(this.getGameWorldName());
-    }
-
-    /**
-     * 设置玩家随机皮肤
-     *
-     * @param player 玩家
-     */
-    private void setRandomSkin(@NotNull Player player) {
-        for (Map.Entry<Integer, Skin> entry : this.crystalWars.getSkins().entrySet()) {
-            if (!this.skinNumber.containsValue(entry.getKey())) {
-                this.skinCache.put(player, player.getSkin());
-                this.skinNumber.put(player, entry.getKey());
-                Utils.setHumanSkin(player, entry.getValue());
-                return;
-            }
-        }
-    }
-
-    /**
-     * 还原玩家皮肤
-     *
-     * @param player 玩家
-     */
-    private void restorePlayerSkin(@NotNull Player player) {
-        if (this.skinCache.containsKey(player)) {
-            Utils.setHumanSkin(player, this.skinCache.get(player));
-            this.skinCache.remove(player);
-        }
-        this.skinNumber.remove(player);
     }
 }

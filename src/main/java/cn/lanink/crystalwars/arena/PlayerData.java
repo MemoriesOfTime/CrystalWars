@@ -26,6 +26,8 @@ public class PlayerData {
 
     private int waitSpawnTime;
 
+    private int playerInvincibleTime; //玩家无敌时间
+
     public PlayerData(@NotNull Player player) {
         this.player = player;
         this.playerStatus = PlayerStatus.WAIT_SPAWN;
@@ -39,7 +41,6 @@ public class PlayerData {
     private int beforeGameMode;
     private PlayerDataUtils.PlayerData playerData;
 
-    private int playerInvincibleTime; //玩家无敌时间
 
     /**
      * 保存玩家加入房间前的一些数据

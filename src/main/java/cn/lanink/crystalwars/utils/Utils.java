@@ -40,6 +40,59 @@ public class Utils {
         throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
     }
 
+    public static void executeCommand(@NotNull Player player, List<String> cmds) {
+        for (String cmd : cmds) {
+            String[] c = cmd.split("&");
+            String command = c[0];
+            if (command.startsWith("/")) {
+                command = command.replaceFirst("/", "");
+            }
+            command = command.replace("{player}", player.getName())
+                    .replace("@p", player.getName());
+            if (c.length > 1 && "con".equals(c[1])) {
+                try {
+                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command);
+                } catch (Exception e) {
+                    CrystalWars.getInstance().getLogger().error(
+                            "控制台权限执行命令时出现错误！" +
+                                    " 玩家:" + player.getName() +
+                                    " 错误:", e);
+                }
+                continue;
+            }
+            try {
+                Server.getInstance().dispatchCommand(player, command);
+            } catch (Exception e) {
+                CrystalWars.getInstance().getLogger().error(
+                        "玩家权限执行命令时出现错误！" +
+                                " 玩家:" + player.getName() +
+                                " 错误:", e);
+            }
+        }
+    }
+
+    /**
+     * 设置Human实体皮肤
+     *
+     * @param human 实体
+     * @param skin 皮肤
+     */
+    public static void setHumanSkin(EntityHuman human, Skin skin) {
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        HashSet<Player> players = new HashSet<>(human.getViewers().values());
+        if (human instanceof Player) {
+            players.add((Player) human);
+        }
+        if (!players.isEmpty()) {
+            Server.broadcastPacket(players, packet);
+        }
+        human.setSkin(skin);
+    }
+
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:
@@ -231,6 +284,13 @@ public class Utils {
         entity.spawnToAll();
     }
 
+    /**
+     * 根据队伍获取对应颜色的物品
+     *
+     * @param defaultItem 默认物品
+     * @param team 队伍
+     * @return 对应颜色的物品
+     */
     public static Item getTeamColorItem(Item defaultItem, Team team) {
         Item air = Item.get(Item.AIR);
         if (defaultItem.hasCompoundTag()) {
@@ -247,6 +307,9 @@ public class Utils {
         Item item = Item.get(defaultItem.getId(), defaultItem.getDamage(), defaultItem.getCount());
         if (item instanceof ItemColorArmor) {
             ItemColorArmor colorArmor = (ItemColorArmor) item;
+            if (defaultItem.hasCompoundTag()) {
+                colorArmor.setNamedTag(defaultItem.getNamedTag());
+            }
             colorArmor.setColor(team.getBlockColor());
             return colorArmor;
         }
@@ -307,58 +370,5 @@ public class Utils {
             newItem.setNamedTag(defaultItem.getNamedTag());
         }
         return newItem;
-    }
-
-    public static void executeCommand(@NotNull Player player, List<String> cmds) {
-        for (String cmd : cmds) {
-            String[] c = cmd.split("&");
-            String command = c[0];
-            if (command.startsWith("/")) {
-                command = command.replaceFirst("/", "");
-            }
-            command = command.replace("{player}", player.getName())
-                    .replace("@p", player.getName());
-            if (c.length > 1 && "con".equals(c[1])) {
-                try {
-                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command);
-                } catch (Exception e) {
-                    CrystalWars.getInstance().getLogger().error(
-                            "控制台权限执行命令时出现错误！" +
-                                    " 玩家:" + player.getName() +
-                                    " 错误:", e);
-                }
-                continue;
-            }
-            try {
-                Server.getInstance().dispatchCommand(player, command);
-            } catch (Exception e) {
-                CrystalWars.getInstance().getLogger().error(
-                        "玩家权限执行命令时出现错误！" +
-                                " 玩家:" + player.getName() +
-                                " 错误:", e);
-            }
-        }
-    }
-
-    /**
-     * 设置Human实体皮肤
-     *
-     * @param human 实体
-     * @param skin 皮肤
-     */
-    public static void setHumanSkin(EntityHuman human, Skin skin) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
-        HashSet<Player> players = new HashSet<>(human.getViewers().values());
-        if (human instanceof Player) {
-            players.add((Player) human);
-        }
-        if (!players.isEmpty()) {
-            Server.broadcastPacket(players, packet);
-        }
-        human.setSkin(skin);
     }
 }

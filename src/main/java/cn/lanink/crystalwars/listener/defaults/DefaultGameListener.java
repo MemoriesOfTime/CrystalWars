@@ -61,7 +61,6 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
@@ -71,17 +70,13 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 return;
             }
             PlayerData playerData = arena.getPlayerData(player);
-
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME && playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
                 if (playerData.getPlayerInvincibleTime() > 0) {
                     event.setDamage(0);
                     event.setCancelled(true);
                     return;
                 }
-            }
 
-            if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME &&
-                    playerData.getPlayerStatus() == PlayerData.PlayerStatus.SURVIVE) {
                 if (event instanceof EntityDamageByEntityEvent) {
                     EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                     if (entityDamageByEntityEvent.getDamager() instanceof Player) {
@@ -97,12 +92,12 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     if (event instanceof EntityDamageByEntityEvent) {
                         EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                         if (entityDamageByEntityEvent.getDamager() instanceof Player) {
-                             PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
-                             if (damagerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
-                                 event.setCancelled(true);
-                                 return;
-                             }
-                             damagerData.addKillCount();
+                            PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
+                            if (damagerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
+                                event.setCancelled(true);
+                                return;
+                            }
+                            damagerData.addKillCount();
                         }
                     }
                     arena.playerDeath(player);
@@ -238,24 +233,6 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onDataPacketReceive(DataPacketReceiveEvent event) {
-        if (event.getPacket() instanceof LevelSoundEventPacket ||
-                event.getPacket() instanceof LevelSoundEventPacketV1 ||
-                event.getPacket() instanceof LevelSoundEventPacketV2) {
-            Player player = event.getPlayer();
-            BaseArena arena = this.getListenerRoom(player.getLevel());
-            if (arena == null || !arena.isPlaying(player)) {
-                return;
-            }
-            PlayerData playerData = arena.getPlayerData(player);
-            if (playerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
-                player.dataPacket(event.getPacket());
-                event.setCancelled(true);
-            }
-        }
-    }
-
     /**
      * 玩家点击背包栏格子事件
      * @param event 事件
@@ -282,4 +259,23 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             event.setCancelled(true);
         }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDataPacketReceive(DataPacketReceiveEvent event) {
+        if (event.getPacket() instanceof LevelSoundEventPacket ||
+                event.getPacket() instanceof LevelSoundEventPacketV1 ||
+                event.getPacket() instanceof LevelSoundEventPacketV2) {
+            Player player = event.getPlayer();
+            BaseArena arena = this.getListenerRoom(player.getLevel());
+            if (arena == null || !arena.isPlaying(player)) {
+                return;
+            }
+            PlayerData playerData = arena.getPlayerData(player);
+            if (playerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
+                player.dataPacket(event.getPacket());
+                event.setCancelled(true);
+            }
+        }
+    }
+
 }

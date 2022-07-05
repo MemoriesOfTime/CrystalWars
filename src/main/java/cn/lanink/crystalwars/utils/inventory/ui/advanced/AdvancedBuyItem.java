@@ -26,7 +26,13 @@ public class AdvancedBuyItem extends AdvancedClickItem{
 
     @Override
     public void callClick(InventoryClickEvent clickEvent, Player player) {
+        clickEvent.setCancelled(true);
+        BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
         Language language = CrystalWars.getInstance().getLang();
+        if(arena == null) {
+            player.sendMessage(language.translateString("tips_buyitem_notInRoom"));
+            return;
+        }
         if(!player.getInventory().canAddItem(this.itemConfig.getItem())) {
             player.sendTip(language.translateString("buyItem_inventoryFull"));
             return;
@@ -37,12 +43,15 @@ public class AdvancedBuyItem extends AdvancedClickItem{
                 return;
             }
         }
+        if (!this.itemConfig.isOvertimeCanBuy() && arena.isOvertime()) {
+            player.sendTip(language.translateString("tips_buyItem_canNotBuyForOvertime"));
+            return;
+        }
         for (Item cost : this.itemConfig.getCost()) {
             player.getInventory().removeItem(cost);
         }
         Item item = this.itemConfig.getItem();
         if(this.itemConfig.isTeamChangeItem()) {
-            BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
             if(arena == null) {
                 player.sendMessage(language.translateString("buyItem_notInRoom"));
                 return;

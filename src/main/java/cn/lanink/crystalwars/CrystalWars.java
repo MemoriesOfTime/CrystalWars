@@ -164,7 +164,7 @@ public class CrystalWars extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        loadSkins();
+        this.loadSkins();
         ThemeManager.load();
         PlayerSettingDataManager.load();
         SupplyConfigManager.loadAllSupplyConfig();
@@ -179,12 +179,12 @@ public class CrystalWars extends PluginBase {
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this, 10), 20, true);
 
         this.loadAllArena();
-        this.victoryCmd = this.config.getStringList("VictoryExecuteCommand");
-        this.defeatCmd = this.config.getStringList("DefeatExecuteCommand");
         this.cmdUser = this.config.getString("cmdUser", "CrystalWars");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "CrystalWarsAdmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+        this.victoryCmd = this.config.getStringList("VictoryExecuteCommand");
+        this.defeatCmd = this.config.getStringList("DefeatExecuteCommand");
 
         this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
                 new UserCommand(this.cmdUser, this.cmdUserAliases.toArray(new String[0])));
@@ -251,6 +251,42 @@ public class CrystalWars extends PluginBase {
 
     public static void registerListener(@NotNull String name, @NotNull Class<? extends BaseGameListener<BaseArena>> listerClass) {
         LISTENER_CLASS.put(name, listerClass);
+    }
+
+
+    public void loadSkins() {
+        File[] files = (new File(this.getDataFolder() + "/Skins")).listFiles();
+        if (files != null && files.length > 0) {
+            int x = 0;
+            for (File file : files) {
+                if (!file.isDirectory()) {
+                    continue;
+                }
+                String skinName = file.getName();
+                File skinFile = new File(this.getDataFolder() + "/Skins/" + skinName + "/skin.png");
+                if (skinFile.exists()) {
+                    Skin skin = new Skin();
+                    skin.setTrusted(true);
+                    BufferedImage skinData = null;
+                    try {
+                        skinData = ImageIO.read(skinFile);
+                    } catch (Exception ignored) {
+                        this.getLogger().warning(this.language.translateString("loadSkin_wrongFormat",skinName));
+                    }
+                    if (skinData != null) {
+                        skin.setSkinData(skinData);
+                        skin.setSkinId(skinName);
+
+                        this.skins.put(x, skin);
+                        x++;
+                    } else {
+                        this.getLogger().warning(this.language.translateString("loadSkin_wrongFormat",skinName));
+                    }
+                } else {
+                    this.getLogger().warning(this.language.translateString("loadSkin_skinNotFound",skinName));
+                }
+            }
+        }
     }
 
     public void loadAllListener() {
@@ -355,40 +391,5 @@ public class CrystalWars extends PluginBase {
 
     public Language getLang(){
         return this.language;
-    }
-
-    public void loadSkins() {
-        File[] files = (new File(this.getDataFolder() + "/Skins")).listFiles();
-        if (files != null && files.length > 0) {
-            int x = 0;
-            for (File file : files) {
-                if (!file.isDirectory()) {
-                    continue;
-                }
-                String skinName = file.getName();
-                File skinFile = new File(this.getDataFolder() + "/Skins/" + skinName + "/skin.png");
-                if (skinFile.exists()) {
-                    Skin skin = new Skin();
-                    skin.setTrusted(true);
-                    BufferedImage skinData = null;
-                    try {
-                        skinData = ImageIO.read(skinFile);
-                    } catch (Exception ignored) {
-                        this.getLogger().warning("§c" + skinName + " 加载失败，错误的图片格式！");
-                    }
-                    if (skinData != null) {
-                        skin.setSkinData(skinData);
-                        skin.setSkinId(skinName);
-
-                        this.skins.put(x, skin);
-                        x++;
-                    } else {
-                        this.getLogger().warning("§c" + skinName + " 加载失败，错误的图片格式！");
-                    }
-                } else {
-                    this.getLogger().warning("§c" + skinName + " 加载失败，请将皮肤文件命名为 skin.png");
-                }
-            }
-        }
     }
 }
