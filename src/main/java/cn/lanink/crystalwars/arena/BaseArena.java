@@ -16,6 +16,7 @@ import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -66,8 +67,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
     @Getter
     private final Map<Player, PlayerData> playerDataMap = new ConcurrentHashMap<>();
-    private final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
-    private final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
 
     private final HashMap<Team, CrystalWarsEntityEndCrystal> teamEntityEndCrystalMap = new HashMap<>();
     private final HashMap<Team, CrystalWarsEntityMerchant> teamEntityMerchantMap = new HashMap<>();
@@ -82,27 +81,32 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     @Getter
     private final HashSet<Vector3> playerPlaceBlocks = new HashSet<>();
 
+    private final HashMap<Player, Integer> skinNumber = new HashMap<>(); //玩家使用皮肤编号，用于防止重复使用
+
+    private final HashMap<Player, Skin> skinCache = new HashMap<>(); //缓存玩家皮肤，用于退出房间时还原
+
+
     public BaseArena(@NotNull String gameWorldName, @NotNull Config config) throws ArenaLoadException {
         super(config);
         this.gameWorldName = gameWorldName;
-
+        Language language = CrystalWars.getInstance().getLang();
         if (!Server.getInstance().loadLevel(this.getGameWorldName())) {
-            throw new ArenaLoadException("世界: " + this.getGameWorldName() + " 加载失败！");
+            throw new ArenaLoadException(language.translateString("arena_loadFailed",this.getGameWorldName()));
         }
         this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
 
         //备份游戏世界
         File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
         if (!backup.exists()) {
-            this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份不存在，正在备份...");
+            this.crystalWars.getLogger().info(language.translateString("arena_backUpNotFound",this.getGameWorldName()));
             Server.getInstance().unloadLevel(this.gameWorld);
             if (FileUtil.copyDir(this.crystalWars.getServerWorldPath() + this.getGameWorldName(), backup)) {
                 Server.getInstance().loadLevel(this.getGameWorldName());
                 this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
             }else {
-                throw new ArenaLoadException("地图: " + this.getGameWorldName() + " 备份失败！");
+                throw new ArenaLoadException(language.translateString("arena_backupFailed",this.getGameWorldName()));
             }
-            this.crystalWars.getLogger().info("地图: " + this.getGameWorldName() + " 备份完成！");
+            this.crystalWars.getLogger().info(language.translateString("arena_backupSucceeded",this.getGameWorldName()));
         }
         this.initLevel();
 
@@ -124,7 +128,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
         }else {
-            throw new RuntimeException("重复设置房间游戏模式！");
+            throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("arena_setGamemodeRepeatedly"));
         }
     }
 
@@ -189,7 +193,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         PlayerData playerData = this.getOrCreatePlayerData(player);
         playerData.saveBeforePlayerData();
         this.getPlayerDataMap().put(player, playerData);
-
         this.setRandomSkin(player);
 
         player.setHealth(player.getMaxHealth());
@@ -217,13 +220,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         PlayerData playerData = this.getPlayerDataMap().remove(player);
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
         playerData.restoreBeforePlayerData();
-
         this.restorePlayerSkin(player);
-
         ScoreboardUtil.getScoreboard().closeScoreboard(player);
         return true;
     }
+
 
     /**
      * 设置玩家随机皮肤
@@ -331,12 +335,13 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
                     int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
                     entry.getValue().setWaitSpawnTime(waitSpawnTime);
+                    Language language = CrystalWars.getInstance().getLang();
                     if (waitSpawnTime <= 0) {
                         //清掉之前的内容
-                        entry.getKey().sendTitle("§a已复活!", "", 5, 15, 10);
+                        entry.getKey().sendTitle(language.translateString("title_respawn"), "", 5, 15, 10);
                         this.playerRespawn(entry.getKey());
                     }else {
-                        entry.getKey().sendTitle("§c死亡", "§a将在§e" + waitSpawnTime + "§a秒后复活!", 0, 30, 10);
+                        entry.getKey().sendTitle(language.translateString("title_wasted"), language.translateString("title_wasted_sub", waitSpawnTime), 0, 30, 10);
                     }
                 }else {
                     entry.getValue().setPlayerStatus(PlayerData.PlayerStatus.DEATH);
@@ -534,6 +539,19 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
         }, 10);
 
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
+            if (!victoryPlayers.isEmpty() && !this.crystalWars.getVictoryCmd().isEmpty()) {
+                for (Player player : victoryPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getVictoryCmd());
+                }
+            }
+            if (!defeatPlayers.isEmpty() && !this.crystalWars.getDefeatCmd().isEmpty()) {
+                for (Player player : defeatPlayers) {
+                    Utils.executeCommand(player, this.crystalWars.getDefeatCmd());
+                }
+            }
+        }, 10);
+
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
@@ -561,15 +579,16 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.initData();
 
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
+            Language language = CrystalWars.getInstance().getLang();
             this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
             if (CrystalWars.debug) {
-                this.crystalWars.getLogger().info("[debug] §a游戏房间: " + this.getGameWorldName() + " 正在还原地图...");
+                this.crystalWars.getLogger().info(language.translateString("tips_levelRecovery_start", this.getGameWorldName()));
             }
             Server.getInstance().unloadLevel(this.getGameWorld(), true);
             File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getGameWorldName());
             File backup = new File(this.crystalWars.getWorldBackupPath() + this.getGameWorldName());
             if (!backup.exists()) {
-                this.crystalWars.getLogger().error("§c游戏房间: " + this.getGameWorldName() + " 地图备份不存在！还原失败！");
+                this.crystalWars.getLogger().error(language.translateString("tips_levelRecovery_backupNotFound", this.getGameWorldName()));
                 this.crystalWars.unloadArena(this.getGameWorldName());
             }
             CompletableFuture.runAsync(() -> {
@@ -579,10 +598,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                     this.initLevel();
                     setArenaStatus(ArenaStatus.TASK_NEED_INITIALIZED);
                     if (CrystalWars.debug) {
-                        this.crystalWars.getLogger().info("[debug] §a游戏房间: " + getGameWorldName() + " 地图还原完成！");
+                        this.crystalWars.getLogger().info(language.translateString("tips_levelRecovery_backupSuccess", this.getGameWorldName()));
                     }
                 }else {
-                    this.crystalWars.getLogger().error("§c游戏房间: " + getGameWorldName() + " 地图还原失败！请检查文件权限！");
+                    this.crystalWars.getLogger().error(language.translateString("tips_levelRecovery_backupFailed", this.getGameWorldName()));
                     Server.getInstance().getScheduler().scheduleTask(
                             this.crystalWars,
                             () -> this.crystalWars.unloadArena(getGameWorldName())

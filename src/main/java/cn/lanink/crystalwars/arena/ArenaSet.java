@@ -5,6 +5,7 @@ import cn.lanink.crystalwars.entity.EntityText;
 import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
@@ -90,6 +91,7 @@ public class ArenaSet extends ArenaConfig {
             this.exit();
             return false;
         }
+        Language language = CrystalWars.getInstance().getLang();
         if (tick%10 == 0) {
             if (this.setRoomSchedule > 100) {
                 this.player.getInventory().setItem(0, ItemManager.get(this.player, 11001));
@@ -103,10 +105,10 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 100;
                     this.nextRoomSchedule = 150;
 
-                    this.player.sendTitle("", "设置游戏模式", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setGameMode"), 0, 30, 10);
 
                     item = ItemManager.get(this.player, 11004);
-                    item.setCustomName("设置游戏模式");
+                    item.setCustomName(language.translateString("arenaSet_setGameMode"));
                     this.player.getInventory().setItem(4, item);
 
                     if (CrystalWars.getARENA_CLASS().containsKey(this.getConfig().getString("gameMode"))) {
@@ -117,10 +119,10 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 100;
                     this.nextRoomSchedule = 200;
 
-                    this.player.sendTitle("", "设置等待出生点", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setWaitSpawn"), 0, 30, 10);
 
                     item = ItemManager.get(this.player, 11005);
-                    item.setCustomName("设置等待出生点");
+                    item.setCustomName(language.translateString("arenaSet_setWaitSpawn"));
                     this.player.getInventory().setItem(4, item);
 
                     if (this.isSet(this.getWaitSpawn())) {
@@ -131,7 +133,7 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 150;
                     this.nextRoomSchedule = 250;
 
-                    this.player.sendTitle("", "设置各队出生点", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setAllTeamsSpawn"), 0, 30, 10);
 
                     int indexSpawn = 2;
                     for (Team team : Team.values()) {
@@ -140,7 +142,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName("设置" + Utils.getShowTeam(team) + "出生点");
+                        item.setCustomName(language.translateString("arenaSet_setTeamSpawn", Utils.getShowTeam(team)));
                         this.player.getInventory().setItem(indexSpawn, item);
                         indexSpawn++;
                     }
@@ -162,7 +164,7 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 200;
                     this.nextRoomSchedule = 300;
 
-                    this.player.sendTitle("", "设置各队水晶位置", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setAllCrystalsSpawn"), 0, 30, 10);
 
                     int indexCrystal = 2;
                     for (Team team : Team.values()) {
@@ -171,7 +173,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName("设置" + Utils.getShowTeam(team) + "水晶位置");
+                        item.setCustomName(language.translateString("arenaSet_setCrystalSpawn", Utils.getShowTeam(team)));
                         this.player.getInventory().setItem(indexCrystal, item);
                         indexCrystal++;
                     }
@@ -193,7 +195,7 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 250;
                     this.nextRoomSchedule = 350;
 
-                    this.player.sendTitle("", "设置各队商店位置", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setAllShopsSpawn"), 0, 30, 10);
 
                     int indexShop = 2;
                     for (Team team : Team.values()) {
@@ -202,7 +204,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName("设置" + Utils.getShowTeam(team) + "商店位置");
+                        item.setCustomName(language.translateString("arenaSet_setShopSpawn", Utils.getShowTeam(team)));
                         this.player.getInventory().setItem(indexShop, item);
                         indexShop++;
                     }
@@ -224,7 +226,7 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 300;
                     this.nextRoomSchedule = 400;
 
-                    this.player.sendTitle("", "设置资源生成点", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setResourcesSpawn"), 0, 30, 10);
 
                     this.player.getInventory().setItem(3, ItemManager.get(this.player, 11007));
                     this.player.getInventory().setItem(5, ItemManager.get(this.player, 11008));
@@ -237,10 +239,10 @@ public class ArenaSet extends ArenaConfig {
                     this.backRoomSchedule = 350;
                     this.nextRoomSchedule = 1000;
 
-                    this.player.sendTitle("", "设置其他参数", 0, 30, 10);
+                    this.player.sendTitle("", language.translateString("arenaSet_setOtherParameters"), 0, 30, 10);
 
                     item = ItemManager.get(this.player, 11004);
-                    item.setCustomName("设置其他参数");
+                    item.setCustomName(language.translateString("arenaSet_setOtherParameters"));
                     this.player.getInventory().setItem(4, item);
 
                     if (this.getMinPlayers() >= 2 &&
@@ -287,7 +289,7 @@ public class ArenaSet extends ArenaConfig {
                 this.waitSpawnText.spawnToAll();
             }
             this.waitSpawnText.setPosition(waitSpawn);
-            this.waitSpawnText.setNameTag("等待出生点");
+            this.waitSpawnText.setNameTag(language.translateString("arenaSet_nameTag_waitSpawn"));
             for (Team team : Team.values()) {
                 if (team == Team.NULL) {
                     continue;
@@ -300,7 +302,7 @@ public class ArenaSet extends ArenaConfig {
                     this.spawnTextMap.put(team, text);
                 }
                 text.setPosition(position);
-                text.setNameTag(Utils.getShowTeam(team) + "出生点");
+                text.setNameTag(Utils.getShowTeam(team) + language.translateString("arenaSet_nameTag_teamSpawn"));
 
                 position = Position.fromObject(this.getTeamCrystal(team), this.world);
                 text = this.crystalTextMap.get(team);
@@ -310,7 +312,7 @@ public class ArenaSet extends ArenaConfig {
                     this.crystalTextMap.put(team, text);
                 }
                 text.setPosition(position);
-                text.setNameTag(Utils.getShowTeam(team) + "水晶位置");
+                text.setNameTag(Utils.getShowTeam(team) + language.translateString("arenaSet_nameTag_crystalSpawn"));
 
                 position = Position.fromObject(this.getTeamShop(team), this.world);
                 text = this.shopTextMap.get(team);
@@ -320,7 +322,7 @@ public class ArenaSet extends ArenaConfig {
                     this.shopTextMap.put(team, text);
                 }
                 text.setPosition(position);
-                text.setNameTag(Utils.getShowTeam(team) + "商店位置");
+                text.setNameTag(Utils.getShowTeam(team) + language.translateString("arenaSet_nameTag_shopSpawn"));
             }
             Iterator<Map.Entry<ResourceGeneration, EntityText>> iterator = this.resourceGenerationTextMap.entrySet().iterator();
             while (iterator.hasNext()) {
@@ -339,7 +341,7 @@ public class ArenaSet extends ArenaConfig {
                     this.resourceGenerationTextMap.put(generation, entityText);
                 }
                 entityText.setPosition(position);
-                entityText.setNameTag("资源生成点\n物品生成配置: " + generation.getConfig().getName());
+                entityText.setNameTag(language.translateString("arenaSet_nameTag_resourcesSpawn") + generation.getConfig().getName());
             }
         }
 

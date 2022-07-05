@@ -20,8 +20,6 @@ public class Theme {
 
     @Getter
     private final String name;
-    private final Config config;
-
     private String scoreboardTitleGame;
     private List<String> scoreboardLineGame;
 
@@ -33,16 +31,16 @@ public class Theme {
 
     public Theme(@NotNull String fileName, @NotNull File file) {
         this.name = fileName;
-        this.config = new Config(file, Config.YAML);
+        Config config = new Config(file, Config.YAML);
 
-        this.scoreboardTitleGame = this.config.getString("scoreboard_game.title");
-        this.scoreboardLineGame = this.config.getStringList("scoreboard_game.line");
+        this.scoreboardTitleGame = config.getString("scoreboard_game.title");
+        this.scoreboardLineGame = config.getStringList("scoreboard_game.line");
 
-        this.scoreboardTitleWait = this.config.getString("scoreboard_wait.title");
-        this.scoreboardLineWait = this.config.getStringList("scoreboard_wait.line");
+        this.scoreboardTitleWait = config.getString("scoreboard_wait.title");
+        this.scoreboardLineWait = config.getStringList("scoreboard_wait.line");
 
-        this.scoreboardTitleVictory = this.config.getString("scoreboard_victory.title");
-        this.scoreboardLineVictory = this.config.getStringList("scoreboard_victory.line");
+        this.scoreboardTitleVictory = config.getString("scoreboard_victory.title");
+        this.scoreboardLineVictory = config.getStringList("scoreboard_victory.line");
     }
 
     public String getScoreboardTitleGame(BaseArena arena, Player player) {
@@ -90,7 +88,7 @@ public class Theme {
                 .replace("{PlayerCount}", String.valueOf(arena.getPlayerCount()))
                 .replace("{MinPlayer}", String.valueOf(arena.getMinPlayers()))
                 .replace("{MaxPlayer}", String.valueOf(arena.getMaxPlayers()))
-                .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(arena.getVictoryTeam()) : "§f平局")
+                .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(arena.getVictoryTeam()) : CrystalWars.getInstance().getLang().translateString("teams_gameDraw"))
                 //队伍名称
                 .replace("{TeamName_RED}", Utils.getShowTeam(Team.RED))
                 .replace("{TeamName_YELLOW}", Utils.getShowTeam(Team.YELLOW))

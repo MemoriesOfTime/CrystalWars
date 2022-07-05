@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.listener.defaults;
 
+import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
@@ -48,7 +49,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     int nowTick = Server.getInstance().getTick();
                     int lastTick = item.getNamedTag().getInt("lastTick");
                     if (lastTick == 0 || nowTick - lastTick > 40) {
-                        player.sendTip("再次点击退出游戏房间！");
+                        player.sendTip(CrystalWars.getInstance().getLang().translateString("tips_clickAgainToQuitRoom"));
                         item.getNamedTag().putInt("lastTick", nowTick);
                         event.setCancelled(true);
                         player.getInventory().setHeldItemIndex(7);
@@ -60,7 +61,6 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
@@ -92,12 +92,12 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     if (event instanceof EntityDamageByEntityEvent) {
                         EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                         if (entityDamageByEntityEvent.getDamager() instanceof Player) {
-                             PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
-                             if (damagerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
-                                 event.setCancelled(true);
-                                 return;
-                             }
-                             damagerData.addKillCount();
+                            PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
+                            if (damagerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
+                                event.setCancelled(true);
+                                return;
+                            }
+                            damagerData.addKillCount();
                         }
                     }
                     arena.playerDeath(player);

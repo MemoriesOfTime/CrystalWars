@@ -1,6 +1,8 @@
 package cn.lanink.crystalwars.command.admin.sub;
 
+import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.command.BaseSubCommand;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
@@ -26,17 +28,18 @@ public class UnloadArena extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        Language language = CrystalWars.getInstance().getLang();
         if (args.length >= 2) {
             String name = args[1];
             if (!this.crystalWars.getArenas().containsKey(name)) {
-                sender.sendMessage("游戏房间: " + name + " 还未加载！无法卸载！");
+                sender.sendMessage(language.translateString("tips_roomUnprepared", name));
                 return true;
             }
             this.crystalWars.unloadArena(name);
-            sender.sendMessage("游戏房间: " + name + " 卸载完成！");
+            sender.sendMessage(language.translateString("tips_unloadRoom", name));
         }else {
             this.crystalWars.unloadAllArena();
-            sender.sendMessage("已卸载所有游戏房间！");
+            sender.sendMessage(language.translateString("tips_unloadAllRooms"));
         }
         return true;
     }

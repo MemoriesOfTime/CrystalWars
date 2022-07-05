@@ -81,10 +81,10 @@ public class PlayerJoinAndQuit implements Listener {
             LinkedHashMap<String, BaseArena> arenas = this.crystalWars.getArenas();
             if (arenas.containsKey(fromLevel) && arenas.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage("§c请使用命令退出游戏房间！");
+                player.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_useCommandToQuitRoom"));
             }else if (!player.isOp() && arenas.containsKey(toLevel) && !arenas.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage("§c请使用命令加入游戏房间！");
+                player.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_useCommandToJoinRoom"));
             }
         }
     }

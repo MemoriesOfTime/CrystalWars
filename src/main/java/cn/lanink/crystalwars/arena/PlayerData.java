@@ -41,6 +41,7 @@ public class PlayerData {
     private int beforeGameMode;
     private PlayerDataUtils.PlayerData playerData;
 
+
     /**
      * 保存玩家加入房间前的一些数据
      */
