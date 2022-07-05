@@ -112,28 +112,28 @@ public class ArenaConfig implements ISaveConfig {
                     String name = (String) map.get("itemGenerationConfigName");
                     ItemGenerationConfig generationConfig = ItemGenerationConfigManager.getItemGenerationConfig(name);
                     if (generationConfig == null) {
-                        throw new RuntimeException("资源生成点配置: " + name + " 不存在！");
+                        throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("arenaConfig_resourceSpawnNotFound", name));
                     }
                     this.resourceGenerations.add(
                             new ResourceGeneration(generationConfig, Utils.mapToVector3(map))
                     );
                 } catch (Exception e) {
-                    CrystalWars.getInstance().getLogger().error("加载资源生成点时出现错误: ", e);
+                    CrystalWars.getInstance().getLogger().error(CrystalWars.getInstance().getLang().translateString("arenaConfig_load_error"), e);
                 }
             }
 
             String supplyName = config.getString("supply");
             if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(supplyName) && !isSet) {
-                CrystalWars.getInstance().getLogger().error("加载商店时出现错误：无 " + supplyName + " 商店供给配置！");
+                CrystalWars.getInstance().getLogger().error(CrystalWars.getInstance().getLang().translateString("arenaConfig_loadSupply_configNotFound_error", supplyName));
             }
             this.supply = new Supply(SupplyConfigManager.getSupplyConfig(supplyName));
 
             if (CrystalWars.debug) {
-                CrystalWars.getInstance().getLogger().info("[debug] 资源生成点:" + this.resourceGenerations);
-                CrystalWars.getInstance().getLogger().info("[debug] 商店供给:" + this.supply);
+                CrystalWars.getInstance().getLogger().info("[debug] Resources Spawn: " + this.resourceGenerations);
+                CrystalWars.getInstance().getLogger().info("[debug] Shop Supply: " + this.supply);
             }
         }catch (Exception e) {
-            throw new ArenaLoadException("游戏房间配置读取错误！", e);
+            throw new ArenaLoadException(CrystalWars.getInstance().getLang().translateString("arenaConfig_arenaLoadException_tip"), e);
         }
     }
 

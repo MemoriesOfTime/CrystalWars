@@ -1,7 +1,9 @@
 package cn.lanink.crystalwars.command.admin.sub;
 
+import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.command.BaseSubCommand;
 import cn.lanink.crystalwars.utils.FormHelper;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -31,6 +33,7 @@ public class CreateArena extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
+        Language language = CrystalWars.getInstance().getLang();
         if (args.length < 2) {
             FormHelper.sendAdminCreateArena(player);
             return true;
@@ -39,16 +42,16 @@ public class CreateArena extends BaseSubCommand {
             if (Server.getInstance().loadLevel(args[1])) {
                 Level level = Server.getInstance().getLevelByName(args[1]);
                 this.crystalWars.getOrCreateArenaConfig(level);
-                sender.sendMessage("§a游戏房间: §f" + args[1] + " §a创建成功！");
+                sender.sendMessage(language.translateString("tips_createRoom_success", args[1]));
                 if (player.getLevel() != level) {
                     player.teleport(level.getSpawnLocation());
                 }
                 Server.getInstance().dispatchCommand(sender, this.crystalWars.getCmdAdmin() + " SetArena " + args[1]);
             } else {
-                sender.sendMessage("§c世界: §f" + args[1] + " §c不存在！请输入一个正确的世界名称！");
+                sender.sendMessage(language.translateString("tips_createRoom_levelNotFound", args[1]));
             }
         } else {
-            sender.sendMessage("§c已存在 §f" + args[1] + " §c游戏房间配置文件！");
+            sender.sendMessage(language.translateString("tips_createRoom_roomExist", args[1]));
         }
         return true;
     }

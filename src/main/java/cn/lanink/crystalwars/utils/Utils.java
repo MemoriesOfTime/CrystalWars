@@ -37,7 +37,7 @@ import java.util.Map;
 public class Utils {
 
     private Utils() {
-        throw new RuntimeException("哎呀！你不能实例化这个类！");
+        throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
     }
 
     public static void executeCommand(@NotNull Player player, List<String> cmds) {
@@ -93,25 +93,19 @@ public class Utils {
         human.setSkin(skin);
     }
 
-    /**
-     * 获取队伍显示名称
-     *
-     * @param team 队伍
-     * @return 显示名称
-     */
     public static String getShowTeam(Team team) {
         switch (team) {
             case RED:
-                return team.getStringColor() + "§l红队§r";
+                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_red");
             case YELLOW:
-                return team.getStringColor() + "§l黄队§r";
+                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_yellow");
             case BLUE:
-                return team.getStringColor() + "§l蓝队§r";
+                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_blue");
             case GREEN:
-                return team.getStringColor() + "§l绿队§r";
+                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_green");
             case NULL:
             default:
-                return team.getStringColor() + "§l未加入队伍§r";
+                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_noTeam");
         }
     }
 
@@ -222,7 +216,6 @@ public class Utils {
 
     /**
      * 格式化倒计时 0 -> 00:00
-     *
      * @param time 时间
      * @return 格式化后的时间
      */
@@ -378,5 +371,4 @@ public class Utils {
         }
         return newItem;
     }
-
 }

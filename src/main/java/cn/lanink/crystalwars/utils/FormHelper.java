@@ -9,6 +9,7 @@ import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButtonImageData;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class FormHelper {
 
     private FormHelper() {
-        throw new RuntimeException("哎呀！你不能实例化这个类！");
+        throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
     }
 
     /**
@@ -36,15 +37,16 @@ public class FormHelper {
      * @param player 玩家
      */
     public static void sendUserMainMenu(@NotNull Player player) {
+        Language language = CrystalWars.getInstance().getLang();
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
 
-        simple.addButton(new ResponseElementButton("加入随机游戏房间").onClicked(
+        simple.addButton(new ResponseElementButton(language.translateString("form_main_joinRandomRoom")).onClicked(
                 cp -> Server.getInstance().dispatchCommand(
                         cp,
                         CrystalWars.getInstance().getCmdUser() +  " join"
                 )
         ));
-        simple.addButton(new ResponseElementButton("查看游戏房间列表").onClicked(FormHelper::sendUserArenaListMenu));
+        simple.addButton(new ResponseElementButton(language.translateString("form_main_checkRoomList")).onClicked(FormHelper::sendUserArenaListMenu));
 
         player.showFormWindow(simple);
     }
@@ -56,12 +58,12 @@ public class FormHelper {
      */
     public static void sendUserArenaListMenu(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
-        
+        Language language = CrystalWars.getInstance().getLang();
         for (Map.Entry<String, BaseArena> entry : CrystalWars.getInstance().getArenas().entrySet()) {
-            simple.addButton(new ResponseElementButton(entry.getKey() + "\n游戏模式: " + entry.getValue().getGameMode())
+            simple.addButton(new ResponseElementButton(entry.getKey() + "\n" + language.translateString("form_base_mode") + entry.getValue().getGameMode())
                     .onClicked(cp -> sendArenaConfirmMenu(cp, entry.getKey())));
         }
-        simple.addButton(new ResponseElementButton("返回", 
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_return"),
                 new ElementButtonImageData("path", "textures/ui/cancel")).onClicked(FormHelper::sendUserMainMenu)
         );
         
@@ -77,41 +79,42 @@ public class FormHelper {
     public static void sendArenaConfirmMenu(@NotNull Player player, @NotNull String world) {
         AdvancedFormWindowModal modal;
         BaseArena arena = CrystalWars.getInstance().getArenas().get(world);
+        Language language = CrystalWars.getInstance().getLang();
+        String returnButtonContent = language.translateString("form_base_return");
         if (arena != null) {
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.LEVEL_NOT_LOADED) {
-                modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
-                        "游戏房间: " + world + " 正在准备中，无法加入！",
-                        "返回",
-                        "返回");
+                modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME, language.translateString("form_confirm_roomNotPrepared", world),
+                        returnButtonContent,
+                        returnButtonContent);
                 modal.onClickedTrue(FormHelper::sendUserArenaListMenu);
                 modal.onClickedFalse(FormHelper::sendUserArenaListMenu);
             }else if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME ||
                     arena.getArenaStatus() == BaseArena.ArenaStatus.VICTORY) {
                 modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
-                        "游戏房间: " + world + " 正在游戏中，无法加入！",
-                        "返回",
-                        "返回");
+                        language.translateString("form_confirm_roomHasStarted", world),
+                        returnButtonContent,
+                        returnButtonContent);
                 modal.onClickedTrue(FormHelper::sendUserArenaListMenu);
                 modal.onClickedFalse(FormHelper::sendUserArenaListMenu);
             }else if (arena.getPlayerCount() >= arena.getMaxPlayers()) {
                 modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
-                        "游戏房间: " + world + " 人数已满，无法加入！",
-                        "返回",
-                        "返回");
+                        language.translateString("form_confirm_roomIsFull", world),
+                        returnButtonContent,
+                        returnButtonContent);
             }else {
                 modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
-                        "确定要加入游戏房间: " + world + " ?",
-                        "确认",
-                        "返回");
+                        language.translateString("form_confirm_isJoinRoom", world),
+                        language.translateString("form_base_confirm"),
+                        returnButtonContent);
                 modal.onClickedTrue((p) ->
                         Server.getInstance().dispatchCommand(p, CrystalWars.getInstance().getCmdUser() + " join " + arena.getLevelName()));
                 modal.onClickedFalse(FormHelper::sendUserArenaListMenu);
             }
         }else {
             modal = new AdvancedFormWindowModal(CrystalWars.PLUGIN_NAME,
-                    "游戏房间: " + world + " 不存在！无法加入！",
-                    "返回", 
-                    "返回");
+                    language.translateString("form_confirm_roomNotFound", world),
+                    returnButtonContent,
+                    returnButtonContent);
             modal.onClickedTrue(FormHelper::sendUserArenaListMenu);
             modal.onClickedFalse(FormHelper::sendUserArenaListMenu);
         }
@@ -127,21 +130,22 @@ public class FormHelper {
      */
     public static void sendAdminMainMenu(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
-
-        simple.addButton(new ResponseElementButton("创建游戏房间")
+        Language language = CrystalWars.getInstance().getLang();
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_createRoom"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " CreateArena")));
-        simple.addButton(new ResponseElementButton("设置游戏房间")
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_setRoom"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " SetArena")));
-        simple.addButton(new ResponseElementButton("卸载所有游戏房间")
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_disableRoom"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " UnloadArena")));
-        simple.addButton(new ResponseElementButton("重载配置")
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_reloadConfig"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " reload")));
 
         player.showFormWindow(simple);
     }
 
     public static void sendAdminCreateArena(@NotNull Player player) {
-        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("创建游戏房间");
+        Language language = CrystalWars.getInstance().getLang();
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(language.translateString("form_base_createRoom"));
 
         ArrayList<String> list = new ArrayList<>();
         for (Level level : Server.getInstance().getLevels().values()) {
@@ -150,7 +154,7 @@ public class FormHelper {
                 list.add(folderName);
             }
         }
-        custom.addElement(new ElementDropdown("\n\n请选择地图", list)); //0
+        custom.addElement(new ElementDropdown("\n\n"+language.translateString("form_adminCreateArena_selectLevel"), list)); //0
 
         custom.onResponded((formResponseCustom, cp) -> Server.getInstance().dispatchCommand(
                 cp,
@@ -161,9 +165,10 @@ public class FormHelper {
     }
 
     public static void sendAdminSetArena(@NotNull Player player) {
-        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("设置游戏房间");
+        Language language = CrystalWars.getInstance().getLang();
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(language.translateString("form_base_setRoom"));
 
-        custom.addElement(new ElementDropdown("\n\n请选择要设置的游戏房间", new ArrayList<>(CrystalWars.getInstance().getArenaConfigs().keySet()))); //0
+        custom.addElement(new ElementDropdown("\n\n"+language.translateString("form_adminCreateArena_selectRoom"), new ArrayList<>(CrystalWars.getInstance().getArenaConfigs().keySet()))); //0
 
         custom.onResponded((formResponseCustom, cp) -> Server.getInstance().dispatchCommand(
                 cp,
@@ -180,14 +185,15 @@ public class FormHelper {
      * @return 个性化设置界面
      */
     public static AdvancedFormWindowCustom getPlayerSetting(@NotNull Player player) {
+        Language language = CrystalWars.getInstance().getLang();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(
-                "CrystalWars - 个性化设置",
+                language.translateString("form_playerSetting_title"),
                 new ArrayList<>(),
                 new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_URL, "https://z3.ax1x.com/2021/09/17/4M5vz8.gif")
         );
         PlayerSettingData oldData = PlayerSettingDataManager.getData(player);
 
-        custom.addElement(new ElementLabel("CrystalWars - 个性化设置\n")); //0
+        custom.addElement(new ElementLabel(language.translateString("form_playerSetting_title")+"\n")); //0
 
         int defaultOptionIndex;
         switch (oldData.getShopType()) {
@@ -202,7 +208,7 @@ public class FormHelper {
                 defaultOptionIndex = 0;
                 break;
         }
-        custom.addElement(new ElementDropdown("商店界面类型", Arrays.asList("自动", "箱子商店", "GUI商店"), defaultOptionIndex)); //1
+        custom.addElement(new ElementDropdown(language.translateString("form_playerSetting_shopShowType"), Arrays.asList(language.translateString("form_playerSetting_shopShowType_auto"), language.translateString("form_playerSetting_shopShowType_chest"), language.translateString("form_playerSetting_shopShowType_gui")), defaultOptionIndex)); //1
 
         ArrayList<String> themes = new ArrayList<>(ThemeManager.getTHEME_MAP().keySet());
         defaultOptionIndex = 0;
@@ -212,7 +218,7 @@ public class FormHelper {
             }
             defaultOptionIndex++;
         }
-        custom.addElement(new ElementDropdown("显示主题", themes, defaultOptionIndex)); //2
+        custom.addElement(new ElementDropdown(language.translateString("form_playerSetting_styleType"), themes, defaultOptionIndex)); //2
 
         custom.onResponded((formResponseCustom, cp) -> {
             PlayerSettingData data = PlayerSettingDataManager.getData(cp);

@@ -44,9 +44,9 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage("你没有权限使用此命令!");
+                        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_commands_noPermission"));
                     }else {
-                        sender.sendMessage("不能在控制台执行此命令!");
+                        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_commands_useInGame"));
                     }
                 }else {
                     this.sendHelp(sender);
@@ -60,7 +60,7 @@ public abstract class BaseCommand extends Command {
             }
             return true;
         }
-        sender.sendMessage("你没有权限使用此命令!");
+        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_commands_noPermission"));
         return true;
     }
 

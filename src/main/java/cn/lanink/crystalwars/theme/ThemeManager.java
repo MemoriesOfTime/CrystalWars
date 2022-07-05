@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.theme;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.gamecore.utils.Language;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,8 @@ public class ThemeManager {
     public static void load() {
         CRYSTAL_WARS.saveResource("Theme/变量介绍.txt", true);
         CRYSTAL_WARS.saveResource("Theme/DefaultTheme.yml");
-
+        CRYSTAL_WARS.saveResource("Theme/DefaultThemeEnglish.yml");
+        Language language = CrystalWars.getInstance().getLang();
         File[] files = new File(CRYSTAL_WARS.getThemePath()).listFiles();
         if(files == null || files.length == 0) {
             return;
@@ -37,9 +39,9 @@ public class ThemeManager {
                     THEME_MAP.put(name, new Theme(name, themeFile));
                     count.incrementAndGet();
                 });
-        CRYSTAL_WARS.getLogger().info("成功加载 " + count + " 个模板");
+        CRYSTAL_WARS.getLogger().info(language.translateString("themeManager_loadTemplate", count));
         if(CrystalWars.debug) {
-            CRYSTAL_WARS.getLogger().info("[debug] THEME_MAP: " + THEME_MAP);
+            CRYSTAL_WARS.getLogger().info("[debug] " + THEME_MAP);
         }
     }
 

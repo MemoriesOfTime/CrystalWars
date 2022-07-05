@@ -30,7 +30,7 @@ public class SupplyConfigManager {
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
 
     private SupplyConfigManager() {
-        throw new RuntimeException("哎呀！你不能实例化这个类！");
+        throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
     }
 
     public static void loadAllSupplyConfig() {
@@ -64,7 +64,7 @@ public class SupplyConfigManager {
                     SUPPLY_CONFIG_MAP.put(supplyDir.getName(), supplyConfig);
                     count.incrementAndGet();
                 });
-        CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个商店配置");
+        CRYSTAL_WARS.getLogger().info(CrystalWars.getInstance().getLang().translateString("supply_loadShopConfig", count));
         if(CrystalWars.debug) {
             CRYSTAL_WARS.getLogger().info("[debug] " + SUPPLY_CONFIG_MAP);
         }
