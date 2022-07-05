@@ -38,7 +38,7 @@ public class SupplyConfig {
         this.dirName = dirName;
         File[] childDir = path.listFiles();
         if(childDir == null) {
-            throw new RuntimeException(language.translateString("supply_loadSupplyFailed",dirName));
+            throw new RuntimeException("加载" + dirName + "失败!");
         }
 
         childDir = Arrays.stream(childDir).filter(File::isDirectory).toArray(File[]::new);
@@ -46,14 +46,14 @@ public class SupplyConfig {
         if(childDir.length != 2 ||
                 !Arrays.asList("items", "pages").contains(childDir[0].getName()) ||
                 !Arrays.asList("items", "pages").contains(childDir[1].getName())) {
-            throw new RuntimeException(language.translateString("supply_loadSupplyFailed",dirName));
+            throw new RuntimeException("加载" + dirName + "失败!");
         }
         File itemsPath = new File(path, "items");
         File[] itemsFiles = itemsPath.listFiles();
         File pagesPath = new File(path, "pages");
         File[] pagesFiles = pagesPath.listFiles();
         if(itemsFiles == null || pagesFiles == null) {
-            throw new RuntimeException(language.translateString("supply_loadShopFailed",dirName));
+            throw new RuntimeException("加载" + dirName + "失败!");
         }
 
         ImmutableMap.Builder<String, SupplyItemConfig> itemConfigMapBuilder = ImmutableMap.builder();
@@ -83,7 +83,7 @@ public class SupplyConfig {
                 });
         pageConfigMap = supplyPageConfigBuilder.build();
         if(this.defaultPageConfig == null) {
-            throw new RuntimeException(language.translateString("supply_loadShop_noDefaultPage", dirName));
+            throw new RuntimeException("商店供给:" + dirName + " 无默认界面!");
         }
     }
 

@@ -30,7 +30,7 @@ public class SupplyConfigManager {
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
 
     private SupplyConfigManager() {
-        throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
+        throw new RuntimeException("哎呀！你不能实例化这个类！");
     }
 
     public static void loadAllSupplyConfig() {

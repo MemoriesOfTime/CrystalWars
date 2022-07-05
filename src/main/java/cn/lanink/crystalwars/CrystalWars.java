@@ -297,10 +297,10 @@ public class CrystalWars extends PluginBase {
                 this.getServer().getPluginManager().registerEvents(baseGameListener, this);
                 this.gameListeners.put(entry.getKey(), baseGameListener);
                 if (CrystalWars.debug) {
-                    this.getLogger().info(this.language.translateString("plugin_registerListener",baseGameListener.getListenerName()));
+                    this.getLogger().info("[debug] registerListener: " + baseGameListener.getListenerName());
                 }
             } catch (Exception e) {
-                this.getLogger().error(this.language.translateString("plugin_registerListener_error"), e);
+                this.getLogger().error("加载监听器时出错：", e);
             }
         }
     }
@@ -309,7 +309,7 @@ public class CrystalWars extends PluginBase {
         for (BaseGameListener<BaseArena> listener : this.gameListeners.values()) {
             HandlerList.unregisterAll(listener);
             if (CrystalWars.debug) {
-                this.getLogger().info(this.language.translateString("plugin_unregisterListener_error", listener.getListenerName()));
+                this.getLogger().info("[debug] unregisterListener: " + listener.getListenerName());
             }
         }
         this.gameListeners.clear();

@@ -30,7 +30,7 @@ public class AdvancedBuyItem extends AdvancedClickItem{
         BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
         Language language = CrystalWars.getInstance().getLang();
         if(arena == null) {
-            player.sendMessage(language.translateString("tips_buyitem_notInRoom"));
+            player.sendMessage(language.translateString("tips_buyItem_notInRoom"));
             return;
         }
         if(!player.getInventory().canAddItem(this.itemConfig.getItem())) {

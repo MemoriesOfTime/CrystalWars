@@ -91,7 +91,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.gameWorldName = gameWorldName;
         Language language = CrystalWars.getInstance().getLang();
         if (!Server.getInstance().loadLevel(this.getGameWorldName())) {
-            throw new ArenaLoadException(language.translateString("arena_loadFailed",this.getGameWorldName()));
+            throw new ArenaLoadException("世界: " + this.getGameWorldName() + " 加载失败！");
         }
         this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
 
@@ -104,7 +104,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 Server.getInstance().loadLevel(this.getGameWorldName());
                 this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
             }else {
-                throw new ArenaLoadException(language.translateString("arena_backupFailed",this.getGameWorldName()));
+                throw new ArenaLoadException("地图: " + this.getGameWorldName() + " 备份失败！");
             }
             this.crystalWars.getLogger().info(language.translateString("arena_backupSucceeded",this.getGameWorldName()));
         }
@@ -128,7 +128,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
         }else {
-            throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("arena_setGamemodeRepeatedly"));
+            throw new RuntimeException("重复设置房间游戏模式！");
         }
     }
 
