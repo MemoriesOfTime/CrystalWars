@@ -11,7 +11,6 @@ import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
