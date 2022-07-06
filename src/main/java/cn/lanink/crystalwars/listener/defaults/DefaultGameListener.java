@@ -24,6 +24,7 @@ import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
@@ -50,9 +51,12 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     int lastTick = item.getNamedTag().getInt("lastTick");
                     if (lastTick == 0 || nowTick - lastTick > 40) {
                         player.sendTip(CrystalWars.getInstance().getLang().translateString("tips_clickAgainToQuitRoom"));
-                        item.getNamedTag().putInt("lastTick", nowTick);
-                        event.setCancelled(true);
+                        CompoundTag tag = item.getNamedTag();
+                        tag.putInt("lastTick", nowTick);
+                        item.setNamedTag(tag); //防止tag更改不生效，无法退出房间
+                        player.getInventory().setItem(8, item);
                         player.getInventory().setHeldItemIndex(7);
+                        event.setCancelled(true);
                     }else {
                         arena.quitRoom(player);
                     }

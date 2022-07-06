@@ -1,5 +1,7 @@
 package cn.lanink.crystalwars.items;
 
+import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -22,34 +24,35 @@ public class ItemManager {
 
     public static Item get(Player player, int internalID, int count) {
         Item item;
+        Language language = CrystalWars.getInstance().getLang();
         switch (internalID) {
             case 10000:
                 item = Item.get(324, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(IS_CRYSTALWARS_TAG, true)
                         .putInt(INTERNAL_ID_TAG, internalID));
-                item.setCustomName("退出游戏房间");
+                item.setCustomName(language.translateString("arenaSet_item_quitRoom"));
                 return item;
             case 11001:
                 item = Item.get(340, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(IS_CRYSTALWARS_TAG, true)
                         .putInt(INTERNAL_ID_TAG, internalID));
-                item.setCustomName("上一步");
+                item.setCustomName(language.translateString("arenaSet_item_back"));
                 return item;
             case 11002:
                 item = Item.get(340, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(IS_CRYSTALWARS_TAG, true)
                         .putInt(INTERNAL_ID_TAG, internalID));
-                item.setCustomName("下一步");
+                item.setCustomName(language.translateString("arenaSet_item_next"));
                 return item;
             case 11003:
                 item = Item.get(340, 0, count);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(IS_CRYSTALWARS_TAG, true)
                         .putInt(INTERNAL_ID_TAG, internalID));
-                item.setCustomName("保存");
+                item.setCustomName(language.translateString("arenaSet_item_save"));
                 return item;
             case 11004:
                 item = Item.get(347, 0, count); //钟表
@@ -74,14 +77,14 @@ public class ItemManager {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(IS_CRYSTALWARS_TAG, true)
                         .putInt(INTERNAL_ID_TAG, internalID));
-                item.setCustomName("添加资源生成点");
+                item.setCustomName(language.translateString("arenaSet_item_addResourcesSpawn"));
                 return item;
             case 11008:
                 item = Item.get(241, 14, count); //红色玻璃
                 item.setNamedTag(new CompoundTag()
                         .putBoolean(IS_CRYSTALWARS_TAG, true)
                         .putInt(INTERNAL_ID_TAG, internalID));
-                item.setCustomName("删除资源生成点");
+                item.setCustomName(language.translateString("arenaSet_item_removeResourcesSpawn"));
                 return item;
             default:
                 return Item.get(0);

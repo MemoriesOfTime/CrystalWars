@@ -180,6 +180,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         Server.getInstance().getPluginManager().callEvent(new CrystalWarsArenaPlayerJoinEvent(this, player));
+        player.getInventory().setHeldItemIndex(0); //防止玩家放到index8的时候，会自动弹出退出房间的tips
 
         if (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED) {
             this.setArenaStatus(ArenaStatus.WAIT);

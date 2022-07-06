@@ -228,6 +228,8 @@ public class CrystalWars extends PluginBase {
 
 
     private void loadLanguage() {
+        //防止reload重复加载
+        if(this.language != null){ return; }
         List<String> languages = Arrays.asList("zh_CN", "en_US");
         String pluginLanguage = this.config.getString("pluginLanguage", "zh_CN");
         if (!languages.contains(pluginLanguage)) {

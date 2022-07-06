@@ -104,10 +104,11 @@ public class ArenaSetListener implements Listener {
         }
         newVector3.x = newVector3.getFloorX() + 0.5;
         newVector3.z = newVector3.getFloorZ() + 0.5;
+        Language language = CrystalWars.getInstance().getLang();
         switch (arenaSet.getSetRoomSchedule()) {
             case 100: //设置游戏模式
-                AdvancedFormWindowCustom custom1 = new AdvancedFormWindowCustom("设置游戏模式");
-                custom1.addElement(new ElementDropdown("游戏模式", new ArrayList<>(CrystalWars.getARENA_CLASS().keySet()))); //0
+                AdvancedFormWindowCustom custom1 = new AdvancedFormWindowCustom(language.translateString("arenaSet_setGameMode"));
+                custom1.addElement(new ElementDropdown(language.translateString("arenaSet_gameMode"), new ArrayList<>(CrystalWars.getARENA_CLASS().keySet()))); //0
                 custom1.onResponded((formResponseCustom, cp) -> {
                     Config config = arenaSet.getConfig();
                     config.set("gameMode", formResponseCustom.getDropdownResponse(0).getElementContent());
@@ -147,7 +148,6 @@ public class ArenaSetListener implements Listener {
                 }
                 break;
             case 400: //设置其他参数
-                Language language = CrystalWars.getInstance().getLang();
                 AdvancedFormWindowCustom custom2 = new AdvancedFormWindowCustom(language.translateString("arenaSet_setOtherParameters"));
 
                 String canUseTeamCount = "2-" + (Team.values().length - 1);

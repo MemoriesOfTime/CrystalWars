@@ -60,7 +60,6 @@ public class ArenaSet extends ArenaConfig {
 
     public ArenaSet(@NotNull String worldName, @NotNull Config config, @NotNull Player player) throws ArenaLoadException {
         super(config, true);
-
         this.worldName = worldName;
         this.player = player;
 
@@ -341,7 +340,7 @@ public class ArenaSet extends ArenaConfig {
                     this.resourceGenerationTextMap.put(generation, entityText);
                 }
                 entityText.setPosition(position);
-                entityText.setNameTag(language.translateString("arenaSet_nameTag_resourcesSpawn") + generation.getConfig().getName());
+                entityText.setNameTag(language.translateString("arenaSet_nameTag_resourcesSpawn",generation.getConfig().getName()).replace("\\n", "\n"));
             }
         }
 
@@ -380,8 +379,19 @@ public class ArenaSet extends ArenaConfig {
         this.crystalWars.getArenaSetMap().remove(this.player);
 
         this.player.setGamemode(this.beforeGameMode);
-        this.player.getInventory().setContents(this.playerInventory);
-        this.player.getOffhandInventory().setItem(0, this.offHandItem);
+        if(this.player.isOnline()) {
+            this.player.getInventory().setContents(this.playerInventory);
+            this.player.getOffhandInventory().setItem(0, this.offHandItem);
+        }else{
+            Player offline = Server.getInstance().getOfflinePlayer(this.player.getUniqueId()).getPlayer();
+            if(offline != null && offline.isValid()) { //防止玩家设置时退出服务器狂刷报错
+                offline.getInventory().setContents(this.playerInventory);
+                offline.getOffhandInventory().setItem(0, this.offHandItem);
+            }else{
+                CrystalWars.getInstance().getLogger().warning("无法还原" + this.player.getName() + "的背包数据");
+                //To do: 可以选择先把玩家数据保存在一个cache.yml内，然后玩家再次进服时检测再还原。
+            }
+        }
 
         this.waitSpawnText.close();
         for (EntityText entityText : this.spawnTextMap.values()) {

@@ -28,7 +28,7 @@ import java.util.Map;
 public class FormHelper {
 
     private FormHelper() {
-        throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
+        throw new RuntimeException("哎呀，你不能实例化这个类奥！");
     }
 
     /**

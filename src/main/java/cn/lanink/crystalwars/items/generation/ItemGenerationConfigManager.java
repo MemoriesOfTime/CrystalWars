@@ -49,7 +49,7 @@ public class ItemGenerationConfigManager {
                 CRYSTAL_WARS.getLogger().error("加载物品生成配置失败，请检查配置文件！", e);
             }
         }
-        CRYSTAL_WARS.getLogger().info("已成功加载" + count + "个物品生成配置");
+        CRYSTAL_WARS.getLogger().info(CRYSTAL_WARS.getLang().translateString("loadItem_generationConfigOnload", count));
     }
 
     public static ItemGenerationConfig getItemGenerationConfig(@NotNull String name) {
