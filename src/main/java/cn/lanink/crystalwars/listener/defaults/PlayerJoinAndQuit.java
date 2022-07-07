@@ -50,6 +50,11 @@ public class PlayerJoinAndQuit implements Listener {
                 }
             }, 1);
         }
+        File file = new File(CrystalWars.getInstance().getDataFolder() + "/cache/ArenaSetPlayerData/" + player.getName() + ".json");
+        if (file.exists()) {
+            PlayerDataUtils.create(player, file).restoreAll();
+            file.delete();
+        }
     }
 
     @EventHandler

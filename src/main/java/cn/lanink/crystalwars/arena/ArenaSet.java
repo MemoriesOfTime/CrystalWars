@@ -6,6 +6,7 @@ import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.lanink.gamecore.utils.Language;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
@@ -19,6 +20,7 @@ import cn.nukkit.utils.Config;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,10 +38,6 @@ public class ArenaSet extends ArenaConfig {
     protected final Level world;
     @Getter
     protected final Player player;
-
-    private final int beforeGameMode;
-    private final Map<Integer, Item> playerInventory;
-    private final Item offHandItem;
 
     @Getter
     private int setRoomSchedule = 100;
@@ -65,9 +63,9 @@ public class ArenaSet extends ArenaConfig {
 
         this.world = Server.getInstance().getLevelByName(this.worldName);
 
-        this.beforeGameMode = player.getGamemode();
-        this.playerInventory = player.getInventory().getContents();
-        this.offHandItem = player.getOffhandInventory().getItem(0);
+        PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);
+        playerData.saveInventory().saveGameMode().saveToFile(new File(CrystalWars.getInstance().getDataFolder() + "/cache/ArenaSetPlayerData/" + player.getName() + ".json"));
+
         player.setGamemode(Player.CREATIVE);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -378,19 +376,10 @@ public class ArenaSet extends ArenaConfig {
 
         this.crystalWars.getArenaSetMap().remove(this.player);
 
-        this.player.setGamemode(this.beforeGameMode);
-        if(this.player.isOnline()) {
-            this.player.getInventory().setContents(this.playerInventory);
-            this.player.getOffhandInventory().setItem(0, this.offHandItem);
-        }else{
-            Player offline = Server.getInstance().getOfflinePlayer(this.player.getUniqueId()).getPlayer();
-            if(offline != null && offline.isValid()) { //防止玩家设置时退出服务器狂刷报错
-                offline.getInventory().setContents(this.playerInventory);
-                offline.getOffhandInventory().setItem(0, this.offHandItem);
-            }else{
-                CrystalWars.getInstance().getLogger().warning("无法还原" + this.player.getName() + "的背包数据");
-                //To do: 可以选择先把玩家数据保存在一个cache.yml内，然后玩家再次进服时检测再还原。
-            }
+        File file = new File(CrystalWars.getInstance().getDataFolder() + "/cache/ArenaSetPlayerData/" + player.getName() + ".json");
+        if (this.player.isOnline() && file.exists()) {
+            PlayerDataUtils.create(this.player, file).restoreAll();
+            file.delete();
         }
 
         this.waitSpawnText.close();
