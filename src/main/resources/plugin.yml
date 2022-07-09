@@ -1,6 +1,6 @@
 name: CrystalWars
 main: cn.lanink.crystalwars.CrystalWars
-version: "0.4.4-SNAPSHOT"
+version: "0.5.0"
 api: ["1.0.9"]
 load: POSTWORLD
 authors: ["LT_Name", "iGxnon", "Glorydark"]
