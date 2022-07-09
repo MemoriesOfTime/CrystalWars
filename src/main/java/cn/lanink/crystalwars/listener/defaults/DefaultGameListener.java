@@ -84,11 +84,13 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                 if (event instanceof EntityDamageByEntityEvent) {
                     EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                     if (entityDamageByEntityEvent.getDamager() instanceof Player) {
-                        PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
+                        Player damager = (Player) entityDamageByEntityEvent.getDamager();
+                        PlayerData damagerData = arena.getPlayerData(damager);
                         if (!arena.isAllowTeammateDamage() && playerData.getTeam() == damagerData.getTeam()) {
                             event.setCancelled(true);
                             return;
                         }
+                        playerData.setLastDamager(damager);
                     }
                 }
 
@@ -96,12 +98,14 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                     if (event instanceof EntityDamageByEntityEvent) {
                         EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
                         if (entityDamageByEntityEvent.getDamager() instanceof Player) {
-                            PlayerData damagerData = arena.getPlayerData((Player) entityDamageByEntityEvent.getDamager());
+                            Player damager = (Player) entityDamageByEntityEvent.getDamager();
+                            PlayerData damagerData = arena.getPlayerData(damager);
                             if (damagerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
                                 event.setCancelled(true);
                                 return;
                             }
                             damagerData.addKillCount();
+                            playerData.setLastDamager(damager);
                         }
                     }
                     arena.playerDeath(player);

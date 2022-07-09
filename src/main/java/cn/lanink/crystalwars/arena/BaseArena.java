@@ -22,6 +22,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
@@ -710,6 +711,28 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.sendTitle("§c死亡");
         PlayerData playerData = this.getPlayerData(player);
 
+        Language lang = this.crystalWars.getLang();
+        String message = null;
+        Player lastDamager = playerData.getLastDamager();
+        if (player.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) {
+            if (lastDamager != null) {
+                message = lang.translateString("tips_killPlayer_void", lastDamager.getName(), player.getName());
+            }else {
+                message = lang.translateString("tips_death_void", player.getName());
+            }
+        }else if (player.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.FIRE) {
+            if (lastDamager != null) {
+                message = lang.translateString("tips_killPlayer_fire", lastDamager.getName(), player.getName());
+            }else {
+                message = lang.translateString("tips_death_fire", player.getName());
+            }
+        }else if (lastDamager != null) {
+            message = lang.translateString("tips_killPlayer_normal", lastDamager.getName(), player.getName());
+        }
+        if (message != null) {
+            Utils.broadcastMessage(message, this);
+        }
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
@@ -737,6 +760,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (playerData.getTeam() == Team.NULL) {
             return;
         }
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
@@ -766,6 +790,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.setGamemode(Player.SURVIVAL);
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
+        playerData.setLastDamager(null);
         playerData.setPlayerStatus(PlayerData.PlayerStatus.SURVIVE);
         playerData.setPlayerInvincibleTime(5); //复活5秒无敌
     }

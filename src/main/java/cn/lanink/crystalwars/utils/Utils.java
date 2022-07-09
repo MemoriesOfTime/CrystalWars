@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.utils;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
@@ -38,6 +39,16 @@ public class Utils {
 
     private Utils() {
         throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
+    }
+
+    /**
+     * 广播消息
+     *
+     * @param message 消息
+     * @param baseArena 需要广播消息的房间
+     */
+    public static void broadcastMessage(@NotNull String message, @NotNull BaseArena baseArena) {
+        baseArena.getPlayerDataMap().keySet().forEach(player -> player.sendMessage(message));
     }
 
     public static void executeCommand(@NotNull Player player, List<String> cmds) {

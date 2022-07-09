@@ -3,7 +3,7 @@ package cn.lanink.crystalwars.arena;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.nukkit.Player;
-import cn.nukkit.level.Position;
+import cn.nukkit.Server;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +28,9 @@ public class PlayerData {
 
     private int playerInvincibleTime; //玩家无敌时间
 
+    private Player lastDamager; //最后一次攻击的玩家
+    private int lastDamagerTime; //最后一次攻击的时间
+
     public PlayerData(@NotNull Player player) {
         this.player = player;
         this.playerStatus = PlayerStatus.WAIT_SPAWN;
@@ -36,9 +39,6 @@ public class PlayerData {
         this.deathCount = 0;
         this.waitSpawnTime = 0;
     }
-
-    private Position beforePos;
-    private int beforeGameMode;
     private PlayerDataUtils.PlayerData playerData;
 
 
@@ -46,9 +46,6 @@ public class PlayerData {
      * 保存玩家加入房间前的一些数据
      */
     public void saveBeforePlayerData() {
-        this.beforePos = this.player.clone();
-        this.beforeGameMode = this.player.getGamemode();
-
         File file = new File(CrystalWars.getInstance().getDataFolder() + "/PlayerInventory/" + this.player.getName() + ".json");
         this.playerData = PlayerDataUtils.create(this.player, file);
         this.playerData.saveAll();
@@ -67,9 +64,6 @@ public class PlayerData {
         this.player.getEnderChestInventory().clearAll();
 
         this.playerData.restoreAll();
-
-        this.player.teleport(this.beforePos);
-        this.player.setGamemode(this.beforeGameMode);
     }
 
     public void addKillCount() {
@@ -78,6 +72,19 @@ public class PlayerData {
 
     public void addDeathCount() {
         this.deathCount++;
+    }
+
+    public void setLastDamager(Player lastDamager) {
+        this.lastDamager = lastDamager;
+        this.lastDamagerTime = Server.getInstance().getTick();
+    }
+
+    public Player getLastDamager() {
+        //让最后攻击玩家参数只在一段时间内有效
+        if (Server.getInstance().getTick() - this.lastDamagerTime > 100) {
+            this.lastDamager = null;
+        }
+        return this.lastDamager;
     }
 
     public enum PlayerStatus {
