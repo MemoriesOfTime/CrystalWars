@@ -248,7 +248,7 @@ public class ArenaSet extends ArenaConfig {
                             this.getSetGameTime() > 0 &&
                             this.getSetOvertime() > 0 &&
                             this.getSetVictoryTime() > 0 &&
-                            this.getSupply().getSupplyConfig() != null) {
+                            this.getSupply() != null) {
                         canNext = true;
                     }
                     break;

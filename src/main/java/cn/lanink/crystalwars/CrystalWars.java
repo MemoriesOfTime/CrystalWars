@@ -11,7 +11,7 @@ import cn.lanink.crystalwars.listener.defaults.ArenaSetListener;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.player.PlayerSettingDataManager;
-import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.supplier.SupplyConfigManager;
 import cn.lanink.crystalwars.theme.ThemeManager;
 import cn.lanink.crystalwars.utils.MetricsLite;
 import cn.lanink.crystalwars.utils.RsNpcVariable;

@@ -3,8 +3,8 @@ package cn.lanink.crystalwars.arena;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfig;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
-import cn.lanink.crystalwars.supplier.Supply;
-import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.supplier.SupplyConfig;
+import cn.lanink.crystalwars.supplier.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.ISaveConfig;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
@@ -63,7 +63,7 @@ public class ArenaConfig implements ISaveConfig {
 
     private final ArrayList<ResourceGeneration> resourceGenerations = new ArrayList<>();
 
-    private Supply supply;
+    private SupplyConfig supply;
 
     public ArenaConfig(@NotNull Config config) throws ArenaLoadException {
         this(config, false);
@@ -126,7 +126,7 @@ public class ArenaConfig implements ISaveConfig {
             if(!SupplyConfigManager.getSUPPLY_CONFIG_MAP().containsKey(supplyName) && !isSet) {
                 CrystalWars.getInstance().getLogger().error(CrystalWars.getInstance().getLang().translateString("arenaConfig_loadSupply_configNotFound_error", supplyName));
             }
-            this.supply = new Supply(SupplyConfigManager.getSupplyConfig(supplyName));
+            this.supply = SupplyConfigManager.getSupplyConfig(supplyName);
 
             if (CrystalWars.debug) {
                 CrystalWars.getInstance().getLogger().info("[debug] Resources Spawn: " + this.resourceGenerations);
@@ -219,7 +219,7 @@ public class ArenaConfig implements ISaveConfig {
         this.waitSpawn = newPos.clone();
     }
 
-    public void setSupply(Supply newSupply) {
+    public void setSupply(SupplyConfig newSupply) {
         if (!this.isSet) {
             return;
         }
@@ -247,7 +247,7 @@ public class ArenaConfig implements ISaveConfig {
         map.put("minPlayers", this.getMinPlayers());
         map.put("maxPlayers", this.getMaxPlayers());
 
-        map.put("supply", this.supply.getSupplyConfig().getDirName());
+        map.put("supply", this.supply.getDirName());
 
         map.put("waitSpawn", Utils.vector3ToString(this.getWaitSpawn()));
 

@@ -2,7 +2,7 @@ package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
-import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
+import cn.lanink.crystalwars.supplier.items.SupplyItemConfig;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
@@ -52,10 +52,6 @@ public class AdvancedBuyItem extends AdvancedClickItem{
         }
         Item item = this.itemConfig.getItem();
         if(this.itemConfig.isTeamChangeItem()) {
-            if(arena == null) {
-                player.sendMessage(language.translateString("buyItem_notInRoom"));
-                return;
-            }
             item = Utils.getTeamColorItem(item, arena.getPlayerData(player).getTeam());
         }
         player.getInventory().addItem(item);

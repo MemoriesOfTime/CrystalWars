@@ -4,7 +4,7 @@ import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
-import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.supplier.SupplyConfigManager;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.EntityHuman;
@@ -256,7 +256,7 @@ public class Utils {
     /**
      * 放烟花
      *
-     * GitHub：https://github.com/PetteriM1/FireworkShow
+     * GitHub：<a href="https://github.com/PetteriM1/FireworkShow">https://github.com/PetteriM1/FireworkShow</a>
      * @param position 位置
      */
     public static void spawnFirework(Position position) {

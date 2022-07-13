@@ -2,7 +2,7 @@ package cn.lanink.crystalwars.entity;
 
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.player.PlayerSettingDataManager;
-import cn.lanink.crystalwars.supplier.Supply;
+import cn.lanink.crystalwars.supplier.SupplyConfig;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.EntityUtils;
@@ -30,12 +30,12 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     private final Team team;
 
     @Getter
-    private final Supply supply;
+    private final SupplyConfig supply;
 
     @Getter
     private AdvancedInventory indexInventory;
 
-    public CrystalWarsEntityMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull Supply supply) {
+    public CrystalWarsEntityMerchant(FullChunk chunk, CompoundTag nbt, @NotNull Team team, @NotNull SupplyConfig supply) {
         super(chunk, nbt);
         this.team = team;
         this.supply = supply;
@@ -57,8 +57,8 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      */
     public AdvancedFormWindowSimple generateGui() {
         AdvancedFormWindowSimple advancedFormWindowSimple = new AdvancedFormWindowSimple(this.getNameTag());
-        if (this.supply.getSupplyConfig() != null) {
-            this.supply.getSupplyConfig().getPageConfigMap().forEach((ignore, pageConfig) -> {
+        if (this.supply != null) {
+            this.supply.getPageConfigMap().forEach((ignore, pageConfig) -> {
                 advancedFormWindowSimple.addButton(pageConfig.getTitle(), player -> {
                     player.showFormWindow(pageConfig.generateForm(advancedFormWindowSimple));
                 });
@@ -71,11 +71,11 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
      * 生成 背包 界面
      */
     public void generateMerchantInventory() {
-        if (this.supply.getSupplyConfig() == null) {
+        if (this.supply == null) {
             this.indexInventory = new AdvancedInventory(this, "null");
             return;
         }
-        this.indexInventory = this.supply.getSupplyConfig().getDefaultPageConfig().generateWindow(this);
+        this.indexInventory = this.supply.getDefaultPageConfig().generateWindow(this);
     }
 
     @Override

@@ -1,8 +1,8 @@
-package cn.lanink.crystalwars.supplier.config;
+package cn.lanink.crystalwars.supplier;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
-import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
+import cn.lanink.crystalwars.supplier.items.SupplyItemConfig;
+import cn.lanink.crystalwars.supplier.pages.SupplyPageConfig;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;

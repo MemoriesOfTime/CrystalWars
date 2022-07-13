@@ -6,8 +6,7 @@ import cn.lanink.crystalwars.arena.ResourceGeneration;
 import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
-import cn.lanink.crystalwars.supplier.Supply;
-import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.supplier.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.utils.Language;
@@ -170,7 +169,7 @@ public class ArenaSetListener implements Listener {
                     arenaSet.setGameTime(Utils.toInt(formResponseCustom.getInputResponse(4)));
                     arenaSet.setOvertime(Utils.toInt(formResponseCustom.getInputResponse(5)));
                     arenaSet.setVictoryTime(Utils.toInt(formResponseCustom.getInputResponse(6)));
-                    arenaSet.setSupply(new Supply(SupplyConfigManager.getSupplyConfig(formResponseCustom.getDropdownResponse(7).getElementContent())));
+                    arenaSet.setSupply(SupplyConfigManager.getSupplyConfig(formResponseCustom.getDropdownResponse(7).getElementContent()));
                     arenaSet.setAllowTeammateDamage(formResponseCustom.getToggleResponse(8));
                     arenaSet.setDefaultEndCrystalHealth(Utils.toInt(formResponseCustom.getInputResponse(9)));
                 });

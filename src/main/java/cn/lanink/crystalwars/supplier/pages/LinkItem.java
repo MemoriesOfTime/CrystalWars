@@ -1,4 +1,4 @@
-package cn.lanink.crystalwars.supplier.config.pages;
+package cn.lanink.crystalwars.supplier.pages;
 
 import cn.lanink.gamecore.api.Info;
 import cn.nukkit.item.Item;

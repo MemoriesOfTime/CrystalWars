@@ -1,10 +1,10 @@
-package cn.lanink.crystalwars.supplier.config.pages;
+package cn.lanink.crystalwars.supplier.pages;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
-import cn.lanink.crystalwars.supplier.config.SupplyConfig;
-import cn.lanink.crystalwars.supplier.config.items.SupplyItemConfig;
+import cn.lanink.crystalwars.supplier.SupplyConfig;
+import cn.lanink.crystalwars.supplier.items.SupplyItemConfig;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedBuyItem;
 import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedInventory;

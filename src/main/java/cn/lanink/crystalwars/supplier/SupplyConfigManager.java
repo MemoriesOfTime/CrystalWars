@@ -1,4 +1,4 @@
-package cn.lanink.crystalwars.supplier.config;
+package cn.lanink.crystalwars.supplier;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.nukkit.item.Item;

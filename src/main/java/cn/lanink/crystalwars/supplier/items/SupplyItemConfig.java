@@ -1,7 +1,7 @@
-package cn.lanink.crystalwars.supplier.config.items;
+package cn.lanink.crystalwars.supplier.items;
 
 import cn.lanink.crystalwars.CrystalWars;
-import cn.lanink.crystalwars.supplier.config.SupplyConfigManager;
+import cn.lanink.crystalwars.supplier.SupplyConfigManager;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.item.Item;

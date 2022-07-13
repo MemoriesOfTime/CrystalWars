@@ -1,7 +1,7 @@
 package cn.lanink.crystalwars.utils.inventory.ui.advanced;
 
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
-import cn.lanink.crystalwars.supplier.config.pages.SupplyPageConfig;
+import cn.lanink.crystalwars.supplier.pages.SupplyPageConfig;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.item.Item;
