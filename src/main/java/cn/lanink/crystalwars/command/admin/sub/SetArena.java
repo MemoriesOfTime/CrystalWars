@@ -1,6 +1,5 @@
 package cn.lanink.crystalwars.command.admin.sub;
 
-import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.ArenaSet;
 import cn.lanink.crystalwars.command.BaseSubCommand;
 import cn.lanink.crystalwars.utils.FormHelper;
@@ -34,7 +33,7 @@ public class SetArena extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = this.crystalWars.getLang(sender);
         Player player = (Player) sender;
         if (this.crystalWars.getArenaSetMap().containsKey(player)) {
             this.crystalWars.getArenaSetMap().get(player).exit();

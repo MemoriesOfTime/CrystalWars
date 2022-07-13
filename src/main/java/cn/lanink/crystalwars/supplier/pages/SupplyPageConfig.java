@@ -157,7 +157,7 @@ public class SupplyPageConfig {
                     }
                 }
                 if (!itemConfig.isOvertimeCanBuy() && arena.isOvertime()) {
-                    player.sendTip("此物品不能在加时赛时购买！");
+                    player.sendTip(language.translateString("tips_buyItem_canNotBuyForOvertime"));
                     return;
                 }
                 for (Item cost : itemConfig.getCost()) {

@@ -8,7 +8,9 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author lt_name
+ * 物品生成配置（游戏内资源点）
+ *
+ * @author LT_Name
  */
 @AllArgsConstructor
 @Getter

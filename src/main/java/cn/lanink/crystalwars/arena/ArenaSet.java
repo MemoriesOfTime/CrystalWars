@@ -88,7 +88,7 @@ public class ArenaSet extends ArenaConfig {
             this.exit();
             return false;
         }
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = this.crystalWars.getLang(this.player);
         if (tick%10 == 0) {
             if (this.setRoomSchedule > 100) {
                 this.player.getInventory().setItem(0, ItemManager.get(this.player, 11001));
@@ -139,7 +139,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName(language.translateString("arenaSet_setTeamSpawn", Utils.getShowTeam(team)));
+                        item.setCustomName(language.translateString("arenaSet_setTeamSpawn", Utils.getShowTeam(player, team)));
                         this.player.getInventory().setItem(indexSpawn, item);
                         indexSpawn++;
                     }
@@ -170,7 +170,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName(language.translateString("arenaSet_setCrystalSpawn", Utils.getShowTeam(team)));
+                        item.setCustomName(language.translateString("arenaSet_setCrystalSpawn", Utils.getShowTeam(player, team)));
                         this.player.getInventory().setItem(indexCrystal, item);
                         indexCrystal++;
                     }
@@ -201,7 +201,7 @@ public class ArenaSet extends ArenaConfig {
                         }
                         item = Utils.getTeamColorItem(ItemManager.get(this.player, 11006), team);
                         item.getNamedTag().putString("CrystalWarsTeam", team.name());
-                        item.setCustomName(language.translateString("arenaSet_setShopSpawn", Utils.getShowTeam(team)));
+                        item.setCustomName(language.translateString("arenaSet_setShopSpawn", Utils.getShowTeam(player, team)));
                         this.player.getInventory().setItem(indexShop, item);
                         indexShop++;
                     }
@@ -299,7 +299,7 @@ public class ArenaSet extends ArenaConfig {
                     this.spawnTextMap.put(team, text);
                 }
                 text.setPosition(position);
-                text.setNameTag(Utils.getShowTeam(team) + language.translateString("arenaSet_nameTag_teamSpawn"));
+                text.setNameTag(Utils.getShowTeam(player, team) + language.translateString("arenaSet_nameTag_teamSpawn"));
 
                 position = Position.fromObject(this.getTeamCrystal(team), this.world);
                 text = this.crystalTextMap.get(team);
@@ -309,7 +309,7 @@ public class ArenaSet extends ArenaConfig {
                     this.crystalTextMap.put(team, text);
                 }
                 text.setPosition(position);
-                text.setNameTag(Utils.getShowTeam(team) + language.translateString("arenaSet_nameTag_crystalSpawn"));
+                text.setNameTag(Utils.getShowTeam(player, team) + language.translateString("arenaSet_nameTag_crystalSpawn"));
 
                 position = Position.fromObject(this.getTeamShop(team), this.world);
                 text = this.shopTextMap.get(team);
@@ -319,7 +319,7 @@ public class ArenaSet extends ArenaConfig {
                     this.shopTextMap.put(team, text);
                 }
                 text.setPosition(position);
-                text.setNameTag(Utils.getShowTeam(team) + language.translateString("arenaSet_nameTag_shopSpawn"));
+                text.setNameTag(Utils.getShowTeam(player, team) + language.translateString("arenaSet_nameTag_shopSpawn"));
             }
             Iterator<Map.Entry<ResourceGeneration, EntityText>> iterator = this.resourceGenerationTextMap.entrySet().iterator();
             while (iterator.hasNext()) {

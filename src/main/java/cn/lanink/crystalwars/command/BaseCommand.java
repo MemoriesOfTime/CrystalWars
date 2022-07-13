@@ -44,9 +44,9 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_commands_noPermission"));
+                        sender.sendMessage(this.crystalWars.getLang(sender).translateString("tips_commands_noPermission"));
                     }else {
-                        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_commands_useInGame"));
+                        sender.sendMessage(this.crystalWars.getLang(sender).translateString("tips_commands_useInGame"));
                     }
                 }else {
                     this.sendHelp(sender);
@@ -60,7 +60,7 @@ public abstract class BaseCommand extends Command {
             }
             return true;
         }
-        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_commands_noPermission"));
+        sender.sendMessage(this.crystalWars.getLang(sender).translateString("tips_commands_noPermission"));
         return true;
     }
 

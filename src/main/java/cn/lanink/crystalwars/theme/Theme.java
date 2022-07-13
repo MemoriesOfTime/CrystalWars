@@ -88,12 +88,12 @@ public class Theme {
                 .replace("{PlayerCount}", String.valueOf(arena.getPlayerCount()))
                 .replace("{MinPlayer}", String.valueOf(arena.getMinPlayers()))
                 .replace("{MaxPlayer}", String.valueOf(arena.getMaxPlayers()))
-                .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(arena.getVictoryTeam()) : CrystalWars.getInstance().getLang().translateString("teams_gameDraw"))
+                .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(player, arena.getVictoryTeam()) : CrystalWars.getInstance().getLang(player).translateString("teams_gameDraw"))
                 //队伍名称
-                .replace("{TeamName_RED}", Utils.getShowTeam(Team.RED))
-                .replace("{TeamName_YELLOW}", Utils.getShowTeam(Team.YELLOW))
-                .replace("{TeamName_BLUE}", Utils.getShowTeam(Team.BLUE))
-                .replace("{TeamName_GREEN}", Utils.getShowTeam(Team.GREEN))
+                .replace("{TeamName_RED}", Utils.getShowTeam(player, Team.RED))
+                .replace("{TeamName_YELLOW}", Utils.getShowTeam(player, Team.YELLOW))
+                .replace("{TeamName_BLUE}", Utils.getShowTeam(player, Team.BLUE))
+                .replace("{TeamName_GREEN}", Utils.getShowTeam(player, Team.GREEN))
                 //队伍水晶血量
                 .replace("{TeamCrystalHealth_RED}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.RED)))
                 .replace("{TeamCrystalHealth_YELLOW}", Utils.getShowHealth(arena.getTeamEntityEndCrystal(Team.YELLOW)))

@@ -45,12 +45,12 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
 
         Item item = event.getItem();
         if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
-            switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG)) {
+            switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG_OLD)) {
                 case 10000:
                     int nowTick = Server.getInstance().getTick();
                     int lastTick = item.getNamedTag().getInt("lastTick");
                     if (lastTick == 0 || nowTick - lastTick > 40) {
-                        player.sendTip(CrystalWars.getInstance().getLang().translateString("tips_clickAgainToQuitRoom"));
+                        player.sendTip(CrystalWars.getInstance().getLang(player).translateString("tips_clickAgainToQuitRoom"));
                         CompoundTag tag = item.getNamedTag();
                         tag.putInt("lastTick", nowTick);
                         item.setNamedTag(tag); //防止tag更改不生效，无法退出房间

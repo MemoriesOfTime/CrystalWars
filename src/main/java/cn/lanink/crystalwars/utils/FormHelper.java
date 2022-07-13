@@ -37,7 +37,7 @@ public class FormHelper {
      * @param player 玩家
      */
     public static void sendUserMainMenu(@NotNull Player player) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
 
         simple.addButton(new ResponseElementButton(language.translateString("form_main_joinRandomRoom")).onClicked(
@@ -58,7 +58,7 @@ public class FormHelper {
      */
     public static void sendUserArenaListMenu(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         for (Map.Entry<String, BaseArena> entry : CrystalWars.getInstance().getArenas().entrySet()) {
             simple.addButton(new ResponseElementButton(entry.getKey() + "\n" + language.translateString("form_base_mode") + entry.getValue().getGameMode())
                     .onClicked(cp -> sendArenaConfirmMenu(cp, entry.getKey())));
@@ -79,7 +79,7 @@ public class FormHelper {
     public static void sendArenaConfirmMenu(@NotNull Player player, @NotNull String world) {
         AdvancedFormWindowModal modal;
         BaseArena arena = CrystalWars.getInstance().getArenas().get(world);
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         String returnButtonContent = language.translateString("form_base_return");
         if (arena != null) {
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.LEVEL_NOT_LOADED) {
@@ -130,7 +130,7 @@ public class FormHelper {
      */
     public static void sendAdminMainMenu(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         simple.addButton(new ResponseElementButton(language.translateString("form_base_createRoom"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " CreateArena")));
         simple.addButton(new ResponseElementButton(language.translateString("form_base_setRoom"))
@@ -144,7 +144,7 @@ public class FormHelper {
     }
 
     public static void sendAdminCreateArena(@NotNull Player player) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(language.translateString("form_base_createRoom"));
 
         ArrayList<String> list = new ArrayList<>();
@@ -165,7 +165,7 @@ public class FormHelper {
     }
 
     public static void sendAdminSetArena(@NotNull Player player) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(language.translateString("form_base_setRoom"));
 
         custom.addElement(new ElementDropdown("\n\n"+language.translateString("form_adminCreateArena_selectRoom"), new ArrayList<>(CrystalWars.getInstance().getArenaConfigs().keySet()))); //0
@@ -185,7 +185,7 @@ public class FormHelper {
      * @return 个性化设置界面
      */
     public static AdvancedFormWindowCustom getPlayerSetting(@NotNull Player player) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = CrystalWars.getInstance().getLang(player);
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(
                 language.translateString("form_playerSetting_title"),
                 new ArrayList<>(),

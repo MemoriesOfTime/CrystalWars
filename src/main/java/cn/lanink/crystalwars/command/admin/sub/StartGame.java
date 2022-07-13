@@ -29,7 +29,7 @@ public class StartGame extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        Language language = crystalWars.getLang();
+        Language language = this.crystalWars.getLang(sender);
         String name;
         if (args.length >= 2) {
             name = args[1];

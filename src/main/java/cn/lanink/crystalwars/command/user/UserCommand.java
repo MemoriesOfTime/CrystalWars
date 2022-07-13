@@ -1,6 +1,5 @@
 package cn.lanink.crystalwars.command.user;
 
-import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.command.BaseCommand;
 import cn.lanink.crystalwars.command.user.sub.JoinRoom;
 import cn.lanink.crystalwars.command.user.sub.QuitRoom;
@@ -27,7 +26,7 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = this.crystalWars.getLang(sender);
         sender.sendMessage(
                 "§a/" + this.getName() + " "+language.translateString("tips_help_openGui")+"\n" +
                 "§a/" + this.getName() + " "+language.translateString("tips_helps_joinRoom")+"\n" +

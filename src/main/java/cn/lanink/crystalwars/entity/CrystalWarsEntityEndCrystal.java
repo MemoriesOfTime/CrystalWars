@@ -106,7 +106,7 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
                 if (this.distance(player) <= 10) {
                     if (!this.bossBarMap.containsKey(player)) {
                         DummyBossBar bossBar = new DummyBossBar
-                                .Builder(player).text(Utils.getShowTeam(this.getTeam()) + "§e水晶").build();
+                                .Builder(player).text(Utils.getShowTeam(player, this.getTeam()) + "§e水晶").build();
                         this.bossBarMap.put(player, bossBar);
                     }
                     DummyBossBar bossBar = this.bossBarMap.get(player);
@@ -161,7 +161,7 @@ public class CrystalWarsEntityEndCrystal extends Entity implements EntityExplosi
             this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_EXPLODE);
 
             for (Player player : this.getArena().getPlayers(this.getTeam())) {
-                player.sendTitle("§c§l✘", CrystalWars.getInstance().getLang().translateString("tips_teamCrystalBeRuined"));
+                player.sendTitle("§c§l✘", CrystalWars.getInstance().getLang(player).translateString("tips_teamCrystalBeRuined"));
                 PlayerData playerData = this.getArena().getPlayerData(player);
                 if (playerData.getPlayerStatus() != PlayerData.PlayerStatus.SURVIVE) {
                     player.getInventory().setItem(8, ItemManager.get(player, 10000));

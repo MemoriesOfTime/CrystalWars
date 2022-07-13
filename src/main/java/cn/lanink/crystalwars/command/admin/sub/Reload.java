@@ -1,6 +1,5 @@
 package cn.lanink.crystalwars.command.admin.sub;
 
-import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.command.BaseSubCommand;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.supplier.SupplyConfigManager;
@@ -36,7 +35,7 @@ public class Reload extends BaseSubCommand {
 
         this.crystalWars.loadAllListener();
         this.crystalWars.loadAllArena();
-        sender.sendMessage(CrystalWars.getInstance().getLang().translateString("tips_reloadRoom_success"));
+        sender.sendMessage(this.crystalWars.getLang(sender).translateString("tips_reloadRoom_success"));
         return true;
     }
 

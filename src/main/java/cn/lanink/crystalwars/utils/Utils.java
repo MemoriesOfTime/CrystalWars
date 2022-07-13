@@ -105,18 +105,22 @@ public class Utils {
     }
 
     public static String getShowTeam(Team team) {
+        return getShowTeam(null, team);
+    }
+
+    public static String getShowTeam(Player player, @NotNull Team team) {
         switch (team) {
             case RED:
-                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_red");
+                return team.getStringColor() + CrystalWars.getInstance().getLang(player).translateString("teams_name_red");
             case YELLOW:
-                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_yellow");
+                return team.getStringColor() + CrystalWars.getInstance().getLang(player).translateString("teams_name_yellow");
             case BLUE:
-                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_blue");
+                return team.getStringColor() + CrystalWars.getInstance().getLang(player).translateString("teams_name_blue");
             case GREEN:
-                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_green");
+                return team.getStringColor() + CrystalWars.getInstance().getLang(player).translateString("teams_name_green");
             case NULL:
             default:
-                return team.getStringColor() + CrystalWars.getInstance().getLang().translateString("teams_name_noTeam");
+                return team.getStringColor() + CrystalWars.getInstance().getLang(player).translateString("teams_name_noTeam");
         }
     }
 

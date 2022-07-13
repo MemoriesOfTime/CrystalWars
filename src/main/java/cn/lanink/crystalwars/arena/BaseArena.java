@@ -337,7 +337,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 if (this.isTeamCrystalSurviving(entry.getValue().getTeam())) {
                     int waitSpawnTime = entry.getValue().getWaitSpawnTime() - 1;
                     entry.getValue().setWaitSpawnTime(waitSpawnTime);
-                    Language language = CrystalWars.getInstance().getLang();
+                    Language language = this.crystalWars.getLang(entry.getKey());
                     if (waitSpawnTime <= 0) {
                         //清掉之前的内容
                         entry.getKey().sendTitle(language.translateString("title_respawn"), "", 5, 15, 10);
@@ -581,7 +581,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         this.initData();
 
         if (oldStatus == ArenaStatus.GAME || oldStatus == ArenaStatus.VICTORY) {
-            Language language = CrystalWars.getInstance().getLang();
+            Language language = this.crystalWars.getLang();
             this.setArenaStatus(ArenaStatus.LEVEL_NOT_LOADED);
             if (CrystalWars.debug) {
                 this.crystalWars.getLogger().info(language.translateString("tips_levelRecovery_start", this.getGameWorldName()));
@@ -711,7 +711,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.sendTitle("§c死亡");
         PlayerData playerData = this.getPlayerData(player);
 
-        Language lang = this.crystalWars.getLang();
+        Language lang = this.crystalWars.getLang(player);
         String message = null;
         Player lastDamager = playerData.getLastDamager();
         if (player.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) {

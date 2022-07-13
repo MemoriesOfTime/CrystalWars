@@ -4,15 +4,19 @@ import cn.nukkit.item.Item;
 import lombok.Getter;
 
 /**
- * @author lt_name
+ * @author LT_Name
  */
 public class BaseItem {
 
     @Getter
-    private Item item;
+    private final String internalID;
 
-    public BaseItem() {
+    public BaseItem(String internalID) {
+        this.internalID = internalID;
+    }
 
+    public Item toItem() {
+        return ItemManager.get(this.internalID);
     }
 
 }

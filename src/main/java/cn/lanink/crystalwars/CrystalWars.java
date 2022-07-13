@@ -21,6 +21,7 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
@@ -107,7 +108,8 @@ public class CrystalWars extends PluginBase {
     @Getter
     private List<String> defeatCmd;
 
-    private Language language;
+    private String defaultLanguage;
+    private final HashMap<String, Language> languageMap = new HashMap<>();
 
     public static CrystalWars getInstance() {
         return crystalWars;
@@ -205,7 +207,7 @@ public class CrystalWars extends PluginBase {
 
         }
 
-        this.getLogger().info(this.language.translateString("plugin_enable", VERSION));
+        this.getLogger().info(this.getLang().translateString("plugin_enable", VERSION));
     }
 
     @Override
@@ -223,23 +225,24 @@ public class CrystalWars extends PluginBase {
 
         PlayerSettingDataManager.save();
 
-        this.getLogger().info(this.language.translateString("plugin_disable"));
+        this.getLogger().info(this.getLang().translateString("plugin_disable"));
     }
 
 
     private void loadLanguage() {
-        //防止reload重复加载
-        if(this.language != null){ return; }
         List<String> languages = Arrays.asList("zh_CN", "en_US");
-        String pluginLanguage = this.config.getString("pluginLanguage", "zh_CN");
-        if (!languages.contains(pluginLanguage)) {
-            this.getLogger().error("Language" + pluginLanguage + "Not supported, will load Chinese!");
-            pluginLanguage = "zh_CN";
+        this.defaultLanguage = this.config.getString("pluginLanguage", "zh_CN");
+        if (!languages.contains(this.defaultLanguage)) {
+            this.getLogger().error("Language" + this.defaultLanguage + "Not supported, will load Chinese!");
+            this.defaultLanguage = "zh_CN";
         }
-        Config languageConfig = new Config(Config.PROPERTIES);
-        languageConfig.load(this.getResource("Resources/Language/" + pluginLanguage + ".properties"));
-        this.language = new Language(languageConfig);
-        this.getLogger().info(this.language.translateString("plugin_LanguageLoaded"));
+        for (String language : languages) {
+            Config languageConfig = new Config(Config.PROPERTIES);
+            languageConfig.load(this.getResource("Resources/Language/" + language + ".properties"));
+            this.languageMap.put(language, new Language(languageConfig));
+        }
+
+        this.getLogger().info(this.getLang().translateString("plugin_LanguageLoaded"));
     }
 
     @Override
@@ -273,7 +276,7 @@ public class CrystalWars extends PluginBase {
                     try {
                         skinData = ImageIO.read(skinFile);
                     } catch (Exception ignored) {
-                        this.getLogger().warning(this.language.translateString("loadSkin_wrongFormat",skinName));
+                        this.getLogger().warning(this.getLang().translateString("loadSkin_wrongFormat",skinName));
                     }
                     if (skinData != null) {
                         skin.setSkinData(skinData);
@@ -282,10 +285,10 @@ public class CrystalWars extends PluginBase {
                         this.skins.put(x, skin);
                         x++;
                     } else {
-                        this.getLogger().warning(this.language.translateString("loadSkin_wrongFormat",skinName));
+                        this.getLogger().warning(this.getLang().translateString("loadSkin_wrongFormat",skinName));
                     }
                 } else {
-                    this.getLogger().warning(this.language.translateString("loadSkin_skinNotFound",skinName));
+                    this.getLogger().warning(this.getLang().translateString("loadSkin_skinNotFound",skinName));
                 }
             }
         }
@@ -302,7 +305,7 @@ public class CrystalWars extends PluginBase {
                     this.getLogger().info("[debug] registerListener: [ " + baseGameListener.getListenerName() + " ]");
                 }
             } catch (Exception e) {
-                this.getLogger().error(this.language.translateString("plugin_registerListener_error"), e);
+                this.getLogger().error(this.getLang().translateString("plugin_registerListener_error"), e);
             }
         }
     }
@@ -334,12 +337,12 @@ public class CrystalWars extends PluginBase {
     public void loadArena(String world) {
         Config config = this.getOrCreateArenaConfig(world);
         if (!Server.getInstance().loadLevel(world)) {
-            this.getLogger().error(this.language.translateString("plugin_loadArena_WorldNotExist", world));
+            this.getLogger().error(this.getLang().translateString("plugin_loadArena_WorldNotExist", world));
             return;
         }
         String gameMode = config.getString("gameMode", "classic");
         if (!ARENA_CLASS.containsKey(gameMode)) {
-            this.getLogger().error(this.language.translateString("plugin_loadArena_GameModeNotExist", world, gameMode));
+            this.getLogger().error(this.getLang().translateString("plugin_loadArena_GameModeNotExist", world, gameMode));
             return;
         }
         try {
@@ -347,9 +350,9 @@ public class CrystalWars extends PluginBase {
             BaseArena baseArena = constructor.newInstance(world, config);
             baseArena.setGameMode(gameMode);
             this.arenas.put(world, baseArena);
-            this.getLogger().info(this.language.translateString("plugin_loadArena_Loaded", world));
+            this.getLogger().info(this.getLang().translateString("plugin_loadArena_Loaded", world));
         } catch (Exception e) {
-            this.getLogger().error(this.language.translateString("plugin_loadArena_Error"), e);
+            this.getLogger().error(this.getLang().translateString("plugin_loadArena_Error"), e);
         }
     }
 
@@ -373,7 +376,7 @@ public class CrystalWars extends PluginBase {
             ArenaTickTask.removeArena(arena);
             Watchdog.removeArena(arena);
             this.arenaConfigs.remove(world);
-            this.getLogger().info(this.language.translateString("plugin_unloadArena_Unloaded", world));
+            this.getLogger().info(this.getLang().translateString("plugin_unloadArena_Unloaded", world));
         }
     }
 
@@ -391,7 +394,22 @@ public class CrystalWars extends PluginBase {
         return this.arenaConfigs.get(level);
     }
 
-    public Language getLang(){
-        return this.language;
+    public Language getLang() {
+        return this.getLang(null);
     }
+
+    public Language getLang(CommandSender sender) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            String playerLanguage = player.getLoginChainData().getLanguageCode();
+            //TODO 转换（例如将zh转换为zh_CN zh_HK转换为zh_CN）
+
+            if (!this.languageMap.containsKey(playerLanguage)) {
+                playerLanguage = this.defaultLanguage;
+            }
+            return this.languageMap.get(playerLanguage);
+        }
+        return this.languageMap.get(this.defaultLanguage);
+    }
+
 }

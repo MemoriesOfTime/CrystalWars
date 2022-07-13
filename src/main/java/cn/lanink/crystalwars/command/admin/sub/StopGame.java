@@ -1,6 +1,5 @@
 package cn.lanink.crystalwars.command.admin.sub;
 
-import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.command.BaseSubCommand;
 import cn.lanink.gamecore.utils.Language;
@@ -30,7 +29,7 @@ public class StopGame extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = this.crystalWars.getLang(sender);
         String name;
         if (args.length >= 2) {
             name = args[1];

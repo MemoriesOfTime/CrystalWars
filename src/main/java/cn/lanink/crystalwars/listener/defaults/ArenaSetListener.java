@@ -51,7 +51,7 @@ public class ArenaSetListener implements Listener {
         if (!item.hasCompoundTag() || !item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
             return;
         }
-        switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG)) {
+        switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG_OLD)) {
             case 11001: //上一步
                 event.setCancelled(true);
                 arenaSet.setRoomSchedule(arenaSet.getBackRoomSchedule());
@@ -66,7 +66,7 @@ public class ArenaSetListener implements Listener {
                 arenaSet.save();
                 arenaSet.exit();
                 this.crystalWars.loadArena(arenaSet.getWorldName());
-                player.sendTitle("", CrystalWars.getInstance().getLang().translateString("arenaSet_configSaved"), 10, 40, 10);
+                player.sendTitle("", CrystalWars.getInstance().getLang(player).translateString("arenaSet_configSaved"), 10, 40, 10);
                 break;
             case 11004:
             case 11005:
@@ -103,7 +103,7 @@ public class ArenaSetListener implements Listener {
         }
         newVector3.x = newVector3.getFloorX() + 0.5;
         newVector3.z = newVector3.getFloorZ() + 0.5;
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = this.crystalWars.getLang(player);
         switch (arenaSet.getSetRoomSchedule()) {
             case 100: //设置游戏模式
                 AdvancedFormWindowCustom custom1 = new AdvancedFormWindowCustom(language.translateString("arenaSet_setGameMode"));
@@ -127,10 +127,10 @@ public class ArenaSetListener implements Listener {
                 arenaSet.setTeamShop(Team.valueOf(item.getNamedTag().getString("CrystalWarsTeam")), newVector3);
                 break;
             case 350: //设置资源点
-                if (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG) == 11007) {
-                    AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(CrystalWars.getInstance().getLang().translateString("arenaSet_selectItemSpawnInit"));
+                if (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG_OLD) == 11007) {
+                    AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(this.crystalWars.getLang(player).translateString("arenaSet_selectItemSpawnInit"));
                     custom.addElement(new ElementDropdown(
-                            CrystalWars.getInstance().getLang().translateString("arenaSet_ItemSpawnInit"),
+                            this.crystalWars.getLang(player).translateString("arenaSet_ItemSpawnInit"),
                             new ArrayList<>(ItemGenerationConfigManager.getITEM_GENERATION_CONFIG_MAP().keySet())
                     )); //0
                     custom.onResponded((formResponseCustom, cp) -> {

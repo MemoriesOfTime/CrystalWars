@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.HashMap;
 
 /**
+ * 物品生成配置(游戏内资源点) 管理器
+ *
  * @author LT_Name
  */
 public class ItemGenerationConfigManager {

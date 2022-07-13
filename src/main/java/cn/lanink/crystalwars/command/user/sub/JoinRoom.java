@@ -32,7 +32,7 @@ public class JoinRoom extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        Language language = CrystalWars.getInstance().getLang();
+        Language language = this.crystalWars.getLang(sender);
         if (!this.crystalWars.getArenas().isEmpty()) {
             Player player = (Player) sender;
             if (player.riding != null) {
