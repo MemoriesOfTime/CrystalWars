@@ -14,8 +14,10 @@ import cn.nukkit.nbt.tag.CompoundTag;
 public class ItemManager {
 
     public static final String IS_CRYSTALWARS_TAG = "isCrystalWars";
-    public static final String INTERNAL_ID_TAG = "CrystalWarsStringInternalID";
-    public static final String INTERNAL_ID_TAG_OLD = "CrystalWarsInternalID";
+    public static final String INTERNAL_ID_TAG = "CrystalWarsStringInternalID"; //String
+    public static final String INTERNAL_ID_TAG_OLD = "CrystalWarsInternalID"; //int
+    public static final String PROPERTY_CANNOTTAKEITOFF_TAG = "CrystalWarsCannotTakeItOff"; //boolean
+    public static final String PROPERTY_CANNOTCLICKONINVENTORY_TAG = "CrystalWarsCannotClickOnInventory"; //boolean
 
     public static Item get(int internalID) {
         return get(null, internalID);

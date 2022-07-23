@@ -32,6 +32,8 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
 
+import java.util.ArrayList;
+
 /**
  * @author LT_Name
  */
@@ -61,34 +63,79 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             int internalID = tag.getInt(ItemManager.INTERNAL_ID_TAG_OLD);
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
                 event.setCancelled(true);
+                Team team;
                 switch (internalID) {
                     case 10101:
-                        arena.getPlayerData(player).setTeam(Team.RED);
-                        arena.getPlayerDataMap().keySet().forEach(p ->
-                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.RED)))
-                        );
+                        team = Team.RED;
                         break;
                     case 10102:
-                        arena.getPlayerData(player).setTeam(Team.YELLOW);
-                        arena.getPlayerDataMap().keySet().forEach(p ->
-                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.YELLOW)))
-                        );
+                        team = Team.YELLOW;
                         break;
                     case 10103:
-                        arena.getPlayerData(player).setTeam(Team.BLUE);
-                        arena.getPlayerDataMap().keySet().forEach(p ->
-                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.BLUE)))
-                        );
+                        team = Team.BLUE;
                         break;
                     case 10104:
-                        arena.getPlayerData(player).setTeam(Team.GREEN);
-                        arena.getPlayerDataMap().keySet().forEach(p ->
-                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.GREEN)))
-                        );
+                        team = Team.GREEN;
                         break;
+                    default:
+                        team = Team.NULL;
+                        break;
+                }
+                if (team != Team.NULL) {
+                    arena.getPlayerData(player).setTeam(team);
+                    this.updatePlayerItem(arena, player);
+                    arena.getPlayerDataMap().keySet().forEach(p ->
+                            p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, team)))
+                    );
                 }
             }
         }
+    }
+
+    private void updatePlayerItem(BaseArena arena, Player player) {
+        PlayerData playerData = arena.getPlayerData(player);
+        // 队伍选择物品
+        ArrayList<Team> canUseTeams = arena.getCanUseTeams();
+        Item item;
+        if (playerData.getTeam() != Team.RED && canUseTeams.contains(Team.RED)) {
+            item = ItemManager.get(player, 10101);
+        }else {
+            item = ItemManager.get(player, 10100);
+        }
+        player.getInventory().setItem(2, item);
+        if (playerData.getTeam() != Team.YELLOW && canUseTeams.contains(Team.YELLOW)) {
+            item = ItemManager.get(player, 10102);
+        }else {
+            item = ItemManager.get(player, 10100);
+        }
+        player.getInventory().setItem(3, item);
+        if (playerData.getTeam() != Team.BLUE && canUseTeams.contains(Team.BLUE)) {
+            item = ItemManager.get(player, 10103);
+        }else {
+            item = ItemManager.get(player, 10100);
+        }
+        player.getInventory().setItem(4, item);
+        if (playerData.getTeam() != Team.GREEN && canUseTeams.contains(Team.GREEN)) {
+            item = ItemManager.get(player, 10104);
+        }else {
+            item = ItemManager.get(player, 10100);
+        }
+        player.getInventory().setItem(5, item);
+
+        CompoundTag tag;
+        Item cap = Item.get(Item.LEATHER_CAP);
+        tag = cap.hasCompoundTag() ? cap.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        tag.putBoolean(ItemManager.PROPERTY_CANNOTTAKEITOFF_TAG, true);
+        cap.setNamedTag(tag);
+        player.getInventory().setHelmet(Utils.getTeamColorItem(cap, playerData.getTeam()));
+
+        Item tunic = Item.get(Item.LEATHER_TUNIC);
+        tag = tunic.hasCompoundTag() ? tunic.getNamedTag() : new CompoundTag();
+        tag.putByte("Unbreakable", 1);
+        tag.putBoolean(ItemManager.PROPERTY_CANNOTTAKEITOFF_TAG, true);
+        tunic.setNamedTag(tag);
+        player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -313,13 +360,13 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
         Item sourceItem = event.getSourceItem();
         //TODO 全使用NBT判断
-        if (sourceItem.isArmor() || (sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean("cannotTakeItOff")) &&
+        if (sourceItem.isArmor() || (sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTTAKEITOFF_TAG)) &&
                 event.getHeldItem().getId() == 0) {
             event.setCancelled(true);
             return;
         }
-        if ((sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean("cannotClickOnInventory")) ||
-                (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean("cannotClickOnInventory"))) {
+        if ((sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTCLICKONINVENTORY_TAG)) ||
+                (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTCLICKONINVENTORY_TAG))) {
             event.setCancelled(true);
         }
     }

@@ -202,7 +202,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
-        //队伍选择物品放到onUpdateWait方法， 方便及时更新（例如不显示已加入的队伍选项）
+        player.getInventory().setItem(2, ItemManager.get(player, 10101));
+        player.getInventory().setItem(3, ItemManager.get(player, 10102));
+        player.getInventory().setItem(4, ItemManager.get(player, 10103));
+        player.getInventory().setItem(5, ItemManager.get(player, 10104));
         player.getInventory().setItem(8, ItemManager.get(player, 10000));
         //等待游戏开始时使用冒险模式
         player.setGamemode(Player.ADVENTURE);
@@ -306,33 +309,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         for (Map.Entry<Player, PlayerData> entry : this.playerDataMap.entrySet()) {
-            // 队伍选择物品
-            ArrayList<Team> canUseTeams = this.getCanUseTeams();
-            Item item;
-            if (entry.getValue().getTeam() != Team.RED && canUseTeams.contains(Team.RED)) {
-                item = ItemManager.get(entry.getKey(), 10101);
-            }else {
-                item = ItemManager.get(entry.getKey(), 10100);
-            }
-            entry.getKey().getInventory().setItem(2, item);
-            if (entry.getValue().getTeam() != Team.YELLOW && canUseTeams.contains(Team.YELLOW)) {
-                item = ItemManager.get(entry.getKey(), 10102);
-            }else {
-                item = ItemManager.get(entry.getKey(), 10100);
-            }
-            entry.getKey().getInventory().setItem(3, item);
-            if (entry.getValue().getTeam() != Team.BLUE && canUseTeams.contains(Team.BLUE)) {
-                item = ItemManager.get(entry.getKey(), 10103);
-            }else {
-                item = ItemManager.get(entry.getKey(), 10100);
-            }
-            entry.getKey().getInventory().setItem(4, item);
-            if (entry.getValue().getTeam() != Team.GREEN && canUseTeams.contains(Team.GREEN)) {
-                item = ItemManager.get(entry.getKey(), 10104);
-            }else {
-                item = ItemManager.get(entry.getKey(), 10100);
-            }
-            entry.getKey().getInventory().setItem(5, item);
 
             //计分板
             Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
@@ -721,7 +697,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     /**
      * @return 可以使用的队伍
      */
-    private ArrayList<Team> getCanUseTeams() {
+    public ArrayList<Team> getCanUseTeams() {
         ArrayList<Team> canUseTeams = new ArrayList<>(Arrays.asList(Team.values()));
         canUseTeams.remove(Team.NULL);
         while (canUseTeams.size() > this.getMaxTeamCount()) {
@@ -798,14 +774,14 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         Item cap = Item.get(Item.LEATHER_CAP);
         tag = cap.hasCompoundTag() ? cap.getNamedTag() : new CompoundTag();
         tag.putByte("Unbreakable", 1);
-        tag.putBoolean("cannotTakeItOff", true);
+        tag.putBoolean(ItemManager.PROPERTY_CANNOTTAKEITOFF_TAG, true);
         cap.setNamedTag(tag);
         player.getInventory().setHelmet(Utils.getTeamColorItem(cap, playerData.getTeam()));
 
         Item tunic = Item.get(Item.LEATHER_TUNIC);
         tag = tunic.hasCompoundTag() ? tunic.getNamedTag() : new CompoundTag();
         tag.putByte("Unbreakable", 1);
-        tag.putBoolean("cannotTakeItOff", true);
+        tag.putBoolean(ItemManager.PROPERTY_CANNOTTAKEITOFF_TAG, true);
         tunic.setNamedTag(tag);
         player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
 
