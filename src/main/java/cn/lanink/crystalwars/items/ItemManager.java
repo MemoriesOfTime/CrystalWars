@@ -1,6 +1,8 @@
 package cn.lanink.crystalwars.items;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.arena.Team;
+import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
@@ -40,6 +42,41 @@ public class ItemManager {
         Item item;
         Language language = CrystalWars.getInstance().getLang(player);
         switch (internalID) {
+            case 10100:
+                item = Item.get(35, 0, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG_OLD, internalID));
+                return item;
+            case 10101:
+                item = Item.get(35, 14, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG_OLD, internalID));
+                item.setCustomName(language.translateString("item_name_select_team", Utils.getShowTeam(player, Team.RED)));
+                return item;
+            case 10102:
+                item = Item.get(35, 4, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG_OLD, internalID));
+                item.setCustomName(language.translateString("item_name_select_team", Utils.getShowTeam(player, Team.YELLOW)));
+                return item;
+            case 10103:
+                item = Item.get(35, 11, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG_OLD, internalID));
+                item.setCustomName(language.translateString("item_name_select_team", Utils.getShowTeam(player, Team.BLUE)));
+                return item;
+            case 10104:
+                item = Item.get(35, 13, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putInt(INTERNAL_ID_TAG_OLD, internalID));
+                item.setCustomName(language.translateString("item_name_select_team", Utils.getShowTeam(player, Team.GREEN)));
+                return item;
+
             case 10000:
                 item = Item.get(324, 0, count);
                 item.setNamedTag(new CompoundTag()
@@ -47,6 +84,7 @@ public class ItemManager {
                         .putInt(INTERNAL_ID_TAG_OLD, internalID));
                 item.setCustomName(language.translateString("arenaSet_item_quitRoom"));
                 return item;
+
             case 11001:
                 item = Item.get(340, 0, count);
                 item.setNamedTag(new CompoundTag()

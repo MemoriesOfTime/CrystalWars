@@ -202,6 +202,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
 
+        //队伍选择物品放到onUpdateWait方法， 方便及时更新（例如不显示已加入的队伍选项）
         player.getInventory().setItem(8, ItemManager.get(player, 10000));
         //等待游戏开始时使用冒险模式
         player.setGamemode(Player.ADVENTURE);
@@ -305,6 +306,34 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }
 
         for (Map.Entry<Player, PlayerData> entry : this.playerDataMap.entrySet()) {
+            // 队伍选择物品
+            ArrayList<Team> canUseTeams = this.getCanUseTeams();
+            Item item;
+            if (entry.getValue().getTeam() != Team.RED && canUseTeams.contains(Team.RED)) {
+                item = ItemManager.get(entry.getKey(), 10101);
+            }else {
+                item = ItemManager.get(entry.getKey(), 10100);
+            }
+            entry.getKey().getInventory().setItem(2, item);
+            if (entry.getValue().getTeam() != Team.YELLOW && canUseTeams.contains(Team.YELLOW)) {
+                item = ItemManager.get(entry.getKey(), 10102);
+            }else {
+                item = ItemManager.get(entry.getKey(), 10100);
+            }
+            entry.getKey().getInventory().setItem(3, item);
+            if (entry.getValue().getTeam() != Team.BLUE && canUseTeams.contains(Team.BLUE)) {
+                item = ItemManager.get(entry.getKey(), 10103);
+            }else {
+                item = ItemManager.get(entry.getKey(), 10100);
+            }
+            entry.getKey().getInventory().setItem(4, item);
+            if (entry.getValue().getTeam() != Team.GREEN && canUseTeams.contains(Team.GREEN)) {
+                item = ItemManager.get(entry.getKey(), 10104);
+            }else {
+                item = ItemManager.get(entry.getKey(), 10100);
+            }
+            entry.getKey().getInventory().setItem(5, item);
+
             //计分板
             Theme theme = ThemeManager.getTheme(PlayerSettingDataManager.getData(entry.getKey()).getTheme());
             ArrayList<String> list = new ArrayList<>();

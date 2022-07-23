@@ -3,9 +3,11 @@ package cn.lanink.crystalwars.listener.defaults;
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
 import cn.lanink.crystalwars.arena.PlayerData;
+import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.items.ItemManager;
+import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -20,6 +22,7 @@ import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
+import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.item.Item;
@@ -34,6 +37,59 @@ import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
  */
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseArena> {
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null) {
+            return;
+        }
+
+        Item item = event.getItem();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
+            int nowTick = Server.getInstance().getTick();
+            CompoundTag tag = item.getNamedTag();
+            int lastTick = tag.getInt("lastTick");
+            if (lastTick != 0 && nowTick - lastTick < 20) {
+                event.setCancelled(true);
+                return;
+            }
+            tag.putInt("lastTick", nowTick);
+            item.setNamedTag(tag);
+            player.getInventory().setItemInHand(item);
+            int internalID = tag.getInt(ItemManager.INTERNAL_ID_TAG_OLD);
+            if (arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
+                event.setCancelled(true);
+                switch (internalID) {
+                    case 10101:
+                        arena.getPlayerData(player).setTeam(Team.RED);
+                        arena.getPlayerDataMap().keySet().forEach(p ->
+                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.RED)))
+                        );
+                        break;
+                    case 10102:
+                        arena.getPlayerData(player).setTeam(Team.YELLOW);
+                        arena.getPlayerDataMap().keySet().forEach(p ->
+                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.YELLOW)))
+                        );
+                        break;
+                    case 10103:
+                        arena.getPlayerData(player).setTeam(Team.BLUE);
+                        arena.getPlayerDataMap().keySet().forEach(p ->
+                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.BLUE)))
+                        );
+                        break;
+                    case 10104:
+                        arena.getPlayerData(player).setTeam(Team.GREEN);
+                        arena.getPlayerDataMap().keySet().forEach(p ->
+                                p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, Team.GREEN)))
+                        );
+                        break;
+                }
+            }
+        }
+    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerItemHeld(PlayerItemHeldEvent event) {
