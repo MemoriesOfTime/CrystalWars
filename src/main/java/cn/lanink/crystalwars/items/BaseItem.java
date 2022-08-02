@@ -16,7 +16,7 @@ public class BaseItem {
     }
 
     public Item toItem() {
-        return ItemManager.get(this.internalID);
+        return ItemManager.of(this.internalID);
     }
 
 }

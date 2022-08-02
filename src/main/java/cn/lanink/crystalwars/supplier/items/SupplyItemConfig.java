@@ -1,8 +1,8 @@
 package cn.lanink.crystalwars.supplier.items;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.crystalwars.items.ItemManager;
 import cn.lanink.crystalwars.supplier.SupplyConfigManager;
-import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -53,16 +53,13 @@ public class SupplyItemConfig {
 
         this.cost = config.getStringList("cost").stream()
                 .filter(rawStr -> rawStr.matches("\\d{1,5}:\\d{1,4}x\\d{1,3}"))
-                .map(rawStr -> {
-                    Item item = Item.fromString(rawStr.split("x")[0]);
-                    item.setCount(Utils.toInt(rawStr.split("x")[1]));
-                    return item;
-                }).toArray(Item[]::new);
+                .map(ItemManager::of)
+                .toArray(Item[]::new);
         if (this.cost.length == 0) {
             CrystalWars.getInstance().getLogger().warning(language.translateString("supply_undefinedItemCost", this.fileName));
         }
 
-        this.item = Item.fromString(config.getString("item"));
+        this.item = ItemManager.of(config.getString("item"));
         this.item.setCount(config.getInt("count"));
         this.item.setLore(this.lore.toArray(new String[0]));
         this.item.setCustomName(this.title);

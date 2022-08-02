@@ -1,5 +1,6 @@
 package cn.lanink.crystalwars.items.generation;
 
+import cn.lanink.crystalwars.items.ItemManager;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import lombok.AllArgsConstructor;
@@ -44,7 +45,7 @@ public class ItemGenerationConfig {
         this.name = name;
         this.config = config;
 
-        this.item = Item.fromString(config.getString("itemID"));
+        this.item = ItemManager.of(config.getString("itemID"));
 
         this.showName = config.getString("showName");
 

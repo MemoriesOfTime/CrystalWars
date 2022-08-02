@@ -7,10 +7,12 @@ import cn.lanink.crystalwars.arena.Team;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.entity.CrystalWarsEntityMerchant;
 import cn.lanink.crystalwars.items.ItemManager;
+import cn.lanink.crystalwars.utils.NukkitTypeUtils;
 import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.block.BlockBreakEvent;
@@ -27,12 +29,15 @@ import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author LT_Name
@@ -61,6 +66,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             item.setNamedTag(tag);
             player.getInventory().setItemInHand(item);
             int internalID = tag.getInt(ItemManager.INTERNAL_ID_TAG_OLD);
+            PlayerData playerData = arena.getPlayerData(player);
             if (arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
                 event.setCancelled(true);
                 Team team;
@@ -82,11 +88,46 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
                         break;
                 }
                 if (team != Team.NULL) {
-                    arena.getPlayerData(player).setTeam(team);
+                    playerData.setTeam(team);
                     this.updatePlayerItem(arena, player);
                     arena.getPlayerDataMap().keySet().forEach(p ->
                             p.sendMessage(CrystalWars.getInstance().getLang(p).translateString("tips_join_team", player.getName(), Utils.getShowTeam(p, team)))
                     );
+                }
+            }else if (arena.getArenaStatus() == BaseArena.ArenaStatus.GAME) {
+                switch (tag.getString(ItemManager.INTERNAL_ID_TAG)) {
+                    case ItemManager.ITEM_INTERNALID_PLATFORM:
+                        int minY = NukkitTypeUtils.getNukkitType() == NukkitTypeUtils.NukkitType.POWER_NUKKIT_X ? -62 : 2;
+                        if (player.getFloorY() > minY) {
+                            //生成平台
+                            HashMap<Position, Block> positions = new HashMap<>();
+                            Position floor = player.floor();
+                            floor.y -= 1;
+                            for (int x=-2; x<2; x++) {
+                                for (int z=-2; z<2; z++) {
+                                    Position position = floor.add(x, 0, z);
+                                    //将不可站立的方块换成可以站立的
+                                    Block block = player.getLevel().getBlock(position);
+                                    if (block.canPassThrough()) {
+                                        positions.put(position, block);
+                                        player.getLevel().setBlock(position, Utils.getTeamColorItem(Item.get(Item.WOOL), playerData.getTeam()).getBlock());
+                                        arena.getPlayerPlaceBlocks().add(position);
+                                    }
+                                }
+                            }
+                            player.teleport(floor.add(0, 1, 0));
+                            Server.getInstance().getScheduler().scheduleDelayedTask(CrystalWars.getInstance(), () -> {
+                                for (Map.Entry<Position, Block> entry : positions.entrySet()) {
+                                    entry.getKey().getLevel().setBlock(entry.getKey(), entry.getValue());
+                                    arena.getPlayerPlaceBlocks().remove(entry.getKey());
+                                }
+                            }, 20 * 10);
+                            item.setCount(1);
+                            player.getInventory().removeItem(item);
+                            event.setCancelled(true);
+                        }
+                        break;
+                    //TODO
                 }
             }
         }
@@ -137,6 +178,21 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         tunic.setNamedTag(tag);
         player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
     }
+
+/*    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        EntityProjectile entity = event.getEntity();
+        if (entity.shootingEntity instanceof Player) {
+            Player player = (Player) entity.shootingEntity;
+            Item item = player.getInventory().getItemInHand();
+            if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
+                CompoundTag namedTag = entity.namedTag == null ? new CompoundTag() : entity.namedTag;
+                namedTag.putBoolean(ItemManager.IS_CRYSTALWARS_TAG, true)
+                        .putString(ItemManager.INTERNAL_ID_TAG, item.getNamedTag().getString(ItemManager.INTERNAL_ID_TAG));
+                entity.namedTag = namedTag;
+            }
+        }
+    }*/
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerItemHeld(PlayerItemHeldEvent event) {

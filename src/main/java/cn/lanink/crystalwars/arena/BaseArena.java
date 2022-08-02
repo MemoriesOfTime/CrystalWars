@@ -790,6 +790,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         tag.putByte("Unbreakable", 1);
         sword.setNamedTag(tag);
         player.getInventory().addItem(sword);
+        if (CrystalWars.debug) {
+            Item item = ItemManager.of(ItemManager.ITEM_INTERNALID_PLATFORM);
+            player.getInventory().addItem(item);
+        }
 
         player.teleport(this.getTeamSpawn(playerData.getTeam()));
         player.setGamemode(Player.SURVIVAL);

@@ -11,13 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 /**
  * @author LT_Name
  */
-public class ItemManager {
-
-    public static final String IS_CRYSTALWARS_TAG = "isCrystalWars";
-    public static final String INTERNAL_ID_TAG = "CrystalWarsStringInternalID"; //String
-    public static final String INTERNAL_ID_TAG_OLD = "CrystalWarsInternalID"; //int
-    public static final String PROPERTY_CANNOTTAKEITOFF_TAG = "CrystalWarsCannotTakeItOff"; //boolean
-    public static final String PROPERTY_CANNOTCLICKONINVENTORY_TAG = "CrystalWarsCannotClickOnInventory"; //boolean
+public class ItemManager implements ItemInternalId {
 
     public static Item get(int internalID) {
         return get(null, internalID);
@@ -36,8 +30,28 @@ public class ItemManager {
     }
 
     public static Item get(Player player, String internalID, int count) {
-        //TODO
-        return Item.get(0);
+        Item item;
+        Language language = CrystalWars.getInstance().getLang(player);
+        switch (internalID) {
+            case ITEM_INTERNALID_PLATFORM:
+                item = Item.get(Item.BLAZE_ROD, 0, count);
+                item.setCompoundTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putString(INTERNAL_ID_TAG, internalID));
+                item.setCustomName(language.translateString("item_platform_name"));
+                return item;
+            case ITEM_INTERNALID_BRIDGEEGG:
+                item = Item.get(Item.EGG, 0, count);
+                item.setCompoundTag(new CompoundTag()
+                        .putBoolean(IS_CRYSTALWARS_TAG, true)
+                        .putString(INTERNAL_ID_TAG, internalID));
+                item.setCustomName(language.translateString("item_bridgeegg_name"));
+                return item;
+            //TODO
+
+            default:
+                return Item.get(0);
+        }
     }
 
     public static Item get(Player player, int internalID, int count) {
@@ -143,6 +157,39 @@ public class ItemManager {
             default:
                 return Item.get(0);
         }
+    }
+
+    public static Item of(String string) {
+        try {
+            if (CrystalWars.debug) {
+                CrystalWars.getInstance().getLogger().info("[debug] ItemManager#of( " + string + " )");
+            }
+
+            // id:damage x count
+            String[] s1 = string.split("x");
+            Item item;
+            if (s1[0].startsWith(INTERNAL_ID_PREFIX)) {
+                item = get(s1[0]);
+            }else {
+                item = Item.fromString(s1[0]);
+            }
+
+            if (item != null) {
+                if (s1.length > 1) {
+                    item.setCount(Utils.toInt(s1[1]));
+                }
+                if (CrystalWars.debug) {
+                    CrystalWars.getInstance().getLogger().info("[debug] ItemManager#of( " + string + " )  out: " + item);
+                }
+                return item;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (CrystalWars.debug) {
+            CrystalWars.getInstance().getLogger().info("[debug] ItemManager#of( " + string + " )  error out: air");
+        }
+        return Item.get(Item.AIR);
     }
 
 }
