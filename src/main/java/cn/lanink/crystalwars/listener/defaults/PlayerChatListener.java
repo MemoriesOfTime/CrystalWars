@@ -2,6 +2,8 @@ package cn.lanink.crystalwars.listener.defaults;
 
 import cn.lanink.crystalwars.CrystalWars;
 import cn.lanink.crystalwars.arena.BaseArena;
+import cn.lanink.crystalwars.arena.PlayerData;
+import cn.lanink.crystalwars.utils.Utils;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -61,7 +63,31 @@ public class PlayerChatListener extends BaseGameListener<BaseArena> {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onChat(PlayerChatEvent event) {
-        //TODO 队伍聊天 全局聊天
+        Player player = event.getPlayer();
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null) {
+            return;
+        }
+        event.getRecipients().clear();
+        String message = event.getMessage();
+        PlayerData playerData = arena.getPlayerData(player);
+        if (message.startsWith("@") ||
+                arena.getArenaStatus() != BaseArena.ArenaStatus.GAME) { //非游戏状态 全局消息
+            //全局消息
+            message = message.replace("@", "");
+            Utils.broadcastMessage(
+                    CrystalWars.getInstance().getLang().translateString("tips_playerChat_all", Utils.getShowTeam(playerData.getTeam()), player.getName(), message),
+                    arena
+            );
+        }else {
+            //队伍消息
+            Utils.broadcastMessage(
+                    CrystalWars.getInstance().getLang().translateString("tips_playerChat_team", Utils.getShowTeam(playerData.getTeam()), player.getName(), message),
+                    arena.getPlayers(playerData.getTeam())
+            );
+        }
+        event.setMessage("");
+        event.setCancelled(true);
     }
 
 }

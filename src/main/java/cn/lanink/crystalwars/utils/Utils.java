@@ -28,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author LT_Name
@@ -57,7 +54,11 @@ public class Utils {
      * @param baseArena 需要广播消息的房间
      */
     public static void broadcastMessage(@NotNull String message, @NotNull BaseArena baseArena) {
-        baseArena.getPlayerDataMap().keySet().forEach(player -> player.sendMessage(message));
+        broadcastMessage(message, baseArena.getPlayerDataMap().keySet());
+    }
+
+    public static void broadcastMessage(@NotNull String message, Collection<Player> players) {
+        players.forEach(player -> player.sendMessage(message));
     }
 
     public static void executeCommand(@NotNull Player player, List<String> cmds) {
