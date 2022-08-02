@@ -173,6 +173,9 @@ public class SupplyPageConfig {
                 }
                 player.getInventory().addItem(item);
                 player.sendTip(language.translateString("buyItem_success"));
+
+                //TODO 优化GUI界面继续购买逻辑
+                player.showFormWindow(this.generateForm(parent));
             });
         });
         return advancedFormWindowSimple;
