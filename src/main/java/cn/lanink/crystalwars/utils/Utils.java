@@ -7,6 +7,7 @@ import cn.lanink.crystalwars.entity.CrystalWarsEntityEndCrystal;
 import cn.lanink.crystalwars.supplier.SupplyConfigManager;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
@@ -39,6 +40,14 @@ public class Utils {
 
     private Utils() {
         throw new RuntimeException(CrystalWars.getInstance().getLang().translateString("tips_canNotInstantiateClass"));
+    }
+
+    public static void clearEntity(BaseArena arena) {
+        for (Entity entity : arena.getLevel().getEntities()) {
+            if (!(entity instanceof Player)) {
+                entity.close();
+            }
+        }
     }
 
     /**

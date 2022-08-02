@@ -22,6 +22,7 @@ public class ResourceGeneration {
     public ResourceGeneration(@NotNull ItemGenerationConfig config, @NotNull Vector3 vector3) {
         this.config = config;
         this.vector3 = vector3;
+        this.coolDownTime = config.getSpawnTime();
     }
 
     public boolean canSpawn(BaseArena arena) {

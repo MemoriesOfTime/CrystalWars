@@ -9,7 +9,7 @@ import lombok.Getter;
 public class NukkitTypeUtils {
 
     @Getter
-    private static NukkitType nukkitType;
+    private static final NukkitType nukkitType;
 
     static {
         String codename = Server.getInstance().getCodename();

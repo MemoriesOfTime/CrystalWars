@@ -469,6 +469,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     public void gameStart() {
+        Utils.clearEntity(this);
+
         this.assignTeam();
 
         //生成水晶
@@ -582,6 +584,8 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         for (EntityText text : this.resourceGenerationText.values()) {
             text.close();
         }
+
+        Utils.clearEntity(this);
 
         this.initData();
 
