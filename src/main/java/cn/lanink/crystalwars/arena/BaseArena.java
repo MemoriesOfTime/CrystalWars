@@ -548,19 +548,6 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
             }
         }, 10);
 
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.crystalWars, () -> {
-            if (!victoryPlayers.isEmpty() && !this.crystalWars.getVictoryCmd().isEmpty()) {
-                for (Player player : victoryPlayers) {
-                    Utils.executeCommand(player, this.crystalWars.getVictoryCmd());
-                }
-            }
-            if (!defeatPlayers.isEmpty() && !this.crystalWars.getDefeatCmd().isEmpty()) {
-                for (Player player : defeatPlayers) {
-                    Utils.executeCommand(player, this.crystalWars.getDefeatCmd());
-                }
-            }
-        }, 10);
-
         for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
             this.quitRoom(player);
         }
