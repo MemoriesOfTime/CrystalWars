@@ -9,6 +9,7 @@ import cn.lanink.crystalwars.command.user.UserCommand;
 import cn.lanink.crystalwars.items.generation.ItemGenerationConfigManager;
 import cn.lanink.crystalwars.listener.defaults.ArenaSetListener;
 import cn.lanink.crystalwars.listener.defaults.DefaultGameListener;
+import cn.lanink.crystalwars.listener.defaults.PlayerChatListener;
 import cn.lanink.crystalwars.listener.defaults.PlayerJoinAndQuit;
 import cn.lanink.crystalwars.player.PlayerSettingDataManager;
 import cn.lanink.crystalwars.supplier.SupplyConfigManager;
@@ -104,6 +105,9 @@ public class CrystalWars extends PluginBase {
     private List<String> cmdAdminAliases;
 
     @Getter
+    private List<String> cmdWhitelist;
+
+    @Getter
     private List<String> victoryCmd;
     @Getter
     private List<String> defeatCmd;
@@ -153,6 +157,7 @@ public class CrystalWars extends PluginBase {
         this.loadLanguage();
 
         registerListener("DefaultGameListener", DefaultGameListener.class);
+        registerListener("PlayerChatListener", PlayerChatListener.class);
 
         registerArenaClass("classic", ClassicArena.class);
     }
@@ -181,10 +186,14 @@ public class CrystalWars extends PluginBase {
         this.getServer().getScheduler().scheduleRepeatingTask(this, new Watchdog(this, 10), 20, true);
 
         this.loadAllArena();
+
         this.cmdUser = this.config.getString("cmdUser", "CrystalWars");
         this.cmdUserAliases = this.config.getStringList("cmdUserAliases");
         this.cmdAdmin = this.config.getString("cmdAdmin", "CrystalWarsAdmin");
         this.cmdAdminAliases = this.config.getStringList("cmdAdminAliases");
+
+        this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
+
         this.victoryCmd = this.config.getStringList("VictoryExecuteCommand");
         this.defeatCmd = this.config.getStringList("DefeatExecuteCommand");
 

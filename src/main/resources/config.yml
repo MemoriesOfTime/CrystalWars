@@ -7,3 +7,12 @@ cmdUserAliases:
 cmdAdmin: CrystalWarsAdmin
 cmdAdminAliases:
   - cwa
+
+#Commands that can be used in the game room
+#可以在游戏房间中使用的命令
+cmdWhitelist:
+  - ban
+  - kick
+  - report
+  - hub
+  - lobby

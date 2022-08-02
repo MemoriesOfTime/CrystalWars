@@ -137,6 +137,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         ArrayList<String> list = new ArrayList<>();
 
         list.add("DefaultGameListener");
+        list.add("PlayerChatListener");
 
         return list;
     }
