@@ -48,16 +48,16 @@ public class StartGame extends BaseSubCommand {
             return true;
         }
         if (arena.getArenaStatus() != BaseArena.ArenaStatus.WAIT) {
-            sender.sendMessage(language.translateString("tips_startRoom_roomStarted", name));
+            sender.sendMessage(language.translateString("tips_startRoom_notInWaitStatus", name));
             return true;
         }
         if (arena.getPlayerCount() < 2) {
-            sender.sendMessage(language.translateString("tips_startRoom_notInWaitStatus", name));
+            sender.sendMessage(language.translateString("tips_startRoom_playerCountsLessThanTwo", name));
             return true;
         }
 
         arena.gameStart();
-        sender.sendMessage(language.translateString("tips_startRoom_playerCountsLessThanTwo", name));
+        sender.sendMessage(language.translateString("tips_startRoom_roomStarted", name));
         return true;
     }
 
