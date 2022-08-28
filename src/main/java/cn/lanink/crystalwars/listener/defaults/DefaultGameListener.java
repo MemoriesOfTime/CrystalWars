@@ -22,10 +22,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
-import cn.nukkit.event.player.PlayerGameModeChangeEvent;
-import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerItemHeldEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -44,6 +41,16 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseArena> {
+
+    @EventHandler
+    public void onPlayerChangeSkin(PlayerChangeSkinEvent event) { //此事件仅玩家主动修改皮肤时触发，不需要针对插件修改特判
+        Player player = event.getPlayer();
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null || !arena.isPlaying(player)) {
+            return;
+        }
+        event.setCancelled(true);
+    }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
