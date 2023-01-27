@@ -84,6 +84,7 @@ public class Theme {
         }
         string = string.replace("{time}", newValue);
 
+        Date date = new Date();
         return string
                 .replace("{PluginName}", CrystalWars.PLUGIN_NAME)
                 .replace("{AutoSpace}", Utils.getSpace(list))
@@ -107,10 +108,10 @@ public class Theme {
                 .replace("{TeamSurvivingPlayers_BLUE}", String.valueOf(arena.getSurvivingPlayers(Team.BLUE).size()))
                 .replace("{TeamSurvivingPlayers_GREEN}", String.valueOf(arena.getSurvivingPlayers(Team.GREEN).size()))
                 //计分板日期显示
-                .replace("{yyyy}", new SimpleDateFormat("yyyy").format(new Date()))
-                .replace("{yy}", new SimpleDateFormat("yy").format(new Date()))
-                .replace("{MM}", new SimpleDateFormat("MM").format(new Date()))
-                .replace("{dd}", new SimpleDateFormat("dd").format(new Date()));
+                .replace("{yyyy}", new SimpleDateFormat("yyyy").format(date))
+                .replace("{yy}", new SimpleDateFormat("yy").format(date))
+                .replace("{MM}", new SimpleDateFormat("MM").format(date))
+                .replace("{dd}", new SimpleDateFormat("dd").format(date));
     }
 
     public List<String> listReplace(BaseArena arena, Player player, List<String> oldList) {
