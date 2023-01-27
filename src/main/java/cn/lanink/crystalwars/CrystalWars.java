@@ -202,7 +202,7 @@ public class CrystalWars extends PluginBase {
         this.getServer().getCommandMap().register("CrystalWars".toLowerCase(),
                 new AdminCommand(this.cmdAdmin, this.cmdAdminAliases.toArray(new String[0])));
 
-        //注册RsNpcX变量
+        //注册RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             VariableManage.addVariableV2("CrystalWars", RsNpcVariable.class);
