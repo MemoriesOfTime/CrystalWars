@@ -38,15 +38,21 @@ public class FormHelper {
      */
     public static void sendUserMainMenu(@NotNull Player player) {
         Language language = CrystalWars.getInstance().getLang(player);
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("§l"+CrystalWars.PLUGIN_NAME);
 
-        simple.addButton(new ResponseElementButton(language.translateString("form_main_joinRandomRoom")).onClicked(
+        simple.addButton(new ResponseElementButton(language.translateString("form_main_joinRandomRoom"),new ElementButtonImageData("path", "textures/ui/switch_start_button")).onClicked(
                 cp -> Server.getInstance().dispatchCommand(
                         cp,
                         CrystalWars.getInstance().getCmdUser() +  " join"
                 )
         ));
-        simple.addButton(new ResponseElementButton(language.translateString("form_main_checkRoomList")).onClicked(FormHelper::sendUserArenaListMenu));
+        simple.addButton(new ResponseElementButton(language.translateString("form_main_quitRoom"),new ElementButtonImageData("path", "textures/ui/switch_select_button")).onClicked(
+                cp -> Server.getInstance().dispatchCommand(
+                        cp,
+                        CrystalWars.getInstance().getCmdUser() +  " quit"
+                )
+        ));
+        simple.addButton(new ResponseElementButton(language.translateString("form_main_checkRoomList"),new ElementButtonImageData("path", "textures/ui/servers")).onClicked(FormHelper::sendUserArenaListMenu));
 
         player.showFormWindow(simple);
     }
@@ -129,15 +135,19 @@ public class FormHelper {
      * @param player 玩家
      */
     public static void sendAdminMainMenu(@NotNull Player player) {
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(CrystalWars.PLUGIN_NAME);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("§l"+CrystalWars.PLUGIN_NAME);
         Language language = CrystalWars.getInstance().getLang(player);
-        simple.addButton(new ResponseElementButton(language.translateString("form_base_createRoom"))
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_createRoom"),
+                new ElementButtonImageData("path", "textures/ui/World"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " CreateArena")));
-        simple.addButton(new ResponseElementButton(language.translateString("form_base_setRoom"))
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_setRoom"),
+                new ElementButtonImageData("path", "textures/ui/World"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " SetArena")));
-        simple.addButton(new ResponseElementButton(language.translateString("form_base_disableRoom"))
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_disableRoom"),
+                new ElementButtonImageData("path", "textures/ui/refresh_light"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " UnloadArena")));
-        simple.addButton(new ResponseElementButton(language.translateString("form_base_reloadConfig"))
+        simple.addButton(new ResponseElementButton(language.translateString("form_base_reloadConfig")
+                ,new ElementButtonImageData("path", "textures/ui/redX1"))
                 .onClicked(cp -> Server.getInstance().dispatchCommand(cp, CrystalWars.getInstance().getCmdAdmin() + " reload")));
 
         player.showFormWindow(simple);
