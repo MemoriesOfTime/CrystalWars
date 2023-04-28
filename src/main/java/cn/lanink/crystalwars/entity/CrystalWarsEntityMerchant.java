@@ -143,4 +143,9 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         }
     }
 
+    @Override
+    public Inventory getInventory() {
+        return this.indexInventory;
+    }
+
 }
