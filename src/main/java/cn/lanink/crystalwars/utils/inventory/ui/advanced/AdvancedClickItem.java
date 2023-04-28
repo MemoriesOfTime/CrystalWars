@@ -34,7 +34,7 @@ public class AdvancedClickItem extends Item {
         super(id, meta, count, name);
     }
 
-    public AdvancedClickItem onClick(@NotNull BiConsumer<InventoryClickEvent, @NotNull Player> consumer) {
+    public AdvancedClickItem onClick(@NotNull BiConsumer<InventoryClickEvent, Player> consumer) {
         this.clickConsumer = consumer;
         return this;
     }

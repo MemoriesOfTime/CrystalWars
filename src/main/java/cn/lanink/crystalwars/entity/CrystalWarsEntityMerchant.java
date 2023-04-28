@@ -79,12 +79,6 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
     }
 
     @Override
-    @Deprecated
-    public Inventory getInventory() {
-        return this.indexInventory;
-    }
-
-    @Override
     public void initEntity() {
         super.initEntity();
 
