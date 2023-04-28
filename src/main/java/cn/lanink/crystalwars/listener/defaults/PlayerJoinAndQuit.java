@@ -77,11 +77,12 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTp(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        String fromLevel = event.getFrom().getLevel().getFolderName();
-        String toLevel = event.getTo().getLevel().getFolderName();
-        if (player == null || fromLevel == null || toLevel == null) {
+        if (player == null || event.getFrom() == null || event.getTo() == null ||
+                event.getFrom().getLevel() == null || event.getTo().getLevel() == null) { //防止其他插件错误触发事件
             return;
         }
+        String fromLevel = event.getFrom().getLevel().getFolderName();
+        String toLevel = event.getTo().getLevel().getFolderName();
         if (!fromLevel.equals(toLevel)) {
             LinkedHashMap<String, BaseArena> arenas = this.crystalWars.getArenas();
             if (arenas.containsKey(fromLevel) && arenas.get(fromLevel).isPlaying(player)) {
