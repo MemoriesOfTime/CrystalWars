@@ -5,7 +5,11 @@
 {MinPlayer} 房间开始游戏需要的最少玩家数量
 {MaxPlayer} 房间最多游戏人数
 {VictoryTeam} 胜利队伍（仅胜利结算阶段有效）
-{yyyy} 年
+
+{KillCount} 玩家本局击杀数
+
+{yyyy} 年（四位）
+{yy} 年（后两位）
 {MM} 月
 {dd} 日
 
