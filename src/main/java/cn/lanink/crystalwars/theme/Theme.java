@@ -96,6 +96,7 @@ public class Theme {
                 .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(player, arena.getVictoryTeam()) : CrystalWars.getInstance().getLang(player).translateString("teams_gameDraw"))
                 //玩家数据
                 .replace("{KillCount}", String.valueOf(playerData.getKillCount()))
+                .replace("{MyTeam}", Utils.getShowTeam(player, playerData.getTeam()))
                 //队伍名称
                 .replace("{TeamName_RED}", Utils.getShowTeam(player, Team.RED))
                 .replace("{TeamName_YELLOW}", Utils.getShowTeam(player, Team.YELLOW))
