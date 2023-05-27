@@ -96,6 +96,7 @@ public class Theme {
                 .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(player, arena.getVictoryTeam()) : CrystalWars.getInstance().getLang(player).translateString("teams_gameDraw"))
                 //玩家数据
                 .replace("{KillCount}", String.valueOf(playerData.getKillCount()))
+                .replace("{MyTeam}", Utils.getShowTeam(player, playerData.getTeam()))
                 //队伍名称
                 .replace("{TeamName_RED}", Utils.getShowTeam(player, Team.RED))
                 .replace("{TeamName_YELLOW}", Utils.getShowTeam(player, Team.YELLOW))
@@ -121,105 +122,110 @@ public class Theme {
     public List<String> listReplace(BaseArena arena, Player player, List<String> oldList) {
         ArrayList<String> list = new ArrayList<>();
         for (String string : oldList) {
-            String stringReplace = this.stringReplace(arena, player, string, list);
-
-            if (stringReplace.contains("[IF:")) {
-                String[] split1 = stringReplace.split("\\[IF:");
-                String[] split2 = split1[1].split("]");
-                if (split2.length > 1) {
-                    String content = split2[1].substring(split2[1].indexOf("{") + 1, split2[1].indexOf("}"));
-                    String fullContent = "[IF:" + split2[0] + "]{" + content + "}";
-                    if ("isOvertime".equalsIgnoreCase(split2[0])) {
-                        if (arena.isOvertime()) {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        }
-                    } else if ("TeamSurviving_RED".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.RED) || !arena.getSurvivingPlayers(Team.RED).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        }
-                    } else if ("TeamSurviving_YELLOW".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.YELLOW) || !arena.getSurvivingPlayers(Team.YELLOW).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        }
-                    } else if ("TeamSurviving_BLUE".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.BLUE) || !arena.getSurvivingPlayers(Team.BLUE).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        }
-                    } else if ("TeamSurviving_GREEN".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.GREEN) || !arena.getSurvivingPlayers(Team.GREEN).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        }
-                    }else if ("PlayerCount>=MinPlayer".equalsIgnoreCase(split2[0])) {
-                        if (arena.getPlayerCount() >= arena.getMinPlayers()) {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, "");
+            StringBuilder stringReplace = new StringBuilder();
+            for (String splitString : this.stringReplace(arena, player, string, list).split("}")) {
+                if (splitString.matches("(?i).*\\[IF.*\\]\\{.*")) {
+                    splitString += "}";
+                }
+                if (splitString.contains("[IF:")) {
+                    String[] split1 = splitString.split("\\[IF:");
+                    String[] split2 = split1[1].split("]");
+                    if (split2.length > 1) {
+                        String content = split2[1].substring(split2[1].indexOf("{") + 1, split2[1].indexOf("}"));
+                        String fullContent = "[IF:" + split2[0] + "]{" + content + "}";
+                        if ("isOvertime".equalsIgnoreCase(split2[0])) {
+                            if (arena.isOvertime()) {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            }
+                        } else if ("TeamSurviving_RED".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.RED) || !arena.getSurvivingPlayers(Team.RED).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            }
+                        } else if ("TeamSurviving_YELLOW".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.YELLOW) || !arena.getSurvivingPlayers(Team.YELLOW).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            }
+                        } else if ("TeamSurviving_BLUE".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.BLUE) || !arena.getSurvivingPlayers(Team.BLUE).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            }
+                        } else if ("TeamSurviving_GREEN".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.GREEN) || !arena.getSurvivingPlayers(Team.GREEN).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            }
+                        } else if ("PlayerCount>=MinPlayer".equalsIgnoreCase(split2[0])) {
+                            if (arena.getPlayerCount() >= arena.getMinPlayers()) {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            }
                         }
                     }
-                }
-            }
-            if (stringReplace.contains("[IF_NOT:")) {
-                String[] split1 = stringReplace.split("\\[IF_NOT:");
-                String[] split2 = split1[1].split("]");
-                if (split2.length > 1) {
-                    String content = split2[1].substring(split2[1].indexOf("{") + 1, split2[1].indexOf("}"));
-                    String fullContent = "[IF_NOT:" + split2[0] + "]{" + content + "}";
-                    if ("isOvertime".equalsIgnoreCase(split2[0])) {
-                        if (arena.isOvertime()) {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        }
-                    } else if ("TeamSurviving_RED".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.RED) || !arena.getSurvivingPlayers(Team.RED).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, content);
+                } else if (splitString.contains("[IF_NOT:")) {
+                    String[] split1 = splitString.split("\\[IF_NOT:");
+                    String[] split2 = split1[1].split("]");
+                    if (split2.length > 1) {
+                        String content = split2[1].substring(split2[1].indexOf("{") + 1, split2[1].indexOf("}"));
+                        String fullContent = "[IF_NOT:" + split2[0] + "]{" + content + "}";
+                        if ("isOvertime".equalsIgnoreCase(split2[0])) {
+                            if (arena.isOvertime()) {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            }
+                        } else if ("TeamSurviving_RED".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.RED) || !arena.getSurvivingPlayers(Team.RED).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, content));
 
-                        }
-                    } else if ("TeamSurviving_YELLOW".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.YELLOW) || !arena.getSurvivingPlayers(Team.YELLOW).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        }
-                    } else if ("TeamSurviving_BLUE".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.BLUE) || !arena.getSurvivingPlayers(Team.BLUE).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        }
-                    } else if ("TeamSurviving_GREEN".equalsIgnoreCase(split2[0])) {
-                        if (arena.isTeamCrystalSurviving(Team.GREEN) || !arena.getSurvivingPlayers(Team.GREEN).isEmpty()) {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, content);
-                        }
-                    } else if ("PlayerCount>=MinPlayer".equalsIgnoreCase(split2[0])) {
-                        if (arena.getPlayerCount() >= arena.getMinPlayers()) {
-                            stringReplace = stringReplace.replace(fullContent, "");
-                        } else {
-                            stringReplace = stringReplace.replace(fullContent, content);
+                            }
+                        } else if ("TeamSurviving_YELLOW".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.YELLOW) || !arena.getSurvivingPlayers(Team.YELLOW).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            }
+                        } else if ("TeamSurviving_BLUE".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.BLUE) || !arena.getSurvivingPlayers(Team.BLUE).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            }
+                        } else if ("TeamSurviving_GREEN".equalsIgnoreCase(split2[0])) {
+                            if (arena.isTeamCrystalSurviving(Team.GREEN) || !arena.getSurvivingPlayers(Team.GREEN).isEmpty()) {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            }
+                        } else if ("PlayerCount>=MinPlayer".equalsIgnoreCase(split2[0])) {
+                            if (arena.getPlayerCount() >= arena.getMinPlayers()) {
+                                stringReplace.append(splitString.replace(fullContent, ""));
+                            } else {
+                                stringReplace.append(splitString.replace(fullContent, content));
+                            }
                         }
                     }
+                } else {
+                    stringReplace.append(splitString);
                 }
             }
 
-            if ("".equals(stringReplace)) {
+            if ("".contentEquals(stringReplace)) {
                 continue;
             }
 
-            list.add(stringReplace);
+            list.add(stringReplace.toString());
         }
         return list;
     }
