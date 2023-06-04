@@ -27,6 +27,7 @@ import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
@@ -61,7 +62,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
 
         Item item = event.getItem();
-        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
+        if (item != null && item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
             int nowTick = Server.getInstance().getTick();
             CompoundTag tag = item.getNamedTag();
             int lastTick = tag.getInt("lastTick");
@@ -337,7 +338,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         BaseArena baseArena = this.getListenerRoom(player.getLevel());
@@ -348,10 +349,11 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             event.setCancelled(true);
             return;
         }
-        baseArena.getPlayerPlaceBlocks().add(event.getBlock().clone());
+        Block block = event.getBlock();
+        baseArena.getPlayerPlaceBlocks().add(new Vector3(block.getFloorX(), block.getFloorY(), block.getFloorZ()));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         BaseArena baseArena = this.getListenerRoom(player.getLevel());
@@ -362,10 +364,12 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             event.setCancelled(true);
             return;
         }
-        if (!baseArena.getPlayerPlaceBlocks().contains(event.getBlock())) {
+        Block block = event.getBlock();
+        Vector3 vector3 = new Vector3(block.getFloorX(), block.getFloorY(), block.getFloorZ());
+        if (!baseArena.getPlayerPlaceBlocks().contains(vector3)) {
             event.setCancelled(true);
         }
-        baseArena.getPlayerPlaceBlocks().remove(event.getBlock());
+        baseArena.getPlayerPlaceBlocks().remove(vector3);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
