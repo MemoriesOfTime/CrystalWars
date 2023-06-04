@@ -62,7 +62,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
 
         Item item = event.getItem();
-        if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
+        if (item != null && item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
             int nowTick = Server.getInstance().getTick();
             CompoundTag tag = item.getNamedTag();
             int lastTick = tag.getInt("lastTick");
