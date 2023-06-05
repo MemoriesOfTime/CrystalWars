@@ -232,6 +232,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         playerData.restoreBeforePlayerData();
         this.restorePlayerSkin(player);
         ScoreboardUtil.getScoreboard().closeScoreboard(player);
+
+        if (this.crystalWars.getConfig().exists("QuitRoom.cmd")) {
+            Utils.executeCommand(player, this.crystalWars.getConfig().getStringList("QuitRoom.cmd"));
+        }
         return true;
     }
 
