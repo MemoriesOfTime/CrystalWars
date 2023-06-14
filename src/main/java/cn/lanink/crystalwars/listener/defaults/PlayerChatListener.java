@@ -65,7 +65,7 @@ public class PlayerChatListener extends BaseGameListener<BaseArena> {
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
         BaseArena arena = this.getListenerRoom(player.getLevel());
-        if (arena == null) {
+        if (arena == null || arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
             return;
         }
         event.getRecipients().clear();
@@ -86,7 +86,7 @@ public class PlayerChatListener extends BaseGameListener<BaseArena> {
                     arena.getPlayers(playerData.getTeam())
             );
         }
-        event.setMessage("");
+        //event.setMessage("");
         event.setCancelled(true);
     }
 
