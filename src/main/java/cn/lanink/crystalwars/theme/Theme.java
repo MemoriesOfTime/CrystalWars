@@ -89,11 +89,14 @@ public class Theme {
         PlayerData playerData = arena.getPlayerData(player);
         return string
                 .replace("{PluginName}", CrystalWars.PLUGIN_NAME)
+                .replace("{PluginVersion}",CrystalWars.VERSION)
                 .replace("{AutoSpace}", Utils.getSpace(list))
                 .replace("{PlayerCount}", String.valueOf(arena.getPlayerCount()))
                 .replace("{MinPlayer}", String.valueOf(arena.getMinPlayers()))
                 .replace("{MaxPlayer}", String.valueOf(arena.getMaxPlayers()))
                 .replace("{VictoryTeam}", arena.getVictoryTeam() != Team.NULL ? Utils.getShowTeam(player, arena.getVictoryTeam()) : CrystalWars.getInstance().getLang(player).translateString("teams_gameDraw"))
+                .replace("{GameMode}",arena.getGameMode())
+                .replace("{MapName}",arena.getGameWorldName())
                 //玩家数据
                 .replace("{KillCount}", String.valueOf(playerData.getKillCount()))
                 .replace("{MyTeam}", Utils.getShowTeam(player, playerData.getTeam()))
