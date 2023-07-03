@@ -11,7 +11,6 @@ scoreboard_wait:
     - "§fMode: §a{GameMode}"
     - "§fVersion: §7v{PluginVersion}"
     - "{AutoSpace}"
-    - "§egithub.com"
 
 scoreboard_game:
   title: "{PluginName}"
@@ -31,7 +30,6 @@ scoreboard_game:
     - "{AutoSpace}"
     - "§fKill: §a{KillCount}"
     - "{AutoSpace}"
-    - "§egithub.com"
 
 scoreboard_victory:
   title: "{PluginName}"
@@ -50,4 +48,3 @@ scoreboard_victory:
     - "{AutoSpace}"
     - "§fKill: §a{KillCount}"
     - "{AutoSpace}"
-    - "§egithub.com"
