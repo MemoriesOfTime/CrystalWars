@@ -1,10 +1,13 @@
 {PluginName} 彩色插件名称
+{PluginVersion} 插件的版本号
 {AutoSpace} 自动填充的空格（用于空出一行）
 {time} 倒计时
 {PlayerCount} 房间中玩家数量
 {MinPlayer} 房间开始游戏需要的最少玩家数量
 {MaxPlayer} 房间最多游戏人数
 {VictoryTeam} 胜利队伍（仅胜利结算阶段有效）
+{GameMode} 房间的游戏模式
+{MapName} 游戏房间的名称
 
 {KillCount} 玩家本局击杀数
 {MyTeam} 玩家所在队伍
