@@ -60,7 +60,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     private Level gameWorld;
 
     @Getter
-    private int waitTime;
+    public int waitTime;
     @Getter
     private int gameTime;
     @Getter
@@ -143,6 +143,15 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
     }
 
     /**
+     * 初始化Task
+     */
+    protected void initTask() {
+        this.setArenaStatus(ArenaStatus.WAIT);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                CrystalWars.getInstance(), new WaitTask(CrystalWars.getInstance(), this), 20);
+    }
+
+    /**
      * 初始化房间数据
      */
     public void initData() {
@@ -183,6 +192,10 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
 
         Server.getInstance().getPluginManager().callEvent(new CrystalWarsArenaPlayerJoinEvent(this, player));
         player.getInventory().setHeldItemIndex(0); //防止玩家放到index8的时候，会自动弹出退出房间的tips
+
+        if (this.getArenaStatus() == ArenaStatus.WAIT) {
+            this.initTask();
+        }
 
         if (this.getArenaStatus() == ArenaStatus.TASK_NEED_INITIALIZED) {
             this.setArenaStatus(ArenaStatus.WAIT);

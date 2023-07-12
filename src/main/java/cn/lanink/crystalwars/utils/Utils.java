@@ -15,6 +15,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
@@ -22,6 +23,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
 import org.jetbrains.annotations.NotNull;
@@ -395,5 +397,30 @@ public class Utils {
             newItem.setNamedTag(defaultItem.getNamedTag());
         }
         return newItem;
+    }
+
+    /**
+     * 播放声音
+     * @param arena 房间
+     * @param sound 声音
+     */
+    public static void playSound(BaseArena arena, Sound sound) {
+        arena.getPlayerDataMap().keySet().forEach(player -> playSound(player, sound));
+    }
+
+    /**
+     * 发包方式播放声音
+     * @param player 玩家
+     * @param sound 声音
+     */
+    public static void playSound(Player player, Sound sound) {
+        PlaySoundPacket packet = new PlaySoundPacket();
+        packet.name = sound.getSound();
+        packet.volume = 1.0F;
+        packet.pitch = 1.0F;
+        packet.x = player.getFloorX();
+        packet.y = player.getFloorY();
+        packet.z = player.getFloorZ();
+        player.dataPacket(packet);
     }
 }
