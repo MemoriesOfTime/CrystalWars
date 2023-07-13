@@ -304,6 +304,24 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         }else {
             if (this.getPlayerCount() >= this.getMinPlayers()) {
                 this.waitTime--;
+                if(this.getPlayerDataMap().size() == this.getMaxPlayers() && this.waitTime > 10) {
+                    this.waitTime = 10;
+                }
+                if(this.waitTime > 0) {
+                    String title = "§e";
+                    if(this.waitTime <= 10) {
+                        if(this.waitTime <= 3) {
+                            title = "§c";
+                            Utils.playSound(this, Sound.NOTE_HARP);
+                        } else {
+                            Utils.playSound(this, Sound.NOTE_BASSATTACK);
+                        }
+                        title += this.waitTime;
+                        for(Player player : this.getPlayerDataMap().keySet()) {
+                            player.sendTitle(title, "", 0, 15, 5);
+                        }
+                    }
+                }
                 if (this.waitTime <= 0) {
                     this.gameStart();
                     return;
