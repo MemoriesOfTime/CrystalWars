@@ -15,7 +15,7 @@ import cn.lanink.crystalwars.utils.Watchdog;
 import cn.lanink.crystalwars.utils.exception.ArenaLoadException;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
-import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.FileUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.Player;
@@ -101,7 +101,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
         if (!backup.exists()) {
             this.crystalWars.getLogger().info(language.translateString("arena_backUpNotFound",this.getGameWorldName()));
             Server.getInstance().unloadLevel(this.gameWorld);
-            if (FileUtil.copyDir(this.crystalWars.getServerWorldPath() + this.getGameWorldName(), backup)) {
+            if (FileUtils.copyDir(this.crystalWars.getServerWorldPath() + this.getGameWorldName(), backup)) {
                 Server.getInstance().loadLevel(this.getGameWorldName());
                 this.gameWorld = Server.getInstance().getLevelByName(this.getGameWorldName());
             }else {
@@ -613,7 +613,7 @@ public abstract class BaseArena extends ArenaConfig implements IRoom {
                 this.crystalWars.unloadArena(this.getGameWorldName());
             }
             CompletableFuture.runAsync(() -> {
-                if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                if (FileUtils.deleteFile(levelFile) && FileUtils.copyDir(backup, levelFile)) {
                     Server.getInstance().loadLevel(getGameWorldName());
                     this.gameWorld = Server.getInstance().getLevelByName(getGameWorldName());
                     this.initLevel();
