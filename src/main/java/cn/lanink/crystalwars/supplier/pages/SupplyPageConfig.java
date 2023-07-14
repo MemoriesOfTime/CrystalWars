@@ -156,7 +156,6 @@ public class SupplyPageConfig {
                     if(!player.getInventory().contains(cost)) {
                         Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
                         player.sendTip(language.translateString("buyItem_lackOfNeededItems"));
-                        player.showFormWindow(this.generateForm(parent));
                         return;
                     }
                 }
