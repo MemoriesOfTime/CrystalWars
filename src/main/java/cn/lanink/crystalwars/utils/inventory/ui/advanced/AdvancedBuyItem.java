@@ -8,6 +8,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Sound;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,16 +35,19 @@ public class AdvancedBuyItem extends AdvancedClickItem{
             return;
         }
         if(!player.getInventory().canAddItem(this.itemConfig.getItem())) {
+            Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
             player.sendTip(language.translateString("buyItem_inventoryFull"));
             return;
         }
         for (Item cost : this.itemConfig.getCost()) {
             if(!player.getInventory().contains(cost)) {
+                Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
                 player.sendTip(language.translateString("buyItem_lackOfNeededItems"));
                 return;
             }
         }
         if (!this.itemConfig.isOvertimeCanBuy() && arena.isOvertime()) {
+            Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
             player.sendTip(language.translateString("tips_buyItem_canNotBuyForOvertime"));
             return;
         }
@@ -55,6 +59,7 @@ public class AdvancedBuyItem extends AdvancedClickItem{
             item = Utils.getTeamColorItem(item, arena.getPlayerData(player).getTeam());
         }
         player.getInventory().addItem(item);
+        Utils.playSound(player, Sound.RANDOM_ORB);
         player.sendTip(language.translateString("buyItem_success"));
     }
 

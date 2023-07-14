@@ -12,6 +12,7 @@ import cn.lanink.crystalwars.utils.inventory.ui.advanced.AdvancedPageLinkItem;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
@@ -147,16 +148,20 @@ public class SupplyPageConfig {
             advancedFormWindowSimple.addButton(itemConfig.getTitle() + "§r\n" + itemConfig.getSubTitle(), player -> {
                 BaseArena arena = CrystalWars.getInstance().getArenas().get(player.getLevel().getFolderName());
                 if(!player.getInventory().canAddItem(itemConfig.getItem())) {
+                    Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
                     player.sendTip(language.translateString("buyItem_inventoryFull"));
                     return;
                 }
                 for (Item cost : itemConfig.getCost()) {
                     if(!player.getInventory().contains(cost)) {
+                        Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
                         player.sendTip(language.translateString("buyItem_lackOfNeededItems"));
+                        player.showFormWindow(this.generateForm(parent));
                         return;
                     }
                 }
                 if (!itemConfig.isOvertimeCanBuy() && arena.isOvertime()) {
+                    Utils.playSound(player,Sound.MOB_ENDERMEN_PORTAL);
                     player.sendTip(language.translateString("tips_buyItem_canNotBuyForOvertime"));
                     return;
                 }
@@ -172,6 +177,7 @@ public class SupplyPageConfig {
                     item = Utils.getTeamColorItem(item, arena.getPlayerData(player).getTeam());
                 }
                 player.getInventory().addItem(item);
+                Utils.playSound(player, Sound.RANDOM_ORB);
                 player.sendTip(language.translateString("buyItem_success"));
 
                 //TODO 优化GUI界面继续购买逻辑
