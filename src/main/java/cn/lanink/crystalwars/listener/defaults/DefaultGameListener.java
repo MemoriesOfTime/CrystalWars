@@ -187,6 +187,24 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
     }
 
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        Item item = event.getItem();
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null) {
+            return;
+        }
+        if(arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
+            if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
+                switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG_OLD)) {
+                    case 10000, 10100, 10101, 10102, 10103, 10104 -> event.setCancelled(true);
+                }
+            }
+
+        }
+    }
+
 /*    @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         EntityProjectile entity = event.getEntity();
@@ -434,6 +452,10 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
         if ((sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTCLICKONINVENTORY_TAG)) ||
                 (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTCLICKONINVENTORY_TAG))) {
+            event.setCancelled(true);
+        }
+        if (arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
+            //不允许移动等待时的物品
             event.setCancelled(true);
         }
     }
