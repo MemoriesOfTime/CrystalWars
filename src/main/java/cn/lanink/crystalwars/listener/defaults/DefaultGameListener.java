@@ -196,12 +196,7 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
             return;
         }
         if(arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
-            if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManager.IS_CRYSTALWARS_TAG)) {
-                switch (item.getNamedTag().getInt(ItemManager.INTERNAL_ID_TAG_OLD)) {
-                    case 10000, 10100, 10101, 10102, 10103, 10104 -> event.setCancelled(true);
-                }
-            }
-
+            event.setCancelled(true);
         }
     }
 
