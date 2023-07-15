@@ -187,6 +187,18 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         player.getInventory().setChestplate(Utils.getTeamColorItem(tunic, playerData.getTeam()));
     }
 
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        BaseArena arena = this.getListenerRoom(player.getLevel());
+        if (arena == null) {
+            return;
+        }
+        if(arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
+            event.setCancelled(true);
+        }
+    }
+
 /*    @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         EntityProjectile entity = event.getEntity();
@@ -434,6 +446,10 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
         }
         if ((sourceItem.hasCompoundTag() && sourceItem.getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTCLICKONINVENTORY_TAG)) ||
                 (event.getHeldItem().hasCompoundTag() && event.getHeldItem().getNamedTag().getBoolean(ItemManager.PROPERTY_CANNOTCLICKONINVENTORY_TAG))) {
+            event.setCancelled(true);
+        }
+        if (arena.getArenaStatus() == BaseArena.ArenaStatus.WAIT) {
+            //不允许移动等待时的物品
             event.setCancelled(true);
         }
     }
