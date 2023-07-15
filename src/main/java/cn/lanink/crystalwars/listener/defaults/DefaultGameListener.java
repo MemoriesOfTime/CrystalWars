@@ -190,7 +190,6 @@ public class DefaultGameListener extends BaseGameListener<BaseArena> {
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
-        Item item = event.getItem();
         BaseArena arena = this.getListenerRoom(player.getLevel());
         if (arena == null) {
             return;
