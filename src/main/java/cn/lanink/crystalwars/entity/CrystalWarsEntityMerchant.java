@@ -42,6 +42,7 @@ public class CrystalWarsEntityMerchant extends EntityVillager implements Invento
         this.setMaxHealth(100);
         this.setHealth(100F);
         this.setNameTag(team.getStringColor() + "村民商店");
+        this.setImmobile();
         generateMerchantInventory();
         generateGui();
     }
