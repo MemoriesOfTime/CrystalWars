@@ -1,9 +1,0 @@
-title: 石剑
-item: "272:0"
-count: 1
-subTitle: (10个铁锭 x1)
-pos: 9
-cost:
-  - "265:0x10"
-lore:
-  - "比木剑强一点"

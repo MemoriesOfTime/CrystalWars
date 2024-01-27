@@ -1,6 +1,7 @@
 package cn.lanink.crystalwars.supplier;
 
 import cn.lanink.crystalwars.CrystalWars;
+import cn.lanink.gamecore.utils.ZipUtils;
 import cn.nukkit.item.Item;
 import lombok.Getter;
 
@@ -37,20 +38,16 @@ public class SupplyConfigManager {
         File dir = new File(CRYSTAL_WARS.getDataFolder(), "/Supply/");
         if(!dir.exists()) {
             dir.mkdirs();
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/goldenApple.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordDiamond.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordIron.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordIronKnockback.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/swordStone.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/items/wool.yml");
-
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageBlock.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageQuickBuy.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageProp.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageTool.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageWeapon.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageFood.yml");
-            CRYSTAL_WARS.saveResource("Supply/DefaultSupply/pages/pageArmor.yml");
+            CRYSTAL_WARS.saveResource("Supply/DefaultSupply.data", true);
+            try {
+                ZipUtils.unzip(dir + "/DefaultSupply.data", dir.getAbsolutePath());
+                File file = new File(dir, "/DefaultSupply.data");
+                if(file.exists()) {
+                    file.delete();
+                }
+            } catch (Exception e) {
+                CRYSTAL_WARS.getLogger().error(CrystalWars.getInstance().getLang().translateString("supply_createDefaultSupplyError"), e);
+            }
         }
         final File[] files = dir.listFiles();
         if(files == null) {
